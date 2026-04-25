@@ -20,7 +20,7 @@ interface Props {
     issuer: string;
     year: number;
     badge?: string;
-    link?: string;
+    url?: string;
   }>;
   languages_spoken: Array<{ lang: string; level: string }>;
 }
@@ -92,13 +92,23 @@ const { name, title, photo, contact, skills, certifications, languages_spoken } 
   <div class="sidebar-section">
     <h3 class="sidebar-label">certifications</h3>
     {certifications.map(cert => (
-      <div class="cert-item">
-        {cert.badge && <img src={cert.badge} alt={cert.name} class="cert-badge-img" />}
-        <div>
-          <span class="cert-name">{cert.name}</span>
-          <span class="cert-meta mono">{cert.issuer} · {cert.year}</span>
+      cert.url ? (
+        <a href={cert.url} class="cert-item cert-item-link no-print-href" target="_blank" rel="noopener">
+          {cert.badge && <img src={cert.badge} alt={cert.name} class="cert-badge-img" />}
+          <div>
+            <span class="cert-name">{cert.name}</span>
+            <span class="cert-meta mono">{cert.issuer} · {cert.year}</span>
+          </div>
+        </a>
+      ) : (
+        <div class="cert-item">
+          {cert.badge && <img src={cert.badge} alt={cert.name} class="cert-badge-img" />}
+          <div>
+            <span class="cert-name">{cert.name}</span>
+            <span class="cert-meta mono">{cert.issuer} · {cert.year}</span>
+          </div>
         </div>
-      </div>
+      )
     ))}
   </div>
 
@@ -219,6 +229,12 @@ const { name, title, photo, contact, skills, certifications, languages_spoken } 
     display: flex;
     align-items: center;
     gap: var(--space-2);
+    text-decoration: none;
+    color: inherit;
+  }
+
+  a.cert-item-link:hover {
+    opacity: 0.75;
   }
 
   .cert-badge-img {

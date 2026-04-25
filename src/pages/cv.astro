@@ -93,20 +93,6 @@ const { name, title, photo, contact, summary, expertise, education, experience, 
         </div>
       )}
 
-      <div class="cv-section">
-        <h2 class="cv-section-title">certifications</h2>
-        <div class="cv-entries">
-          {certifications.map(cert => (
-            <CertBadge
-              name={cert.name}
-              issuer={cert.issuer}
-              year={cert.year}
-              badge={cert.badge}
-              link={cert.url}
-            />
-          ))}
-        </div>
-      </div>
     </main>
   </div>
 </CVLayout>

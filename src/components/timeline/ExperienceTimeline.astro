@@ -13,7 +13,7 @@ const entries = [
     org: e.org,
     start: e.start,
     end: e.end,
-    notes: e.bullets?.[0],
+    bullets: e.bullets ?? [],
   })),
   ...cv.data.education.map(e => ({
     type: 'education' as const,
@@ -29,7 +29,7 @@ const entries = [
     org: e.issuer,
     start: e.year,
     end: null as null,
-    link: e.link,
+    link: e.url,
   })),
   ...research.map(r => ({
     type: 'research' as const,
@@ -37,7 +37,7 @@ const entries = [
     org: r.data.venue,
     start: r.data.year,
     end: null as null,
-    notes: r.data.abstract.slice(0, 120) + '…',
+    notes: r.data.abstract,
     link: r.data.doi ? `https://doi.org/${r.data.doi}` : undefined,
   })),
 ].sort((a, b) => b.start - a.start);

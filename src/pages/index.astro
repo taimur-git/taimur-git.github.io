@@ -7,9 +7,9 @@ import ExperienceTimeline from '../components/timeline/ExperienceTimeline.astro'
   <section class="hero site-container">
     <div class="hero-inner">
       <h1 class="hero-name">Taimur Rahman</h1>
-      <p class="hero-tagline">software engineer · ai researcher · quality lead</p>
+      <p class="hero-tagline">process improvement · software engineer · quality coordinator</p>
       <p class="hero-bio">
-        Accomplished and detail-oriented professional with a strong academic foundation in computer science and engineering, complemented by experience leading quality assurance operations, training pipelines, and multilingual AI data projects. Adept at spearheading initiatives that streamline processes, reduce onboarding timelines, and elevate performance standards across global teams. Demonstrated success in driving continuous improvement, developing innovative tools, and coordinating cross-functional efforts to deliver high-quality outputs for high-stakes clients. Brings expertise in programming, data science, and cybersecurity, with a proven record of excellence in both academic research and industry projects.
+        <span id="typewriter"></span><span class="tw-cursor" aria-hidden="true"></span>
       </p>
       <div class="hero-links">
         <a href="/cv" class="hero-link">view cv →</a>
@@ -94,4 +94,57 @@ import ExperienceTimeline from '../components/timeline/ExperienceTimeline.astro'
     font-size: var(--font-size-xs);
     padding-bottom: 0;
   }
+
+  .tw-cursor {
+    display: inline-block;
+    width: 2px;
+    height: 0.85em;
+    background: var(--color-text-muted);
+    margin-left: 2px;
+    vertical-align: middle;
+    animation: tw-blink 1s step-end infinite;
+  }
+
+  .tw-cursor.done {
+    animation: none;
+    opacity: 0;
+  }
+
+  @keyframes tw-blink {
+    50% { opacity: 0; }
+  }
 </style>
+
+<script>
+  const el = document.getElementById('typewriter')!;
+  const cursor = document.querySelector<HTMLElement>('.tw-cursor')!;
+
+  const PHRASE = 'Welcome To My WebSight';
+  const DELETE_COUNT = 5; // removes "Sight"
+  const CORRECTION = 'site';
+  const TYPE_MS = 55;
+  const DELETE_MS = 70;
+  const PAUSE_MS = 650;
+
+  const sleep = (ms: number) => new Promise(r => setTimeout(r, ms));
+
+  async function run() {
+    for (const ch of PHRASE) {
+      el.textContent += ch;
+      await sleep(TYPE_MS);
+    }
+    await sleep(PAUSE_MS);
+    for (let i = 0; i < DELETE_COUNT; i++) {
+      el.textContent = el.textContent!.slice(0, -1);
+      await sleep(DELETE_MS);
+    }
+    for (const ch of CORRECTION) {
+      el.textContent += ch;
+      await sleep(TYPE_MS);
+    }
+    await sleep(400);
+    cursor.classList.add('done');
+  }
+
+  run();
+</script>

@@ -6,6 +6,7 @@ interface Props {
     org: string;
     start: number;
     end: number | null;
+    bullets?: string[];
     notes?: string;
     link?: string;
   };
@@ -13,29 +14,66 @@ interface Props {
 
 const { entry } = Astro.props;
 const endLabel = entry.end === null ? 'present' : entry.end.toString();
+const hasDetails = (entry.bullets && entry.bullets.length > 0) || !!entry.notes || !!entry.link;
 ---
 
 <div class="timeline-entry" data-type={entry.type}>
   <div class="timeline-dot"></div>
   <div class="timeline-year mono">{entry.start}</div>
-  <div class="timeline-card">
-    <div class="timeline-card-header">
-      <div>
-        <span class="timeline-title">{entry.title}</span>
-        <span class="timeline-org">{entry.org}</span>
+  <div class={`timeline-card${hasDetails ? ' expandable' : ''}`}>
+    {hasDetails ? (
+      <button class="timeline-toggle" aria-expanded="false">
+        <div class="timeline-card-header">
+          <div>
+            <span class="timeline-title">{entry.title}</span>
+            <span class="timeline-org">{entry.org}</span>
+          </div>
+          <div class="timeline-header-right">
+            <span class={`timeline-badge badge-${entry.type}`}>{entry.type}</span>
+            <span class="timeline-chevron" aria-hidden="true">▾</span>
+          </div>
+        </div>
+      </button>
+    ) : (
+      <div class="timeline-card-header">
+        <div>
+          <span class="timeline-title">{entry.title}</span>
+          <span class="timeline-org">{entry.org}</span>
+        </div>
+        <span class={`timeline-badge badge-${entry.type}`}>{entry.type}</span>
       </div>
-      <span class={`timeline-badge badge-${entry.type}`}>{entry.type}</span>
-    </div>
+    )}
     <div class="timeline-meta mono">
       {entry.start} – {endLabel}
     </div>
-    {entry.notes && (
-      <p class="timeline-notes">{entry.notes}</p>
-    )}
-    {entry.link && (
-      <a href={entry.link} class="timeline-link no-print-href" target="_blank" rel="noopener">
-        {entry.type === 'research' ? 'DOI ↗' : 'View credential ↗'}
-      </a>
+    {hasDetails && (
+      <div class="timeline-body-wrap">
+        <div class="timeline-body">
+          {entry.bullets && entry.bullets.length > 0 && (
+            <ul class="timeline-bullets">
+              {entry.bullets.map(b => <li>{b}</li>)}
+            </ul>
+          )}
+          {entry.notes && (
+            <p class="timeline-notes">{entry.notes}</p>
+          )}
+          {entry.link && (
+            <a href={entry.link} class="timeline-link no-print-href" target="_blank" rel="noopener">
+              {entry.type === 'research' ? 'DOI ↗' : 'View credential ↗'}
+            </a>
+          )}
+        </div>
+      </div>
     )}
   </div>
 </div>
+
+<script>
+  document.querySelectorAll<HTMLElement>('.timeline-card.expandable').forEach(card => {
+    const toggle = card.querySelector<HTMLButtonElement>('.timeline-toggle')!;
+    toggle.addEventListener('click', () => {
+      const expanded = card.classList.toggle('expanded');
+      toggle.setAttribute('aria-expanded', String(expanded));
+    });
+  });
+</script>

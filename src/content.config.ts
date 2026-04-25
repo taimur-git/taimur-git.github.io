@@ -35,7 +35,7 @@ const cvCollection = defineCollection({
       issuer: z.string(),
       year: z.number(),
       badge: z.string().optional(),
-      link: z.string().optional(),
+      url: z.string().optional(),
     })),
     skills: z.object({
       languages: z.array(z.string()),

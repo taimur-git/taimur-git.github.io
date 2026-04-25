@@ -2,9 +2,14 @@
 title: "Benchmarking Fully Homomorphic Encryption Libraries in IoT Devices"
 authors:
   - "Taimur Rahman"
+  - "Anas Mohammad Ishfaqul Muktadir Osmani"
+  - "Mohammad Shahriar Rahman"
+  - "Mir Moynuddin Ahmed Shibly"
+  - "Salekul Islam"
 venue: "NSysS 2024"
 year: 2024
-abstract: "This work benchmarks leading fully homomorphic encryption (FHE) libraries on resource-constrained IoT hardware, evaluating computation time, memory overhead, and power consumption. The results provide practical guidance for integrating privacy-preserving computation into embedded and IoT systems where cryptographic overhead is a key constraint."
+doi: 10.1145/3704522.3704546
+abstract: "Homomorphic encryption is a standard that allows arithmetic and logical operations to be performed on encrypted data. This is relevant in data analytics, where sensitive data such as health records or bank transactions cannot be shared. Many of these tasks are based on IoT devices, so integrating Homomorphic Encryption (HE) in the existing systems can ensure a reliable level of data privacy. Therefore, we have experimented with three Fully Homomorphic Encryption (FHE) libraries and accompanying schemes on the Raspberry Pi 4. Our emphasis was on analysing other factors such as temperature and RAM usage accounting for the resource constrained device. In the fast evolving realm of FHE libraries supporting various schemes, this study has given an insight to the current standings of the most common libraries in terms of computation efficiency and implementation optimisation. We have found that OpenFHE library has a better implementation of the BFV scheme with regards to CPU usage and server-side arithmetic operations, being on average 50.4% better than the second best library. SEAL has outperformed the other libraries with a relatively lower temperature profile and faster arithmetic on BFV and CKKS schemes. On the other hand, key generation is far better on Lattigo, being on average 12.7 times faster than other libraries."
 tags:
   - homomorphic encryption
   - IoT

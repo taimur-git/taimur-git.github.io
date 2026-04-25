@@ -1,0 +1,116 @@
+---
+interface Props {
+  title: string;
+  authors: string[];
+  venue: string;
+  year: number;
+  doi?: string;
+  pdf?: string;
+  tags: string[];
+  highlightAuthor?: string;
+}
+
+const { title, authors, venue, year, doi, pdf, tags, highlightAuthor } = Astro.props;
+const doiUrl = doi ? `https://doi.org/${doi}` : undefined;
+---
+
+<div class="publication-card">
+  <div class="pub-title-row">
+    {doiUrl ? (
+      <a href={doiUrl} class="pub-title" target="_blank" rel="noopener">{title}</a>
+    ) : (
+      <span class="pub-title">{title}</span>
+    )}
+  </div>
+  <div class="pub-meta mono">
+    {venue} · {year}
+  </div>
+  <div class="pub-authors">
+    {authors.map((author, i) => (
+      <span class={highlightAuthor && author === highlightAuthor ? 'author-highlight' : 'author'}>
+        {author}{i < authors.length - 1 ? ', ' : ''}
+      </span>
+    ))}
+  </div>
+  {tags.length > 0 && (
+    <div class="pub-tags">
+      {tags.map(tag => <span class="pub-tag">{tag}</span>)}
+    </div>
+  )}
+  <div class="pub-links">
+    {doiUrl && (
+      <a href={doiUrl} class="pub-link no-print-href" target="_blank" rel="noopener">DOI ↗</a>
+    )}
+    {pdf && (
+      <a href={pdf} class="pub-link no-print-href" target="_blank" rel="noopener">PDF ↗</a>
+    )}
+  </div>
+</div>
+
+<style>
+  .publication-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .pub-title {
+    font-weight: var(--font-weight-medium);
+    font-size: var(--font-size-base);
+    color: var(--color-text);
+    text-decoration: none;
+    line-height: var(--line-height-tight);
+  }
+
+  a.pub-title:hover {
+    color: var(--color-accent);
+    opacity: 1;
+  }
+
+  .pub-meta {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-faint);
+  }
+
+  .pub-authors {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+  }
+
+  .author-highlight {
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text);
+  }
+
+  .pub-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-1);
+  }
+
+  .pub-tag {
+    font-family: var(--font-mono);
+    font-size: var(--font-size-xs);
+    padding: 1px var(--space-2);
+    border-radius: var(--radius-full);
+    background: var(--color-surface);
+    border: 0.5px solid var(--color-border-strong);
+    color: var(--color-text-muted);
+  }
+
+  .pub-links {
+    display: flex;
+    gap: var(--space-3);
+  }
+
+  .pub-link {
+    font-family: var(--font-mono);
+    font-size: var(--font-size-xs);
+    color: var(--color-accent);
+    text-decoration: none;
+  }
+
+  .pub-link:hover {
+    opacity: 0.75;
+  }
+</style>

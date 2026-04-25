@@ -1,0 +1,137 @@
+/* ── Two-column CV grid ── */
+.cv-layout {
+  display: grid;
+  grid-template-columns: var(--cv-sidebar-width) 1fr;
+  gap: var(--space-8);
+  align-items: start;
+  max-width: var(--max-width-site);
+  margin: 0 auto;
+  padding: var(--space-8) var(--space-6);
+}
+
+.cv-sidebar {
+  position: sticky;
+  top: var(--space-8);
+}
+
+.cv-section {
+  margin-bottom: var(--space-8);
+  padding-bottom: var(--space-8);
+  border-bottom: 0.5px solid var(--color-border);
+}
+
+.cv-section:last-child { border-bottom: none; }
+
+.cv-section-title {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-faint);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--space-6);
+  font-weight: var(--font-weight-regular);
+}
+
+.cv-entries {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+/* ── Header ── */
+.cv-name {
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-tight);
+}
+
+.cv-headline {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  margin-top: var(--space-1);
+}
+
+.cv-summary {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  line-height: var(--line-height-body);
+  margin-top: var(--space-4);
+  /*max-width: 60ch;*/
+}
+
+/* ── Expertise tags ── */
+.expertise-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
+}
+
+.expertise-tag {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-full);
+  background: var(--color-surface);
+  border: 0.5px solid var(--color-border-strong);
+  color: var(--color-text-muted);
+}
+
+/* ── Print ── */
+@media print {
+  @page {
+    size: A4;
+    margin: 18mm 16mm;
+  }
+
+  /* Hide all screen-only chrome */
+  nav, footer, .print-btn, .cv-print-bar { display: none !important; }
+
+  /* Remove viewport min-height that causes a blank first page */
+  body {
+    min-height: 0 !important;
+    background: white !important;
+    color: black !important;
+  }
+
+  /* Preserve two-column grid with concrete values (no CSS vars for safety) */
+  .cv-layout {
+    display: grid !important;
+    grid-template-columns: 240px 1fr !important;
+    gap: 24px !important;
+    padding: 0 !important;
+    max-width: none !important;
+    background: white !important;
+  }
+
+  .cv-sidebar {
+    position: static !important;
+    background: white !important;
+    color: black !important;
+  }
+
+  .experience-block,
+  .education-block,
+  .publication-card {
+    break-inside: avoid;
+  }
+
+  a[href]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.7em;
+    color: #666;
+  }
+
+  a.no-print-href::after { content: ""; }
+}
+
+/* ── Mobile ── */
+@media (max-width: 720px) {
+  .cv-layout {
+    grid-template-columns: 1fr;
+  }
+  .cv-sidebar {
+    position: static;
+  }
+}

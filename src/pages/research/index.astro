@@ -1,0 +1,33 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+import '../../styles/blog.css';
+
+const papers = (await getCollection('research'))
+  .sort((a, b) => b.data.year - a.data.year);
+---
+
+<BaseLayout title="Research">
+  <div class="site-container" style="padding-top: var(--space-12);">
+    <h1 style="font-size: var(--font-size-3xl); font-weight: var(--font-weight-medium); line-height: var(--line-height-tight); margin-bottom: var(--space-8);">research</h1>
+    <div class="post-list">
+      {papers.map(paper => {
+        const doiUrl = paper.data.doi ? `https://doi.org/${paper.data.doi}` : undefined;
+        return (
+          <article class="post-card">
+            <a href={`/research/${paper.id}`}>
+              <span class="mono post-date">{paper.data.venue} · {paper.data.year}</span>
+              <h2 class="post-title">{paper.data.title}</h2>
+              <p class="post-excerpt">{paper.data.abstract.slice(0, 180)}…</p>
+              <div class="post-tags">
+                {paper.data.tags.map((tag: string) => (
+                  <span class="tag-pill mono">{tag}</span>
+                ))}
+              </div>
+            </a>
+          </article>
+        );
+      })}
+    </div>
+  </div>
+</BaseLayout>

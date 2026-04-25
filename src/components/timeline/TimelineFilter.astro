@@ -1,0 +1,29 @@
+---
+const types = ['work', 'education', 'certification', 'research'];
+---
+
+<div class="timeline-filters" id="timeline-filters">
+  <button class="filter-pill active" data-filter="all">all</button>
+  {types.map(t => (
+    <button class="filter-pill" data-filter={t}>{t}</button>
+  ))}
+</div>
+
+<script>
+  const filters = document.querySelectorAll<HTMLButtonElement>('.filter-pill');
+  const entries = document.querySelectorAll<HTMLElement>('.timeline-entry');
+
+  filters.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const filter = btn.dataset.filter!;
+
+      filters.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      entries.forEach(entry => {
+        const show = filter === 'all' || entry.dataset.type === filter;
+        entry.style.display = show ? '' : 'none';
+      });
+    });
+  });
+</script>

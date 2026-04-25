@@ -1,17 +1,97 @@
 ---
-
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ExperienceTimeline from '../components/timeline/ExperienceTimeline.astro';
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<BaseLayout title="Taimur Rahman">
+  <section class="hero site-container">
+    <div class="hero-inner">
+      <h1 class="hero-name">Taimur Rahman</h1>
+      <p class="hero-tagline">software engineer · ai researcher · quality lead</p>
+      <p class="hero-bio">
+        Accomplished and detail-oriented professional with a strong academic foundation in computer science and engineering, complemented by experience leading quality assurance operations, training pipelines, and multilingual AI data projects. Adept at spearheading initiatives that streamline processes, reduce onboarding timelines, and elevate performance standards across global teams. Demonstrated success in driving continuous improvement, developing innovative tools, and coordinating cross-functional efforts to deliver high-quality outputs for high-stakes clients. Brings expertise in programming, data science, and cybersecurity, with a proven record of excellence in both academic research and industry projects.
+      </p>
+      <div class="hero-links">
+        <a href="/cv" class="hero-link">view cv →</a>
+        <a href="/blog" class="hero-link secondary">writing</a>
+        <a href="/research" class="hero-link secondary">research</a>
+      </div>
+    </div>
+  </section>
+
+  <div class="timeline-label site-container">
+    <span class="mono">experience &amp; timeline</span>
+  </div>
+
+  <ExperienceTimeline />
+</BaseLayout>
+
+<style>
+  .hero {
+    padding: var(--space-16) var(--space-6) var(--space-12);
+  }
+
+  .hero-inner {
+    max-width: 72ch;
+  }
+
+  .hero-name {
+    font-size: var(--font-size-3xl);
+    font-weight: var(--font-weight-medium);
+    line-height: var(--line-height-tight);
+    margin-bottom: var(--space-3);
+  }
+
+  .hero-tagline {
+    font-family: var(--font-mono);
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-4);
+  }
+
+  .hero-bio {
+    font-size: var(--font-size-base);
+    color: var(--color-text-muted);
+    line-height: var(--line-height-body);
+    margin-bottom: var(--space-6);
+  }
+
+  .hero-links {
+    display: flex;
+    gap: var(--space-4);
+    flex-wrap: wrap;
+  }
+
+  .hero-link {
+    font-family: var(--font-mono);
+    font-size: var(--font-size-sm);
+    color: var(--color-accent);
+    padding: var(--space-2) var(--space-4);
+    border: 0.5px solid var(--color-accent);
+    border-radius: var(--radius-md);
+    transition: all var(--transition-base);
+  }
+
+  .hero-link:hover {
+    background: var(--color-accent);
+    color: white;
+    opacity: 1;
+  }
+
+  .hero-link.secondary {
+    color: var(--color-text-muted);
+    border-color: var(--color-border-strong);
+  }
+
+  .hero-link.secondary:hover {
+    background: transparent;
+    color: var(--color-text);
+    border-color: var(--color-text);
+  }
+
+  .timeline-label {
+    color: var(--color-text-faint);
+    font-size: var(--font-size-xs);
+    padding-bottom: 0;
+  }
+</style>

@@ -1,0 +1,23 @@
+---
+import TagPill from './TagPill.astro';
+
+interface Props {
+  post: any;
+}
+
+const { post } = Astro.props;
+const formattedDate = post.data.date.toLocaleDateString('en-GB', {
+  day: 'numeric', month: 'short', year: 'numeric'
+});
+---
+
+<article class="post-card">
+  <a href={`/blog/${post.id}`}>
+    <span class="mono post-date">{formattedDate}</span>
+    <h2 class="post-title">{post.data.title}</h2>
+    <p class="post-excerpt">{post.data.excerpt}</p>
+    <div class="post-tags">
+      {post.data.tags.map((tag: string) => <TagPill tag={tag} />)}
+    </div>
+  </a>
+</article>

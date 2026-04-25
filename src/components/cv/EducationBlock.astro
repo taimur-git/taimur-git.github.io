@@ -1,0 +1,65 @@
+---
+interface Props {
+  degree: string;
+  institution: string;
+  start: number;
+  end?: number;
+  notes?: string;
+}
+
+const { degree, institution, start, end, notes } = Astro.props;
+const endLabel = end ? end.toString() : 'present';
+---
+
+<div class="education-block">
+  <div class="edu-header">
+    <div>
+      <span class="edu-degree">{degree}</span>
+      <span class="edu-institution">{institution}</span>
+    </div>
+    <span class="edu-dates mono">{start} – {endLabel}</span>
+  </div>
+  {notes && <p class="edu-notes">{notes}</p>}
+</div>
+
+<style>
+  .education-block {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .edu-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: var(--space-4);
+  }
+
+  .edu-degree {
+    display: block;
+    font-weight: var(--font-weight-medium);
+    font-size: var(--font-size-base);
+    color: var(--color-text);
+  }
+
+  .edu-institution {
+    display: block;
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+    margin-top: var(--space-1);
+  }
+
+  .edu-dates {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-faint);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .edu-notes {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+    font-style: italic;
+  }
+</style>

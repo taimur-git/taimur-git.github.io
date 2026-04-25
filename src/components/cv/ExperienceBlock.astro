@@ -1,0 +1,85 @@
+---
+interface Props {
+  role: string;
+  org: string;
+  start: number;
+  end: number | null;
+  bullets?: string[];
+}
+
+const { role, org, start, end, bullets } = Astro.props;
+const endLabel = end === null ? 'present' : end.toString();
+---
+
+<div class="experience-block">
+  <div class="exp-header">
+    <div>
+      <span class="exp-role">{role}</span>
+      <span class="exp-org">{org}</span>
+    </div>
+    <span class="exp-dates mono">{start} – {endLabel}</span>
+  </div>
+  {bullets && bullets.length > 0 && (
+    <ul class="exp-bullets">
+      {bullets.map(b => <li>{b}</li>)}
+    </ul>
+  )}
+</div>
+
+<style>
+  .experience-block {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .exp-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: var(--space-4);
+  }
+
+  .exp-role {
+    display: block;
+    font-weight: var(--font-weight-medium);
+    font-size: var(--font-size-base);
+    color: var(--color-text);
+  }
+
+  .exp-org {
+    display: block;
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+    margin-top: var(--space-1);
+  }
+
+  .exp-dates {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-faint);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .exp-bullets {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    padding-left: var(--space-4);
+  }
+
+  .exp-bullets li {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+    line-height: var(--line-height-body);
+    position: relative;
+  }
+
+  .exp-bullets li::before {
+    content: '–';
+    position: absolute;
+    left: calc(-1 * var(--space-4));
+    color: var(--color-text-faint);
+  }
+</style>

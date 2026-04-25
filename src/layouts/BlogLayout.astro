@@ -1,0 +1,38 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import TagPill from '../components/blog/TagPill.astro';
+import ReadingTime from '../components/blog/ReadingTime.astro';
+import TOC from '../components/blog/TOC.astro';
+import '../styles/blog.css';
+
+interface Props {
+  title: string;
+  date: Date;
+  tags: string[];
+  headings: Array<{ depth: number; slug: string; text: string }>;
+  body?: string;
+}
+
+const { title, date, tags, headings, body = '' } = Astro.props;
+const formattedDate = date.toLocaleDateString('en-GB', {
+  day: 'numeric', month: 'long', year: 'numeric'
+});
+---
+
+<BaseLayout title={title}>
+  <div class="blog-layout">
+    <article class="blog-content">
+      <a href="/blog" class="blog-back">← back to writing</a>
+      <h1 class="blog-post-title">{title}</h1>
+      <div class="blog-post-meta">
+        <span class="mono post-date">{formattedDate}</span>
+        {body && <ReadingTime body={body} />}
+        {tags.map(tag => <TagPill tag={tag} />)}
+      </div>
+      <slot />
+    </article>
+    <aside>
+      <TOC headings={headings} />
+    </aside>
+  </div>
+</BaseLayout>

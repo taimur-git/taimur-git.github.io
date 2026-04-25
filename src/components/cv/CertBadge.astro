@@ -1,0 +1,72 @@
+---
+interface Props {
+  name: string;
+  issuer: string;
+  year: number;
+  badge?: string;
+  link?: string;
+}
+
+const { name, issuer, year, badge, link } = Astro.props;
+---
+
+{link ? (
+  <a href={link} class="cert-badge" target="_blank" rel="noopener">
+    {badge && <img src={badge} alt={name} class="cert-img" />}
+    <div class="cert-text">
+      <span class="cert-name">{name}</span>
+      <span class="cert-meta mono">{issuer} · {year}</span>
+    </div>
+  </a>
+) : (
+  <div class="cert-badge">
+    {badge && <img src={badge} alt={name} class="cert-img" />}
+    <div class="cert-text">
+      <span class="cert-name">{name}</span>
+      <span class="cert-meta mono">{issuer} · {year}</span>
+    </div>
+  </div>
+)}
+
+<style>
+  .cert-badge {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-4);
+    border: 0.5px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-surface-raised);
+    color: inherit;
+    text-decoration: none;
+    transition: border-color var(--transition-base), opacity var(--transition-base);
+  }
+
+  a.cert-badge:hover {
+    border-color: var(--color-border-strong);
+    opacity: 1;
+  }
+
+  .cert-img {
+    height: 32px;
+    width: auto;
+    flex-shrink: 0;
+  }
+
+  .cert-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .cert-name {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text);
+  }
+
+  .cert-meta {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-faint);
+  }
+</style>

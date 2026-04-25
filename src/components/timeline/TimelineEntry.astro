@@ -1,0 +1,41 @@
+---
+interface Props {
+  entry: {
+    type: 'work' | 'education' | 'certification' | 'research';
+    title: string;
+    org: string;
+    start: number;
+    end: number | null;
+    notes?: string;
+    link?: string;
+  };
+}
+
+const { entry } = Astro.props;
+const endLabel = entry.end === null ? 'present' : entry.end.toString();
+---
+
+<div class="timeline-entry" data-type={entry.type}>
+  <div class="timeline-dot"></div>
+  <div class="timeline-year mono">{entry.start}</div>
+  <div class="timeline-card">
+    <div class="timeline-card-header">
+      <div>
+        <span class="timeline-title">{entry.title}</span>
+        <span class="timeline-org">{entry.org}</span>
+      </div>
+      <span class={`timeline-badge badge-${entry.type}`}>{entry.type}</span>
+    </div>
+    <div class="timeline-meta mono">
+      {entry.start} – {endLabel}
+    </div>
+    {entry.notes && (
+      <p class="timeline-notes">{entry.notes}</p>
+    )}
+    {entry.link && (
+      <a href={entry.link} class="timeline-link no-print-href" target="_blank" rel="noopener">
+        {entry.type === 'research' ? 'DOI ↗' : 'View credential ↗'}
+      </a>
+    )}
+  </div>
+</div>

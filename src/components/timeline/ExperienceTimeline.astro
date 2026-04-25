@@ -1,0 +1,53 @@
+---
+import { getEntry, getCollection } from 'astro:content';
+import TimelineFilter from './TimelineFilter.astro';
+import TimelineEntry from './TimelineEntry.astro';
+
+const cv = await getEntry('cv', 'index');
+const research = await getCollection('research');
+
+const entries = [
+  ...cv.data.experience.map(e => ({
+    type: 'work' as const,
+    title: e.role,
+    org: e.org,
+    start: e.start,
+    end: e.end,
+    notes: e.bullets?.[0],
+  })),
+  ...cv.data.education.map(e => ({
+    type: 'education' as const,
+    title: e.degree,
+    org: e.institution,
+    start: e.start,
+    end: e.end ?? null,
+    notes: e.notes,
+  })),
+  ...cv.data.certifications.map(e => ({
+    type: 'certification' as const,
+    title: e.name,
+    org: e.issuer,
+    start: e.year,
+    end: null as null,
+    link: e.link,
+  })),
+  ...research.map(r => ({
+    type: 'research' as const,
+    title: r.data.title,
+    org: r.data.venue,
+    start: r.data.year,
+    end: null as null,
+    notes: r.data.abstract.slice(0, 120) + '…',
+    link: r.data.doi ? `https://doi.org/${r.data.doi}` : undefined,
+  })),
+].sort((a, b) => b.start - a.start);
+---
+
+<section class="timeline-section" id="experience">
+  <TimelineFilter />
+  <div class="timeline" id="timeline-entries">
+    {entries.map(entry => (
+      <TimelineEntry entry={entry} />
+    ))}
+  </div>
+</section>

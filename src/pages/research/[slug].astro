@@ -1,0 +1,40 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+import '../../styles/blog.css';
+
+export async function getStaticPaths() {
+  const papers = await getCollection('research');
+  return papers.map(paper => ({
+    params: { slug: paper.id },
+    props: { paper },
+  }));
+}
+
+const { paper } = Astro.props;
+const { data } = paper;
+const doiUrl = data.doi ? `https://doi.org/${data.doi}` : undefined;
+---
+
+<BaseLayout title={data.title}>
+  <div class="blog-layout">
+    <article class="blog-content">
+      <a href="/research" class="blog-back">← back to research</a>
+      <h1 class="blog-post-title">{data.title}</h1>
+      <div class="blog-post-meta">
+        <span class="mono post-date">{data.venue} · {data.year}</span>
+        {doiUrl && (
+          <a href={doiUrl} class="tag-pill mono" target="_blank" rel="noopener">DOI ↗</a>
+        )}
+        {data.pdf && (
+          <a href={data.pdf} class="tag-pill mono" target="_blank" rel="noopener">PDF ↗</a>
+        )}
+      </div>
+      <p style="color: var(--color-text-muted); font-size: var(--font-size-sm); margin-bottom: var(--space-6);">
+        {data.authors.join(', ')}
+      </p>
+      <h2>Abstract</h2>
+      <p>{data.abstract}</p>
+    </article>
+  </div>
+</BaseLayout>

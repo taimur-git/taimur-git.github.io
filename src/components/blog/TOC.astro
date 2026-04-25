@@ -1,0 +1,21 @@
+---
+interface Props {
+  headings: Array<{ depth: number; slug: string; text: string }>;
+}
+
+const { headings } = Astro.props;
+const filtered = headings.filter(h => h.depth <= 3);
+---
+
+{filtered.length > 2 && (
+  <nav class="toc" aria-label="Table of contents">
+    <p class="toc-heading mono">on this page</p>
+    <ul>
+      {filtered.map(h => (
+        <li style={`padding-left: ${(h.depth - 2) * 12}px`}>
+          <a href={`#${h.slug}`}>{h.text}</a>
+        </li>
+      ))}
+    </ul>
+  </nav>
+)}

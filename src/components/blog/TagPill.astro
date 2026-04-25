@@ -1,0 +1,12 @@
+---
+interface Props {
+  tag: string;
+  href?: string;
+}
+
+const { tag, href } = Astro.props;
+---
+
+<a href={href ?? `/blog?tag=${tag}`} class="tag-pill mono">
+  {tag}
+</a>

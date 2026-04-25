@@ -1,0 +1,85 @@
+---
+const links = [
+  { href: '/cv', label: 'cv' },
+  { href: '/projects', label: 'projects' },
+  { href: '/blog', label: 'blog' },
+  { href: '/research', label: 'research' },
+];
+
+const pathname = Astro.url.pathname;
+---
+
+<nav class="nav">
+  <div class="nav-inner site-container">
+    <a href="/" class="nav-home">Taimur Rahman</a>
+    <ul class="nav-links">
+      {links.map(link => (
+        <li>
+          <a
+            href={link.href}
+            class={`nav-link ${pathname.startsWith(link.href) ? 'active' : ''}`}
+          >
+            {link.label}
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+</nav>
+
+<style>
+  .nav {
+    border-bottom: 0.5px solid var(--color-border);
+    background: var(--color-bg);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+
+  .nav-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 56px;
+  }
+
+  .nav-home {
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text);
+    font-size: var(--font-size-sm);
+  }
+
+  .nav-links {
+    display: flex;
+    list-style: none;
+    gap: var(--space-6);
+  }
+
+  .nav-link {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+    font-family: var(--font-mono);
+  }
+
+  .nav-link.active {
+    color: var(--color-accent);
+  }
+
+  .nav-link:hover {
+    opacity: 1;
+    color: var(--color-text);
+  }
+
+  @media (max-width: 600px) {
+    .nav-links {
+      gap: var(--space-4);
+    }
+    .nav-home {
+      font-size: var(--font-size-xs);
+    }
+  }
+
+  @media print {
+    .nav { display: none; }
+  }
+</style>

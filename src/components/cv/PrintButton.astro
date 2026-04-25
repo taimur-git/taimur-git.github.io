@@ -1,0 +1,33 @@
+---
+---
+
+<button onclick="window.print()" class="print-btn">
+  Print / Save as PDF
+</button>
+
+<style>
+  .print-btn {
+    font-family: var(--font-mono);
+    font-size: var(--font-size-xs);
+    padding: var(--space-2) var(--space-4);
+    border-radius: var(--radius-md);
+    border: 0.5px solid var(--color-border-strong);
+    background: var(--color-surface);
+    color: var(--color-text-muted);
+    cursor: pointer;
+    transition: all var(--transition-base);
+  }
+
+  .print-btn:hover {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+  }
+
+  .print-btn:active {
+    transform: scale(0.98);
+  }
+
+  @media print {
+    .print-btn { display: none; }
+  }
+</style>

@@ -1,0 +1,59 @@
+---
+interface Props {
+  skills: {
+    languages: string[];
+    tools: string[];
+    concepts: string[];
+  };
+}
+
+const { skills } = Astro.props;
+---
+
+<div class="skills-grid">
+  {Object.entries(skills).map(([category, items]) => (
+    <div class="skill-group">
+      <span class="skill-category mono">{category}</span>
+      <div class="skill-pills">
+        {(items as string[]).map(s => <span class="skill-pill">{s}</span>)}
+      </div>
+    </div>
+  ))}
+</div>
+
+<style>
+  .skills-grid {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  .skill-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .skill-category {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-faint);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .skill-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+
+  .skill-pill {
+    font-family: var(--font-mono);
+    font-size: var(--font-size-xs);
+    padding: var(--space-1) var(--space-3);
+    border-radius: var(--radius-full);
+    background: var(--color-surface);
+    border: 0.5px solid var(--color-border-strong);
+    color: var(--color-text-muted);
+  }
+</style>

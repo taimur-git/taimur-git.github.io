@@ -1,0 +1,126 @@
+---
+import CVLayout from '../layouts/CVLayout.astro';
+import ProfileCard from '../components/cv/ProfileCard.astro';
+import ExperienceBlock from '../components/cv/ExperienceBlock.astro';
+import EducationBlock from '../components/cv/EducationBlock.astro';
+import PublicationCard from '../components/cv/PublicationCard.astro';
+import CertBadge from '../components/cv/CertBadge.astro';
+import PrintButton from '../components/cv/PrintButton.astro';
+import { getEntry, getCollection } from 'astro:content';
+
+const cv = await getEntry('cv', 'index');
+const research = await getCollection('research');
+const { name, title, photo, contact, summary, expertise, education, experience, certifications, skills, languages_spoken } = cv.data;
+---
+
+<CVLayout title={`${name} — CV`}>
+  <div class="cv-print-bar">
+    <PrintButton />
+  </div>
+
+  <div class="cv-layout">
+    <aside class="cv-sidebar">
+      <ProfileCard
+        name={name}
+        title={title}
+        photo={photo}
+        contact={contact}
+        skills={skills}
+        certifications={certifications}
+        languages_spoken={languages_spoken}
+      />
+    </aside>
+
+    <main class="cv-main">
+      <div class="cv-section cv-header">
+        <h1 class="cv-name">{name}</h1>
+        <p class="cv-headline mono">{title}</p>
+        <p class="cv-summary">{summary}</p>
+        <div class="expertise-tags">
+          {expertise.map(tag => <span class="expertise-tag">{tag}</span>)}
+        </div>
+      </div>
+
+      <div class="cv-section">
+        <h2 class="cv-section-title">experience</h2>
+        <div class="cv-entries">
+          {experience.map(job => (
+            <ExperienceBlock
+              role={job.role}
+              org={job.org}
+              start={job.start}
+              end={job.end}
+              bullets={job.bullets}
+            />
+          ))}
+        </div>
+      </div>
+
+      <div class="cv-section">
+        <h2 class="cv-section-title">education</h2>
+        <div class="cv-entries">
+          {education.map(edu => (
+            <EducationBlock
+              degree={edu.degree}
+              institution={edu.institution}
+              start={edu.start}
+              end={edu.end}
+              notes={edu.notes}
+            />
+          ))}
+        </div>
+      </div>
+
+      {research.length > 0 && (
+        <div class="cv-section">
+          <h2 class="cv-section-title">research</h2>
+          <div class="cv-entries">
+            {research
+              .sort((a, b) => b.data.year - a.data.year)
+              .map(paper => (
+                <PublicationCard
+                  title={paper.data.title}
+                  authors={paper.data.authors}
+                  venue={paper.data.venue}
+                  year={paper.data.year}
+                  doi={paper.data.doi}
+                  pdf={paper.data.pdf}
+                  tags={paper.data.tags}
+                  highlightAuthor="Taimur Rahman"
+                />
+              ))}
+          </div>
+        </div>
+      )}
+
+      <div class="cv-section">
+        <h2 class="cv-section-title">certifications</h2>
+        <div class="cv-entries">
+          {certifications.map(cert => (
+            <CertBadge
+              name={cert.name}
+              issuer={cert.issuer}
+              year={cert.year}
+              badge={cert.badge}
+              link={cert.link}
+            />
+          ))}
+        </div>
+      </div>
+    </main>
+  </div>
+</CVLayout>
+
+<style>
+  .cv-print-bar {
+    max-width: var(--max-width-site);
+    margin: 0 auto;
+    padding: var(--space-4) var(--space-6) 0;
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .cv-header {
+    border-bottom: 0.5px solid var(--color-border);
+  }
+</style>

@@ -6,9 +6,10 @@ import '../styles/global.css';
 interface Props {
   title: string;
   description?: string;
+  fullTitle?: boolean;
 }
 
-const { title, description = 'Taimur Rahman — network engineer, researcher, developer.' } = Astro.props;
+const { title, description = 'Taimur Rahman — network engineer, researcher, developer.', fullTitle = false } = Astro.props;
 ---
 
 <!doctype html>
@@ -17,7 +18,7 @@ const { title, description = 'Taimur Rahman — network engineer, researcher, de
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={description} />
-    <title>{title} — Taimur Rahman</title>
+    <title>{fullTitle ? title : `${title} | Taimur Rahman`}</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />

@@ -13,7 +13,8 @@ interface Props {
 }
 
 const { entry } = Astro.props;
-const endLabel = entry.end === null ? 'present' : entry.end.toString();
+const showPresent = entry.end === null && entry.type === 'work';
+const endLabel = showPresent ? 'present' : (entry.end ?? entry.start).toString();
 const hasDetails = (entry.bullets && entry.bullets.length > 0) || !!entry.notes || !!entry.link;
 ---
 
@@ -44,7 +45,7 @@ const hasDetails = (entry.bullets && entry.bullets.length > 0) || !!entry.notes 
       </div>
     )}
     <div class="timeline-meta mono">
-      {entry.start} – {endLabel}
+      {showPresent || entry.start !== (entry.end ?? entry.start) ? `${entry.start} – ${endLabel}` : entry.start}
     </div>
     {hasDetails && (
       <div class="timeline-body-wrap">

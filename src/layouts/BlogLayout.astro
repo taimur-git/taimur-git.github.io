@@ -27,10 +27,12 @@ const formattedDate = date.toLocaleDateString('en-GB', {
     <article class="blog-content">
       <div class="blog-top-row">
         <a href="/blog" class="blog-back">← back to writing</a>
-        <div class="lang-selector">
-          <button class="lang-pill" data-lang="en">EN</button>
-          <button class="lang-pill" data-lang="bn" disabled={!hasBn}>বাংলা</button>
-        </div>
+        {hasBn && (
+          <div class="lang-selector">
+            <button class="lang-pill" data-lang="en">EN</button>
+            <button class="lang-pill" data-lang="bn">বাংলা</button>
+          </div>
+        )}
       </div>
 
       <h1 class="blog-post-title" id="title-en">{title}</h1>

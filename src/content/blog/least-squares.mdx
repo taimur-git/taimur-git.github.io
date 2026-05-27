@@ -11,6 +11,10 @@ draft: false
 import ManimRegression from '../../components/blog/ManimRegression.astro';
 import Tooltip from '../../components/blog/Tooltip.astro';
 import Sidenote from '../../components/blog/Sidenote.astro';
+import Callout from '../../components/blog/Callout.astro';
+import Details from '../../components/blog/Details.astro';
+import Tabs from '../../components/blog/Tabs.astro';
+import Abbr from '../../components/blog/Abbr.astro';
 
 Given a set of points, <Tooltip term="ordinary least squares">A method for fitting a line to data by minimizing the sum of squared vertical distances (residuals) from each point to the line. First derived independently by Legendre (1805) and Gauss (1809).</Tooltip> finds the line $\hat{y} = \beta x + \beta_0$ that minimizes the sum of **squared** vertical distances from each point to the line — the <Tooltip term="residuals">The vertical distance between each observed data point and the predicted value on the regression line. Residuals are what the model fails to explain.</Tooltip>.
 
@@ -20,11 +24,76 @@ Given a set of points, <Tooltip term="ordinary least squares">A method for fitti
 
 The vertical grey segments are the residuals. The blue line is their least-squares solution. Drag a point far from the cluster and watch how much the line chases it. That sensitivity is not a bug — it is a direct consequence of squaring the residuals. A point twice as far contributes four times as much to the loss.[^gauss1809]
 
+<Callout type="warning" title="When OLS breaks down">
+  OLS makes three quiet assumptions: the relationship is linear, the error variance is constant across all $x$ (homoscedasticity), and there are no extreme outliers. Violate any of these and the estimates can be badly wrong — the figure above shows the outlier problem directly. Check residual plots before trusting any regression.
+</Callout>
+
+<Details summary="Derivation: where do the formulas come from?">
+
+We want to minimize the loss $S(\beta, \beta_0) = \sum_{i=1}^n (y_i - \beta x_i - \beta_0)^2$ over $\beta$ and $\beta_0$.
+
+Setting $\partial S / \partial \beta_0 = 0$ gives the intercept in terms of the slope:
+
+$$\hat{\beta}_0 = \bar{y} - \hat{\beta}\bar{x}$$
+
+Setting $\partial S / \partial \beta = 0$ and substituting $\hat{\beta}_0$:
+
+$$\hat{\beta} = \frac{\sum_{i=1}^n (x_i - \bar{x})(y_i - \bar{y})}{\sum_{i=1}^n (x_i - \bar{x})^2} = \frac{\widehat{\text{Cov}}(x, y)}{\widehat{\text{Var}}(x)}$$
+
+No iteration required — this is a closed-form solution. The loss surface is a convex paraboloid, so there is exactly one global minimum and the gradient equations find it directly.
+
+</Details>
+
 <Sidenote>Huber loss blends squared error (for small residuals) and absolute error (for large ones), controlled by a threshold δ. Points beyond δ are treated linearly instead of quadratically.</Sidenote>
 
-This is why robust regression methods exist: <Tooltip term="Huber loss">A loss function that behaves like squared error for small residuals but switches to absolute error for large ones. This limits the influence of outliers compared to OLS.</Tooltip> and LAD regression replace the square with something that grows more slowly, so extreme points have less leverage over the fit.[^huber1964]
+This is why robust regression methods exist: <Tooltip term="Huber loss">A loss function that behaves like squared error for small residuals but switches to absolute error for large ones. This limits the influence of outliers compared to OLS.</Tooltip> and <Abbr short="LAD" full="least absolute deviations" /> regression replace the square with something that grows more slowly, so extreme points have less leverage over the fit.[^huber1964]
 
 One thing the figure makes clear that algebra obscures: the line always passes through the centroid of the data — the point $(\bar{x}, \bar{y})$. No matter where you drag the points, the line pivots around that center.[^stigler1981]
+
+## Computing it
+
+Both estimates follow directly from the formulas above — no matrix operations needed for simple linear regression.
+
+<Tabs labels={["Python", "R", "From scratch"]}>
+  <div slot="tab-0">
+
+  ```python
+  import numpy as np
+
+  x = np.array([1, 2, 3, 4, 5])
+  y = np.array([2.1, 3.9, 6.0, 8.2, 9.8])
+
+  beta  = np.cov(x, y, ddof=1)[0, 1] / np.var(x, ddof=1)
+  beta0 = y.mean() - beta * x.mean()
+  ```
+
+  </div>
+  <div slot="tab-1">
+
+  ```r
+  x <- c(1, 2, 3, 4, 5)
+  y <- c(2.1, 3.9, 6.0, 8.2, 9.8)
+
+  model <- lm(y ~ x)
+  coef(model)   # (Intercept)  x
+  ```
+
+  </div>
+  <div slot="tab-2">
+
+  ```python
+  # No library — just the formulas
+  n    = len(x)
+  xbar = sum(x) / n
+  ybar = sum(y) / n
+
+  beta  = sum((xi - xbar) * (yi - ybar) for xi, yi in zip(x, y)) \
+        / sum((xi - xbar) ** 2 for xi in x)
+  beta0 = ybar - beta * xbar
+  ```
+
+  </div>
+</Tabs>
 
 [^gauss1809]: Gauss, C.F. (1809). *Theoria Motus Corporum Coelestium*. Hamburg: Perthes & Besser.
 [^huber1964]: Huber, P.J. (1964). Robust estimation of a location parameter. *The Annals of Mathematical Statistics*, 35(1), 73–101.

@@ -1,0 +1,19 @@
+---
+interface Props {
+  short: string;
+  full: string;
+}
+const { short, full } = Astro.props;
+---
+
+<abbr title={full} class="abbr-term">{short}</abbr>
+
+<style>
+  .abbr-term {
+    font-variant: small-caps;
+    letter-spacing: 0.03em;
+    text-decoration: underline dotted var(--color-text-faint);
+    cursor: help;
+    text-underline-offset: 3px;
+  }
+</style>

@@ -1,0 +1,155 @@
+---
+interface Props {
+  before: string;
+  after: string;
+  beforeAlt?: string;
+  afterAlt?: string;
+  caption?: string;
+}
+const { before, after, beforeAlt = 'Before', afterAlt = 'After', caption } = Astro.props;
+---
+
+<figure class="compare-figure">
+  <div class="compare-wrap">
+    <img class="compare-after" src={after} alt={afterAlt} draggable="false" loading="lazy" />
+    <img class="compare-before" src={before} alt={beforeAlt} draggable="false" loading="lazy" />
+    <div class="compare-handle">
+      <div class="compare-line"></div>
+      <div class="compare-grip">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+          <path d="M5 3l-3 5 3 5V3zM11 3v10l3-5-3-5z"/>
+        </svg>
+      </div>
+    </div>
+    <input type="range" min="0" max="100" value="50" class="compare-slider" aria-label="Image comparison slider" />
+    <div class="compare-labels">
+      <span class="compare-label">{beforeAlt}</span>
+      <span class="compare-label">{afterAlt}</span>
+    </div>
+  </div>
+  {caption && <figcaption class="compare-caption">{caption}</figcaption>}
+</figure>
+
+<style>
+  .compare-figure {
+    margin: var(--space-8) 0;
+  }
+
+  .compare-wrap {
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--radius-md);
+    border: 0.5px solid var(--color-border);
+    user-select: none;
+    cursor: col-resize;
+  }
+
+  /* after image sets the container height, sits underneath */
+  .compare-after {
+    display: block;
+    width: 100%;
+    height: auto;
+    pointer-events: none;
+  }
+
+  /* before image overlaid at full size, clipped from the right */
+  .compare-before {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: left center;
+    clip-path: inset(0 50% 0 0);
+    pointer-events: none;
+  }
+
+  .compare-handle {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    pointer-events: none;
+  }
+
+  .compare-line {
+    width: 2px;
+    flex: 1;
+    background: #fff;
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.4);
+  }
+
+  .compare-grip {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-full);
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-text-muted);
+  }
+
+  .compare-slider {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: col-resize;
+    margin: 0;
+  }
+
+  .compare-labels {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    padding: var(--space-2) var(--space-3);
+    pointer-events: none;
+  }
+
+  .compare-label {
+    font-family: var(--font-mono);
+    font-size: var(--font-size-xs);
+    background: rgba(0, 0, 0, 0.5);
+    color: #fff;
+    padding: 2px var(--space-2);
+    border-radius: var(--radius-sm);
+    backdrop-filter: blur(4px);
+  }
+
+  .compare-caption {
+    text-align: center;
+    margin-top: var(--space-2);
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+    font-style: italic;
+  }
+</style>
+
+<script is:inline>
+  document.querySelectorAll('.compare-wrap').forEach(function (wrap) {
+    var slider = wrap.querySelector('.compare-slider');
+    var before = wrap.querySelector('.compare-before');
+    var handle = wrap.querySelector('.compare-handle');
+
+    function update(val) {
+      before.style.clipPath = 'inset(0 ' + (100 - val) + '% 0 0)';
+      handle.style.left = val + '%';
+    }
+
+    slider.addEventListener('input', function () {
+      update(slider.value);
+    });
+  });
+</script>

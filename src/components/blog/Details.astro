@@ -1,0 +1,66 @@
+---
+interface Props {
+  summary: string;
+}
+const { summary } = Astro.props;
+---
+
+<details class="details-block">
+  <summary class="details-summary">
+    <span class="details-marker" aria-hidden="true">▶</span>
+    {summary}
+  </summary>
+  <div class="details-body">
+    <slot />
+  </div>
+</details>
+
+<style>
+  .details-block {
+    border: 0.5px solid var(--color-border-strong);
+    border-radius: var(--radius-md);
+    margin: var(--space-6) 0;
+    overflow: hidden;
+  }
+
+  .details-summary {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-4);
+    cursor: pointer;
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-muted);
+    user-select: none;
+    list-style: none;
+    background: var(--color-surface);
+    transition: color var(--transition-base), background var(--transition-base);
+  }
+
+  .details-summary::-webkit-details-marker { display: none; }
+
+  .details-summary:hover {
+    color: var(--color-accent);
+    background: var(--color-accent-muted);
+  }
+
+  .details-marker {
+    font-size: 0.6rem;
+    transition: transform var(--transition-base);
+    flex-shrink: 0;
+  }
+
+  .details-block[open] .details-marker {
+    transform: rotate(90deg);
+  }
+
+  .details-body {
+    padding: var(--space-4);
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height-body);
+    border-top: 0.5px solid var(--color-border);
+  }
+
+  .details-body :global(p:last-child) { margin-bottom: 0; }
+</style>

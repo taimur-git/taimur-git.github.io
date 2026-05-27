@@ -1,0 +1,89 @@
+---
+interface Props {
+  type?: 'info' | 'tip' | 'warning' | 'danger';
+  title?: string;
+}
+const { type = 'info', title } = Astro.props;
+
+const icons = {
+  info:    '○',
+  tip:     '✦',
+  warning: '△',
+  danger:  '✕',
+};
+---
+
+<div class={`callout callout-${type}`} role="note">
+  <span class="callout-icon" aria-hidden="true">{icons[type]}</span>
+  <div class="callout-body">
+    {title && <p class="callout-title">{title}</p>}
+    <slot />
+  </div>
+</div>
+
+<style>
+  .callout {
+    display: flex;
+    gap: var(--space-3);
+    padding: var(--space-4) var(--space-4);
+    border-radius: var(--radius-md);
+    border: 0.5px solid;
+    margin: var(--space-6) 0;
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height-body);
+  }
+
+  .callout-icon {
+    font-size: var(--font-size-sm);
+    flex-shrink: 0;
+    margin-top: 2px;
+    font-family: var(--font-mono);
+  }
+
+  .callout-body { flex: 1; min-width: 0; }
+  .callout-body :global(p:last-child) { margin-bottom: 0; }
+
+  .callout-title {
+    font-weight: var(--font-weight-medium);
+    margin-bottom: var(--space-1);
+  }
+
+  /* info */
+  .callout-info {
+    background: #eff6ff;
+    border-color: #bfdbfe;
+    color: #1e40af;
+  }
+  .callout-info .callout-title { color: #1d4ed8; }
+
+  /* tip */
+  .callout-tip {
+    background: #f0fdf4;
+    border-color: #bbf7d0;
+    color: #14532d;
+  }
+  .callout-tip .callout-title { color: #15803d; }
+
+  /* warning */
+  .callout-warning {
+    background: #fffbeb;
+    border-color: #fde68a;
+    color: #78350f;
+  }
+  .callout-warning .callout-title { color: #b45309; }
+
+  /* danger */
+  .callout-danger {
+    background: #fef2f2;
+    border-color: #fecaca;
+    color: #7f1d1d;
+  }
+  .callout-danger .callout-title { color: #b91c1c; }
+
+  @media (prefers-color-scheme: dark) {
+    .callout-info    { background: #1e3a5f22; border-color: #1e40af88; color: #93c5fd; }
+    .callout-tip     { background: #14532d22; border-color: #16a34a88; color: #86efac; }
+    .callout-warning { background: #45140322; border-color: #d9770688; color: #fcd34d; }
+    .callout-danger  { background: #7f1d1d22; border-color: #dc262688; color: #fca5a5; }
+  }
+</style>

@@ -1,0 +1,125 @@
+---
+interface Props {
+  src: string;
+  alt: string;
+  caption?: string;
+  zoom?: boolean;
+}
+const { src, alt, caption, zoom = true } = Astro.props;
+const id = `fig-${Math.random().toString(36).slice(2, 8)}`;
+---
+
+<figure class="post-figure">
+  <img
+    src={src}
+    alt={alt}
+    class={`figure-img${zoom ? ' zoomable' : ''}`}
+    data-lightbox={zoom ? id : undefined}
+    loading="lazy"
+  />
+  {caption && <figcaption class="figure-caption">{caption}</figcaption>}
+</figure>
+
+{zoom && (
+  <div class="fig-lightbox" id={id} role="dialog" aria-modal="true" aria-label={alt}>
+    <button class="fig-close" aria-label="Close">✕</button>
+    <img src={src} alt={alt} class="fig-lightbox-img" />
+  </div>
+)}
+
+<style>
+  .post-figure {
+    margin: var(--space-8) 0;
+    text-align: center;
+  }
+
+  .figure-img {
+    max-width: 100%;
+    border-radius: var(--radius-md);
+    border: 0.5px solid var(--color-border);
+    display: block;
+    margin: 0 auto;
+  }
+
+  .figure-img.zoomable {
+    cursor: zoom-in;
+    transition: opacity var(--transition-base);
+  }
+
+  .figure-img.zoomable:hover { opacity: 0.9; }
+
+  .figure-caption {
+    margin-top: var(--space-2);
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+    font-style: italic;
+  }
+
+  /* lightbox */
+  .fig-lightbox {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    background: rgba(0, 0, 0, 0.85);
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-8);
+  }
+
+  .fig-lightbox.open { display: flex; }
+
+  .fig-lightbox-img {
+    max-width: 100%;
+    max-height: 90vh;
+    border-radius: var(--radius-md);
+    object-fit: contain;
+    cursor: default;
+  }
+
+  .fig-close {
+    position: absolute;
+    top: var(--space-4);
+    right: var(--space-4);
+    background: rgba(255, 255, 255, 0.1);
+    border: 0.5px solid rgba(255, 255, 255, 0.2);
+    color: #fff;
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-full);
+    cursor: pointer;
+    font-size: var(--font-size-sm);
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background var(--transition-base);
+  }
+
+  .fig-close:hover { background: rgba(255, 255, 255, 0.2); }
+</style>
+
+<script is:inline>
+  document.querySelectorAll('[data-lightbox]').forEach(function (img) {
+    img.addEventListener('click', function () {
+      var lb = document.getElementById(img.dataset.lightbox);
+      if (lb) lb.classList.add('open');
+    });
+  });
+
+  document.querySelectorAll('.fig-lightbox').forEach(function (lb) {
+    lb.addEventListener('click', function (e) {
+      if (e.target === lb || e.target.classList.contains('fig-close')) {
+        lb.classList.remove('open');
+      }
+    });
+  });
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') {
+      document.querySelectorAll('.fig-lightbox.open').forEach(function (lb) {
+        lb.classList.remove('open');
+      });
+    }
+  });
+</script>

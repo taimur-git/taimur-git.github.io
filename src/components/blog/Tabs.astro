@@ -1,0 +1,99 @@
+---
+interface Props {
+  labels: string[];
+}
+const { labels } = Astro.props;
+---
+
+<div class="tabs-wrap" data-tabs>
+  <div class="tabs-nav" role="tablist">
+    {labels.map((label, i) => (
+      <button
+        class={`tab-btn${i === 0 ? ' active' : ''}`}
+        role="tab"
+        aria-selected={i === 0 ? 'true' : 'false'}
+        data-tab={String(i)}
+      >{label}</button>
+    ))}
+  </div>
+  <div class="tabs-panels">
+    <div class="tab-panel active" data-panel="0"><slot name="tab-0" /></div>
+    <div class="tab-panel"        data-panel="1"><slot name="tab-1" /></div>
+    <div class="tab-panel"        data-panel="2"><slot name="tab-2" /></div>
+    <div class="tab-panel"        data-panel="3"><slot name="tab-3" /></div>
+  </div>
+</div>
+
+<style>
+  .tabs-wrap {
+    margin: var(--space-6) 0;
+    border: 0.5px solid var(--color-border-strong);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+  }
+
+  .tabs-nav {
+    display: flex;
+    background: var(--color-surface);
+    border-bottom: 0.5px solid var(--color-border-strong);
+    overflow-x: auto;
+  }
+
+  .tab-btn {
+    font-family: var(--font-mono);
+    font-size: var(--font-size-xs);
+    padding: var(--space-2) var(--space-4);
+    border: none;
+    background: transparent;
+    color: var(--color-text-muted);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: color var(--transition-base), border-color var(--transition-base);
+    white-space: nowrap;
+  }
+
+  .tab-btn:hover { color: var(--color-accent); }
+
+  .tab-btn.active {
+    color: var(--color-accent);
+    border-bottom-color: var(--color-accent);
+    background: var(--color-surface-raised);
+  }
+
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  .tabs-panels :global(pre) {
+    margin: 0;
+    border-radius: 0;
+    border: none;
+    border-top: 0.5px solid var(--color-border);
+  }
+
+  .tabs-panels :global(> .tab-panel.active > *:only-child) {
+    margin: 0;
+  }
+
+  .tab-panel:not(:has(pre)) {
+    padding: var(--space-4);
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height-body);
+  }
+</style>
+
+<script is:inline>
+  document.querySelectorAll('[data-tabs]').forEach(function (wrap) {
+    wrap.querySelectorAll('.tab-btn').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var idx = btn.dataset.tab;
+        wrap.querySelectorAll('.tab-btn').forEach(function (b) {
+          b.classList.toggle('active', b.dataset.tab === idx);
+          b.setAttribute('aria-selected', b.dataset.tab === idx ? 'true' : 'false');
+        });
+        wrap.querySelectorAll('.tab-panel').forEach(function (p) {
+          p.classList.toggle('active', p.dataset.panel === idx);
+        });
+      });
+    });
+  });
+</script>

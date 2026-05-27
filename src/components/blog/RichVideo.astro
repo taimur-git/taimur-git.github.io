@@ -1,0 +1,729 @@
+---
+interface Props {
+  src: string;
+  vtt: string;
+}
+const { src, vtt } = Astro.props;
+---
+
+<div class="rv-main-container">
+  <div class="rv-layout">
+
+    <div class="rv-video-column rv-video-col">
+      <div class="rv-video-wrapper">
+        <video class="rv-player" playsinline crossorigin="anonymous" preload="metadata">
+          <source src={src} type="video/mp4" />
+          <track class="rv-track-data" kind="metadata" src={vtt} default />
+          Your browser does not support the video tag.
+        </video>
+      </div>
+
+      <div class="rv-controls">
+        <div class="rv-progress-area">
+          <div class="rv-progress-track">
+            <div class="rv-progress-fill"></div>
+            <div class="rv-progress-thumb"></div>
+          </div>
+        </div>
+
+        <div class="rv-controls-row">
+          <div class="rv-controls-left">
+            <button class="rv-ctrl-btn rv-play-btn" aria-label="Play">
+              <svg class="rv-icon rv-icon-play" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M8 5v14l11-7z"/>
+              </svg>
+              <svg class="rv-icon rv-icon-pause hidden" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
+              </svg>
+            </button>
+
+            <span class="rv-time-display">
+              <span class="rv-current-time">0:00</span>
+              <span class="rv-time-sep">/</span>
+              <span class="rv-duration">0:00</span>
+            </span>
+          </div>
+
+          <div class="rv-controls-right">
+            <select class="rv-speed-ctrl rv-speed-select" title="Playback speed">
+              <option value="0.5">0.5x</option>
+              <option value="1" selected>1x</option>
+              <option value="1.25">1.25x</option>
+              <option value="1.5">1.5x</option>
+              <option value="2">2x</option>
+            </select>
+
+            <div class="rv-volume-group">
+              <button class="rv-ctrl-btn rv-mute-btn" aria-label="Mute">
+                <svg class="rv-icon rv-icon-vol" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/>
+                </svg>
+                <svg class="rv-icon rv-icon-mute hidden" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/>
+                </svg>
+              </button>
+              <div class="rv-volume-slider-wrap">
+                <input type="range" class="rv-volume-slider" min="0" max="1" step="0.02" value="1" aria-label="Volume" />
+              </div>
+            </div>
+
+            <button class="rv-ctrl-btn rv-fs-btn" aria-label="Fullscreen">
+              <svg class="rv-icon rv-icon-expand" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/>
+              </svg>
+              <svg class="rv-icon rv-icon-compress hidden" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="rv-transcript-column">
+      <div class="rv-transcript-header">
+        <div class="rv-header-row">
+          <span class="rv-label">Transcript</span>
+          <button class="rv-sync-btn hidden">Resume Sync</button>
+        </div>
+        <input type="text" class="rv-search-input" placeholder="Search transcript…" />
+      </div>
+
+      <div class="rv-transcript-scroll-area rv-scroll-pane">
+        <div class="rv-transcript-content">
+          <p class="rv-loading">Loading transcript…</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<style>
+  /* ── Container ── */
+  .rv-main-container {
+    margin: var(--space-8) 0;
+    border: 0.5px solid var(--color-border-strong);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    background: var(--color-bg);
+  }
+
+  .rv-layout {
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── Video column ── */
+  .rv-video-column {
+    display: flex;
+    flex-direction: column;
+    background: #000;
+    border-bottom: 0.5px solid var(--color-border-strong);
+  }
+
+  .rv-video-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .rv-player {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  /* ── Controls ── */
+  .rv-controls {
+    flex-shrink: 0;
+    background: var(--color-surface);
+    border-top: 0.5px solid var(--color-border);
+  }
+
+  .rv-progress-area {
+    padding: 10px 12px 4px;
+    cursor: pointer;
+  }
+
+  .rv-progress-track {
+    position: relative;
+    height: 3px;
+    background: var(--color-border-strong);
+    border-radius: 2px;
+    transition: height 0.15s;
+  }
+
+  .rv-progress-area:hover .rv-progress-track { height: 5px; }
+
+  .rv-progress-fill {
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 0%;
+    background: var(--color-accent);
+    border-radius: 2px;
+  }
+
+  .rv-progress-thumb {
+    position: absolute;
+    top: 50%;
+    left: 0%;
+    width: 11px;
+    height: 11px;
+    background: var(--color-accent);
+    border-radius: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    transition: transform 0.15s;
+    pointer-events: none;
+  }
+
+  .rv-progress-area:hover .rv-progress-thumb,
+  .rv-progress-area.seeking .rv-progress-thumb {
+    transform: translate(-50%, -50%) scale(1);
+  }
+
+  .rv-controls-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 4px 6px 8px;
+  }
+
+  .rv-controls-left,
+  .rv-controls-right {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+  }
+
+  .rv-ctrl-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    color: var(--color-text-muted);
+    cursor: pointer;
+    padding: 5px;
+    border-radius: var(--radius-sm);
+    transition: color var(--transition-fast), background var(--transition-fast);
+    line-height: 0;
+  }
+
+  .rv-ctrl-btn:hover {
+    color: var(--color-text);
+    background: var(--color-border);
+  }
+
+  .rv-icon { width: 17px; height: 17px; }
+
+  .rv-time-display {
+    font-size: var(--font-size-xs);
+    font-family: var(--font-mono);
+    color: var(--color-text-muted);
+    padding: 0 6px;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+  }
+
+  .rv-time-sep { opacity: 0.4; }
+
+  .rv-speed-ctrl {
+    appearance: none;
+    background: transparent;
+    border: 0.5px solid var(--color-border-strong);
+    color: var(--color-text-muted);
+    font-size: var(--font-size-xs);
+    font-family: var(--font-mono);
+    padding: 3px 6px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    margin-right: 2px;
+    transition: border-color var(--transition-fast), color var(--transition-fast);
+  }
+
+  .rv-speed-ctrl:hover {
+    border-color: var(--color-accent);
+    color: var(--color-text);
+  }
+
+  .rv-speed-ctrl option {
+    background: var(--color-surface);
+    color: var(--color-text);
+  }
+
+  /* Volume */
+  .rv-volume-group { display: flex; align-items: center; }
+
+  .rv-volume-slider-wrap {
+    width: 0;
+    overflow: hidden;
+    transition: width 0.2s ease;
+  }
+
+  .rv-volume-group:hover .rv-volume-slider-wrap,
+  .rv-volume-group:focus-within .rv-volume-slider-wrap { width: 64px; }
+
+  .rv-volume-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 60px;
+    height: 16px;
+    background: transparent;
+    outline: none;
+    cursor: pointer;
+    display: block;
+    margin: 0 4px;
+  }
+
+  .rv-volume-slider::-webkit-slider-runnable-track {
+    height: 3px;
+    border-radius: 2px;
+    background: linear-gradient(
+      to right,
+      var(--color-accent) calc(var(--vol, 100) * 1%),
+      var(--color-border-strong) calc(var(--vol, 100) * 1%)
+    );
+  }
+
+  .rv-volume-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--color-accent);
+    cursor: pointer;
+    margin-top: -5.5px;
+    transition: transform 0.15s;
+  }
+
+  .rv-volume-slider::-webkit-slider-thumb:hover { transform: scale(1.2); }
+
+  .rv-volume-slider::-moz-range-track {
+    height: 3px;
+    border-radius: 2px;
+    background: var(--color-border-strong);
+  }
+
+  .rv-volume-slider::-moz-range-progress {
+    height: 3px;
+    border-radius: 2px;
+    background: var(--color-accent);
+  }
+
+  .rv-volume-slider::-moz-range-thumb {
+    width: 14px;
+    height: 14px;
+    border: none;
+    border-radius: 50%;
+    background: var(--color-accent);
+    cursor: pointer;
+  }
+
+  /* Fullscreen */
+  .rv-video-column:fullscreen {
+    background: #000;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .rv-video-column:fullscreen .rv-video-wrapper { flex: 1; }
+  .rv-video-column:fullscreen .rv-player { width: 100%; height: 100%; }
+
+  /* ── Transcript column ── */
+  .rv-transcript-column {
+    display: flex;
+    flex-direction: column;
+    background: var(--color-bg);
+  }
+
+  .rv-transcript-header {
+    padding: var(--space-4);
+    border-bottom: 0.5px solid var(--color-border);
+    flex-shrink: 0;
+  }
+
+  .rv-header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--space-2);
+  }
+
+  .rv-label {
+    font-size: var(--font-size-xs);
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-text-faint);
+  }
+
+  .rv-sync-btn {
+    background: var(--color-accent);
+    color: #fff;
+    border: none;
+    padding: 3px var(--space-3);
+    border-radius: var(--radius-sm);
+    font-size: var(--font-size-xs);
+    font-family: var(--font-mono);
+    cursor: pointer;
+    transition: opacity var(--transition-fast);
+  }
+
+  .rv-sync-btn:hover { opacity: 0.85; }
+
+  .rv-search-input {
+    width: 100%;
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-sm);
+    border: 0.5px solid var(--color-border-strong);
+    background: var(--color-surface);
+    color: var(--color-text);
+    font-size: var(--font-size-sm);
+    font-family: var(--font-body);
+    box-sizing: border-box;
+    transition: border-color var(--transition-fast);
+  }
+
+  .rv-search-input:focus {
+    outline: none;
+    border-color: var(--color-accent);
+  }
+
+  .rv-search-input::placeholder { color: var(--color-text-faint); }
+
+  .rv-transcript-scroll-area {
+    max-height: 280px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: var(--space-2);
+  }
+
+  /* ── Transcript blocks — :global because JS creates these at runtime ── */
+  :global(.rv-block) {
+    padding: var(--space-3) var(--space-4);
+    border-radius: var(--radius-md);
+    margin-bottom: 2px;
+    cursor: pointer;
+    transition: background var(--transition-fast), opacity var(--transition-fast);
+    border: 0.5px solid transparent;
+    opacity: 0.45;
+  }
+
+  :global(.rv-block:hover) {
+    background: var(--color-surface);
+    opacity: 0.8;
+  }
+
+  :global(.rv-block.active) {
+    background: var(--color-accent-muted);
+    border-color: var(--color-accent);
+    opacity: 1;
+  }
+
+  :global(.rv-time) {
+    display: block;
+    font-size: var(--font-size-xs);
+    font-family: var(--font-mono);
+    color: var(--color-accent);
+    margin-bottom: var(--space-1);
+    font-weight: var(--font-weight-medium);
+  }
+
+  :global(.rv-text-content) {
+    display: block;
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height-body);
+    color: var(--color-text-muted);
+  }
+
+  :global(.rv-block.active .rv-text-content) { color: var(--color-text); }
+
+  :global(.rv-loading) {
+    text-align: center;
+    padding: var(--space-8);
+    color: var(--color-text-faint);
+    font-size: var(--font-size-sm);
+  }
+
+  .hidden { display: none !important; }
+</style>
+
+<script>
+  class TranscriptPlayer {
+    constructor(container) {
+      this.container   = container;
+      this.video       = container.querySelector('.rv-player');
+      this.videoCol    = container.querySelector('.rv-video-col');
+      this.scrollPane  = container.querySelector('.rv-scroll-pane');
+      this.content     = container.querySelector('.rv-transcript-content');
+      this.search      = container.querySelector('.rv-search-input');
+      this.syncBtn     = container.querySelector('.rv-sync-btn');
+      this.speed       = container.querySelector('.rv-speed-select');
+
+      this.playBtn       = container.querySelector('.rv-play-btn');
+      this.progressArea  = container.querySelector('.rv-progress-area');
+      this.progressTrack = container.querySelector('.rv-progress-track');
+      this.progressFill  = container.querySelector('.rv-progress-fill');
+      this.progressThumb = container.querySelector('.rv-progress-thumb');
+      this.currentTimeEl = container.querySelector('.rv-current-time');
+      this.durationEl    = container.querySelector('.rv-duration');
+      this.muteBtn       = container.querySelector('.rv-mute-btn');
+      this.volSlider     = container.querySelector('.rv-volume-slider');
+      this.fsBtn         = container.querySelector('.rv-fs-btn');
+
+      this.vttUrl      = container.querySelector('.rv-track-data').src;
+      this.data        = [];
+      this.blocks      = [];
+      this.activeBlock = null;
+      this.autoScroll  = true;
+      this.seeking     = false;
+
+      this.init();
+    }
+
+    async init() {
+      try {
+        const response = await fetch(this.vttUrl);
+        const text = await response.text();
+        this.parse(text);
+        this.render();
+        this.setupEvents();
+      } catch (err) {
+        this.content.innerHTML = '<p class="rv-loading">Error loading transcript.</p>';
+      }
+    }
+
+    parse(vtt) {
+      const cleanVtt = vtt.replace('WEBVTT', '').trim();
+      const blocks = cleanVtt.split(/\n\r?\n/);
+
+      this.data = blocks.map(block => {
+        const lines = block.split(/\r?\n/).map(l => l.trim()).filter(l => l !== '');
+        const timeLine = lines.find(l => l.includes('-->'));
+        if (!timeLine) return null;
+
+        const [startStr, endStr] = timeLine.split(' --> ');
+        const text = lines.slice(lines.indexOf(timeLine) + 1).join(' ');
+
+        return {
+          start: this.toSeconds(startStr),
+          end:   this.toSeconds(endStr),
+          text:  text.replace(/<[^>]*>/g, '').trim()
+        };
+      }).filter(item => item !== null);
+    }
+
+    toSeconds(t) {
+      if (!t) return 0;
+      const match = t.match(/(?:(\d{1,2}):)?(\d{1,2}):(\d{1,2})[.,](\d{3})/);
+      if (!match) return parseFloat(t) || 0;
+      const h  = parseInt(match[1] || 0, 10);
+      const m  = parseInt(match[2], 10);
+      const s  = parseInt(match[3], 10);
+      const ms = parseInt(match[4], 10) / 1000;
+      return (h * 3600) + (m * 60) + s + ms;
+    }
+
+    formatTime(s) {
+      const min = Math.floor(s / 60);
+      const sec = Math.floor(s % 60);
+      return `${min}:${sec.toString().padStart(2, '0')}`;
+    }
+
+    render(filter = '') {
+      this.activeBlock = null;
+      this.content.innerHTML = '';
+      this.data.forEach((item, index) => {
+        if (filter && !item.text.toLowerCase().includes(filter.toLowerCase())) return;
+
+        const div = document.createElement('div');
+        div.className = 'rv-block';
+        div.dataset.index = index;
+        div.innerHTML = `
+          <span class="rv-time">${this.formatTime(item.start)}</span>
+          <span class="rv-text-content">${item.text}</span>
+        `;
+
+        div.onclick = () => {
+          this.video.currentTime = item.start;
+          this.video.play();
+          this.autoScroll = true;
+          this.syncBtn.classList.add('hidden');
+        };
+
+        this.content.appendChild(div);
+      });
+      this.blocks = Array.from(this.content.querySelectorAll('.rv-block'));
+    }
+
+    setProgress(pct) {
+      this.progressFill.style.width = pct + '%';
+      this.progressThumb.style.left = pct + '%';
+    }
+
+    seekFromEvent(e) {
+      const rect = this.progressTrack.getBoundingClientRect();
+      const pct  = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+      if (isFinite(this.video.duration)) {
+        this.video.currentTime = pct * this.video.duration;
+      }
+    }
+
+    setupEvents() {
+      this.playBtn.addEventListener('click', () => {
+        this.video.paused ? this.video.play() : this.video.pause();
+      });
+
+      this.video.addEventListener('play', () => {
+        this.playBtn.querySelector('.rv-icon-play').classList.add('hidden');
+        this.playBtn.querySelector('.rv-icon-pause').classList.remove('hidden');
+        this.playBtn.setAttribute('aria-label', 'Pause');
+      });
+
+      this.video.addEventListener('pause', () => {
+        this.playBtn.querySelector('.rv-icon-pause').classList.add('hidden');
+        this.playBtn.querySelector('.rv-icon-play').classList.remove('hidden');
+        this.playBtn.setAttribute('aria-label', 'Play');
+      });
+
+      this.video.addEventListener('loadedmetadata', () => {
+        this.durationEl.textContent = this.formatTime(this.video.duration);
+      });
+      if (this.video.readyState >= 1) {
+        this.durationEl.textContent = this.formatTime(this.video.duration);
+      }
+
+      this.progressArea.addEventListener('mousedown', (e) => {
+        this.seeking = true;
+        this.progressArea.classList.add('seeking');
+        this.seekFromEvent(e);
+      });
+
+      document.addEventListener('mousemove', (e) => {
+        if (this.seeking) this.seekFromEvent(e);
+      });
+
+      document.addEventListener('mouseup', () => {
+        if (this.seeking) {
+          this.seeking = false;
+          this.progressArea.classList.remove('seeking');
+        }
+      });
+
+      this.speed.onchange = (e) => {
+        this.video.playbackRate = parseFloat(e.target.value);
+      };
+
+      const syncVolUI = () => {
+        const muted = this.video.muted || this.video.volume === 0;
+        this.muteBtn.querySelector('.rv-icon-vol').classList.toggle('hidden', muted);
+        this.muteBtn.querySelector('.rv-icon-mute').classList.toggle('hidden', !muted);
+        this.muteBtn.setAttribute('aria-label', muted ? 'Unmute' : 'Mute');
+        const pct = muted ? 0 : this.video.volume * 100;
+        this.volSlider.value = muted ? 0 : this.video.volume;
+        this.volSlider.style.setProperty('--vol', pct);
+      };
+
+      this.muteBtn.addEventListener('click', () => {
+        this.video.muted = !this.video.muted;
+        if (this.video.muted) {
+          this._volBeforeMute = this.video.volume;
+        } else {
+          this.video.volume = this._volBeforeMute ?? 1;
+        }
+        syncVolUI();
+      });
+
+      this.volSlider.addEventListener('input', () => {
+        const v = parseFloat(this.volSlider.value);
+        this.video.volume = v;
+        this.video.muted = v === 0;
+        syncVolUI();
+      });
+
+      syncVolUI();
+
+      this.fsBtn.addEventListener('click', () => {
+        if (!document.fullscreenElement) {
+          this.videoCol.requestFullscreen();
+        } else {
+          document.exitFullscreen();
+        }
+      });
+
+      document.addEventListener('fullscreenchange', () => {
+        const isFs = !!document.fullscreenElement;
+        this.fsBtn.querySelector('.rv-icon-expand').classList.toggle('hidden', isFs);
+        this.fsBtn.querySelector('.rv-icon-compress').classList.toggle('hidden', !isFs);
+        this.fsBtn.setAttribute('aria-label', isFs ? 'Exit fullscreen' : 'Fullscreen');
+      });
+
+      let searchTimer;
+      this.search.oninput = (e) => {
+        clearTimeout(searchTimer);
+        searchTimer = setTimeout(() => { this.render(e.target.value); }, 150);
+      };
+
+      this.scrollPane.addEventListener('wheel', () => {
+        if (this.autoScroll) {
+          this.autoScroll = false;
+          this.syncBtn.classList.remove('hidden');
+        }
+      }, { passive: true });
+
+      this.syncBtn.onclick = () => {
+        this.autoScroll = true;
+        this.syncBtn.classList.add('hidden');
+      };
+
+      this.video.ontimeupdate = () => {
+        const time = this.video.currentTime;
+
+        if (!this.seeking && isFinite(this.video.duration)) {
+          this.setProgress((time / this.video.duration) * 100);
+        }
+        this.currentTimeEl.textContent = this.formatTime(time);
+
+        let newActive = null;
+        for (const block of this.blocks) {
+          const item = this.data[parseInt(block.dataset.index)];
+          if (item && time >= item.start && time <= item.end) {
+            newActive = block;
+            break;
+          }
+        }
+
+        if (newActive === this.activeBlock) return;
+
+        if (this.activeBlock) this.activeBlock.classList.remove('active');
+        if (newActive) {
+          newActive.classList.add('active');
+          if (this.autoScroll) {
+            const blockRect = newActive.getBoundingClientRect();
+            const paneRect  = this.scrollPane.getBoundingClientRect();
+            const top = blockRect.top - paneRect.top + this.scrollPane.scrollTop
+                      - (this.scrollPane.offsetHeight / 2) + (newActive.offsetHeight / 2);
+            this.scrollPane.scrollTo({ top, behavior: 'smooth' });
+          }
+        }
+        this.activeBlock = newActive;
+      };
+    }
+  }
+
+  function initPlayers() {
+    document.querySelectorAll('.rv-main-container').forEach(el => {
+      if (!el.dataset.rvInit) {
+        el.dataset.rvInit = '1';
+        new TranscriptPlayer(el);
+      }
+    });
+  }
+
+  initPlayers();
+  document.addEventListener('astro:after-swap', initPlayers);
+</script>

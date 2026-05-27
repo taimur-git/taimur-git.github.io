@@ -1,0 +1,31 @@
+---
+title: "Least Squares, Visually"
+date: 2025-01-15
+excerpt: "What the regression line is actually minimizing — with a figure you can break by dragging."
+tags:
+  - statistics
+  - machine learning
+draft: false
+---
+
+import ManimRegression from '../../components/blog/ManimRegression.astro';
+import Tooltip from '../../components/blog/Tooltip.astro';
+import Sidenote from '../../components/blog/Sidenote.astro';
+
+Given a set of points, <Tooltip term="ordinary least squares">A method for fitting a line to data by minimizing the sum of squared vertical distances (residuals) from each point to the line. First derived independently by Legendre (1805) and Gauss (1809).</Tooltip> finds the line $\hat{y} = \beta x + \beta_0$ that minimizes the sum of **squared** vertical distances from each point to the line — the <Tooltip term="residuals">The vertical distance between each observed data point and the predicted value on the regression line. Residuals are what the model fails to explain.</Tooltip>.
+
+<ManimRegression />
+
+<Sidenote>Squaring residuals makes the loss function smooth and differentiable everywhere, so the minimum can be found analytically — no iterative optimization needed.</Sidenote>
+
+The vertical grey segments are the residuals. The blue line is their least-squares solution. Drag a point far from the cluster and watch how much the line chases it. That sensitivity is not a bug — it is a direct consequence of squaring the residuals. A point twice as far contributes four times as much to the loss.[^gauss1809]
+
+<Sidenote>Huber loss blends squared error (for small residuals) and absolute error (for large ones), controlled by a threshold δ. Points beyond δ are treated linearly instead of quadratically.</Sidenote>
+
+This is why robust regression methods exist: <Tooltip term="Huber loss">A loss function that behaves like squared error for small residuals but switches to absolute error for large ones. This limits the influence of outliers compared to OLS.</Tooltip> and LAD regression replace the square with something that grows more slowly, so extreme points have less leverage over the fit.[^huber1964]
+
+One thing the figure makes clear that algebra obscures: the line always passes through the centroid of the data — the point $(\bar{x}, \bar{y})$. No matter where you drag the points, the line pivots around that center.[^stigler1981]
+
+[^gauss1809]: Gauss, C.F. (1809). *Theoria Motus Corporum Coelestium*. Hamburg: Perthes & Besser.
+[^huber1964]: Huber, P.J. (1964). Robust estimation of a location parameter. *The Annals of Mathematical Statistics*, 35(1), 73–101.
+[^stigler1981]: Stigler, S.M. (1981). Gauss and the invention of least squares. *The Annals of Statistics*, 9(3), 465–474.

@@ -1,0 +1,38 @@
+<aside class="sn-box">
+  <span class="sn-label">note</span>
+  <slot />
+</aside>
+
+<style>
+  .sn-box {
+    float: right;
+    clear: right;
+    width: 175px;
+    margin: 0 0 var(--space-4) var(--space-6);
+    padding: var(--space-3) var(--space-4);
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+    background: var(--color-surface);
+    border-left: 2px solid var(--color-accent);
+    border-radius: 0 var(--radius-md) var(--radius-md) 0;
+    line-height: var(--line-height-body);
+  }
+
+  .sn-label {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: var(--font-size-xs);
+    color: var(--color-accent);
+    margin-bottom: var(--space-2);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  @media (max-width: 680px) {
+    .sn-box {
+      float: none;
+      width: 100%;
+      margin: var(--space-4) 0;
+    }
+  }
+</style>

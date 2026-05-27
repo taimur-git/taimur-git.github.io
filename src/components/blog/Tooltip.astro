@@ -1,0 +1,76 @@
+---
+interface Props {
+  term: string;
+}
+const { term } = Astro.props;
+---
+
+<span class="tooltip-wrap">
+  <span class="tooltip-trigger" tabindex="0">{term}</span>
+  <span class="tooltip-card" role="tooltip">
+    <slot />
+  </span>
+</span>
+
+<style>
+  .tooltip-wrap {
+    position: relative;
+    display: inline;
+  }
+
+  .tooltip-trigger {
+    border-bottom: 1px dotted var(--color-accent);
+    color: var(--color-accent);
+    cursor: help;
+    border-radius: 2px;
+    transition: background var(--transition-fast), color var(--transition-fast);
+  }
+
+  .tooltip-wrap:hover .tooltip-trigger,
+  .tooltip-wrap:focus-within .tooltip-trigger,
+  .tooltip-wrap.open .tooltip-trigger {
+    background: #ffffff;
+    color: #000000;
+    border-bottom-color: transparent;
+  }
+
+  .tooltip-card {
+    display: none;
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 50%;
+    transform: translateX(-50%);
+    width: 240px;
+    background: var(--color-surface-raised);
+    border: 0.5px solid var(--color-border-strong);
+    border-radius: var(--radius-md);
+    padding: var(--space-3) var(--space-4);
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+    line-height: var(--line-height-body);
+    z-index: 100;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    pointer-events: none;
+    text-align: left;
+  }
+
+  .tooltip-wrap:hover .tooltip-card,
+  .tooltip-wrap:focus-within .tooltip-card,
+  .tooltip-wrap.open .tooltip-card {
+    display: block;
+  }
+</style>
+
+<script is:inline>
+  document.querySelectorAll('.tooltip-wrap').forEach(function (wrap) {
+    wrap.addEventListener('click', function (e) {
+      e.stopPropagation();
+      wrap.classList.toggle('open');
+    });
+  });
+  document.addEventListener('click', function () {
+    document.querySelectorAll('.tooltip-wrap.open').forEach(function (w) {
+      w.classList.remove('open');
+    });
+  });
+</script>

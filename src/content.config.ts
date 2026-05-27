@@ -72,6 +72,7 @@ const researchCollection = defineCollection({
     abstract: z.string(),
     pdf: z.string().optional(),
     tags: z.array(z.string()),
+    citations: z.number().optional(),
   }),
 });
 

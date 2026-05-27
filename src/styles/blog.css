@@ -267,6 +267,17 @@
   color: var(--color-text-muted);
 }
 
+/* ── Research citation count ── */
+.research-cites {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  color: var(--color-accent);
+  white-space: nowrap;
+}
+
 /* ── Mobile ── */
 @media (max-width: 900px) {
   .blog-layout {

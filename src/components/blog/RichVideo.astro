@@ -16,6 +16,9 @@ const { src, vtt } = Astro.props;
           <track class="rv-track-data" kind="metadata" src={vtt} default />
           Your browser does not support the video tag.
         </video>
+        <div class="rv-subtitle-overlay">
+          <span class="rv-subtitle-text"></span>
+        </div>
       </div>
 
       <div class="rv-controls">
@@ -64,6 +67,25 @@ const { src, vtt } = Astro.props;
               </button>
               <div class="rv-volume-slider-wrap">
                 <input type="range" class="rv-volume-slider" min="0" max="1" step="0.02" value="1" aria-label="Volume" />
+              </div>
+            </div>
+
+            <div class="rv-cc-wrap">
+              <button class="rv-ctrl-btn rv-cc-btn" aria-label="Captions" aria-expanded="false">
+                <svg class="rv-icon" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm-8 7H7.5v-.5h-2v3h2V13H12v1c0 .55-.45 1-1 1H5c-.55 0-1-.45-1-1v-4c0-.55.45-1 1-1h6c.55 0 1 .45 1 1v1zm7 0h-4.5v-.5h-2v3h2V13H19v1c0 .55-.45 1-1 1h-6c-.55 0-1-.45-1-1v-4c0-.55.45-1 1-1h6c.55 0 1 .45 1 1v1z"/>
+                </svg>
+              </button>
+              <div class="rv-cc-popover" role="menu">
+                <button class="rv-cc-option selected" data-mode="off" role="menuitemradio" aria-checked="true">
+                  <span class="rv-cc-check">✓</span>Off
+                </button>
+                <button class="rv-cc-option" data-mode="subtitles" role="menuitemradio" aria-checked="false">
+                  <span class="rv-cc-check"></span>Subtitles
+                </button>
+                <button class="rv-cc-option" data-mode="transcript" role="menuitemradio" aria-checked="false">
+                  <span class="rv-cc-check"></span>Transcript
+                </button>
               </div>
             </div>
 
@@ -119,10 +141,10 @@ const { src, vtt } = Astro.props;
     display: flex;
     flex-direction: column;
     background: #000;
-    border-bottom: 0.5px solid var(--color-border-strong);
   }
 
   .rv-video-wrapper {
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -133,6 +155,34 @@ const { src, vtt } = Astro.props;
     height: auto;
     display: block;
   }
+
+  /* ── Subtitle overlay ── */
+  .rv-subtitle-overlay {
+    display: none;
+    position: absolute;
+    bottom: var(--space-4);
+    left: 50%;
+    transform: translateX(-50%);
+    max-width: 85%;
+    text-align: center;
+    pointer-events: none;
+    z-index: 10;
+  }
+
+  .rv-subtitle-overlay.visible { display: block; }
+
+  .rv-subtitle-text {
+    display: inline-block;
+    background: rgba(0, 0, 0, 0.75);
+    color: #fff;
+    padding: var(--space-1) var(--space-3);
+    border-radius: var(--radius-sm);
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height-body);
+    backdrop-filter: blur(2px);
+  }
+
+  .rv-subtitle-text:empty { display: none; }
 
   /* ── Controls ── */
   .rv-controls {
@@ -210,10 +260,9 @@ const { src, vtt } = Astro.props;
     line-height: 0;
   }
 
-  .rv-ctrl-btn:hover {
-    color: var(--color-text);
-    background: var(--color-border);
-  }
+  .rv-ctrl-btn:hover { color: var(--color-text); background: var(--color-border); }
+
+  .rv-ctrl-btn.active { color: var(--color-accent); }
 
   .rv-icon { width: 17px; height: 17px; }
 
@@ -244,15 +293,8 @@ const { src, vtt } = Astro.props;
     transition: border-color var(--transition-fast), color var(--transition-fast);
   }
 
-  .rv-speed-ctrl:hover {
-    border-color: var(--color-accent);
-    color: var(--color-text);
-  }
-
-  .rv-speed-ctrl option {
-    background: var(--color-surface);
-    color: var(--color-text);
-  }
+  .rv-speed-ctrl:hover { border-color: var(--color-accent); color: var(--color-text); }
+  .rv-speed-ctrl option { background: var(--color-surface); color: var(--color-text); }
 
   /* Volume */
   .rv-volume-group { display: flex; align-items: center; }
@@ -323,22 +365,59 @@ const { src, vtt } = Astro.props;
     cursor: pointer;
   }
 
-  /* Fullscreen */
-  .rv-video-column:fullscreen {
-    background: #000;
-    display: flex;
-    flex-direction: column;
+  /* ── CC button & popover ── */
+  .rv-cc-wrap { position: relative; }
+
+  .rv-cc-popover {
+    display: none;
+    position: absolute;
+    bottom: calc(100% + 6px);
+    right: 0;
+    background: var(--color-surface-raised);
+    border: 0.5px solid var(--color-border-strong);
+    border-radius: var(--radius-md);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+    z-index: 50;
+    min-width: 120px;
   }
 
-  .rv-video-column:fullscreen .rv-video-wrapper { flex: 1; }
-  .rv-video-column:fullscreen .rv-player { width: 100%; height: 100%; }
+  .rv-cc-popover.open { display: block; }
+
+  .rv-cc-option {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    width: 100%;
+    padding: var(--space-2) var(--space-3);
+    border: none;
+    background: none;
+    color: var(--color-text-muted);
+    font-size: var(--font-size-xs);
+    font-family: var(--font-mono);
+    cursor: pointer;
+    text-align: left;
+    transition: background var(--transition-fast), color var(--transition-fast);
+  }
+
+  .rv-cc-option:hover { background: var(--color-surface); color: var(--color-text); }
+  .rv-cc-option.selected { color: var(--color-accent); }
+
+  .rv-cc-check {
+    width: 10px;
+    flex-shrink: 0;
+    font-size: var(--font-size-xs);
+  }
 
   /* ── Transcript column ── */
   .rv-transcript-column {
-    display: flex;
+    display: none;
     flex-direction: column;
     background: var(--color-bg);
+    border-top: 0.5px solid var(--color-border-strong);
   }
+
+  .rv-transcript-column.visible { display: flex; }
 
   .rv-transcript-header {
     padding: var(--space-4);
@@ -388,11 +467,7 @@ const { src, vtt } = Astro.props;
     transition: border-color var(--transition-fast);
   }
 
-  .rv-search-input:focus {
-    outline: none;
-    border-color: var(--color-accent);
-  }
-
+  .rv-search-input:focus { outline: none; border-color: var(--color-accent); }
   .rv-search-input::placeholder { color: var(--color-text-faint); }
 
   .rv-transcript-scroll-area {
@@ -400,6 +475,44 @@ const { src, vtt } = Astro.props;
     overflow-y: auto;
     overflow-x: hidden;
     padding: var(--space-2);
+  }
+
+  /* ── Fullscreen ── */
+  .rv-main-container:fullscreen {
+    border-radius: 0;
+    border: none;
+  }
+
+  .rv-main-container:fullscreen .rv-layout {
+    flex-direction: row;
+    height: 100dvh;
+  }
+
+  .rv-main-container:fullscreen .rv-video-column {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .rv-main-container:fullscreen .rv-video-wrapper {
+    flex: 1;
+    min-height: 0;
+  }
+
+  .rv-main-container:fullscreen .rv-player {
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .rv-main-container:fullscreen .rv-transcript-column.visible {
+    width: 320px;
+    flex-shrink: 0;
+    border-top: none;
+    border-left: 0.5px solid var(--color-border-strong);
+  }
+
+  .rv-main-container:fullscreen .rv-transcript-scroll-area {
+    max-height: none;
+    flex: 1;
   }
 
   /* ── Transcript blocks — :global because JS creates these at runtime ── */
@@ -413,10 +526,7 @@ const { src, vtt } = Astro.props;
     opacity: 0.45;
   }
 
-  :global(.rv-block:hover) {
-    background: var(--color-surface);
-    opacity: 0.8;
-  }
+  :global(.rv-block:hover) { background: var(--color-surface); opacity: 0.8; }
 
   :global(.rv-block.active) {
     background: var(--color-accent-muted);
@@ -455,14 +565,19 @@ const { src, vtt } = Astro.props;
 <script>
   class TranscriptPlayer {
     constructor(container) {
-      this.container   = container;
-      this.video       = container.querySelector('.rv-player');
-      this.videoCol    = container.querySelector('.rv-video-col');
-      this.scrollPane  = container.querySelector('.rv-scroll-pane');
-      this.content     = container.querySelector('.rv-transcript-content');
-      this.search      = container.querySelector('.rv-search-input');
-      this.syncBtn     = container.querySelector('.rv-sync-btn');
-      this.speed       = container.querySelector('.rv-speed-select');
+      this.container     = container;
+      this.video         = container.querySelector('.rv-player');
+      this.videoCol      = container.querySelector('.rv-video-col');
+      this.scrollPane    = container.querySelector('.rv-scroll-pane');
+      this.content       = container.querySelector('.rv-transcript-content');
+      this.search        = container.querySelector('.rv-search-input');
+      this.syncBtn       = container.querySelector('.rv-sync-btn');
+      this.speed         = container.querySelector('.rv-speed-select');
+      this.transcriptCol = container.querySelector('.rv-transcript-column');
+      this.subtitleOverlay = container.querySelector('.rv-subtitle-overlay');
+      this.subtitleText  = container.querySelector('.rv-subtitle-text');
+      this.ccBtn         = container.querySelector('.rv-cc-btn');
+      this.ccPopover     = container.querySelector('.rv-cc-popover');
 
       this.playBtn       = container.querySelector('.rv-play-btn');
       this.progressArea  = container.querySelector('.rv-progress-area');
@@ -481,6 +596,7 @@ const { src, vtt } = Astro.props;
       this.activeBlock = null;
       this.autoScroll  = true;
       this.seeking     = false;
+      this.mode        = 'off';
 
       this.init();
     }
@@ -499,33 +615,26 @@ const { src, vtt } = Astro.props;
 
     parse(vtt) {
       const cleanVtt = vtt.replace('WEBVTT', '').trim();
-      const blocks = cleanVtt.split(/\n\r?\n/);
-
-      this.data = blocks.map(block => {
+      this.data = cleanVtt.split(/\n\r?\n/).map(block => {
         const lines = block.split(/\r?\n/).map(l => l.trim()).filter(l => l !== '');
         const timeLine = lines.find(l => l.includes('-->'));
         if (!timeLine) return null;
-
         const [startStr, endStr] = timeLine.split(' --> ');
         const text = lines.slice(lines.indexOf(timeLine) + 1).join(' ');
-
         return {
           start: this.toSeconds(startStr),
           end:   this.toSeconds(endStr),
           text:  text.replace(/<[^>]*>/g, '').trim()
         };
-      }).filter(item => item !== null);
+      }).filter(Boolean);
     }
 
     toSeconds(t) {
       if (!t) return 0;
       const match = t.match(/(?:(\d{1,2}):)?(\d{1,2}):(\d{1,2})[.,](\d{3})/);
       if (!match) return parseFloat(t) || 0;
-      const h  = parseInt(match[1] || 0, 10);
-      const m  = parseInt(match[2], 10);
-      const s  = parseInt(match[3], 10);
-      const ms = parseInt(match[4], 10) / 1000;
-      return (h * 3600) + (m * 60) + s + ms;
+      return (parseInt(match[1] || 0) * 3600) + (parseInt(match[2]) * 60)
+           + parseInt(match[3]) + (parseInt(match[4]) / 1000);
     }
 
     formatTime(s) {
@@ -534,12 +643,27 @@ const { src, vtt } = Astro.props;
       return `${min}:${sec.toString().padStart(2, '0')}`;
     }
 
+    setMode(mode) {
+      this.mode = mode;
+      this.transcriptCol.classList.toggle('visible', mode === 'transcript');
+      this.subtitleOverlay.classList.toggle('visible', mode === 'subtitles');
+      if (mode !== 'subtitles') this.subtitleText.textContent = '';
+      this.ccBtn.classList.toggle('active', mode !== 'off');
+      this.ccBtn.setAttribute('aria-expanded', 'false');
+      this.ccPopover.classList.remove('open');
+      this.container.querySelectorAll('.rv-cc-option').forEach(opt => {
+        const selected = opt.dataset.mode === mode;
+        opt.classList.toggle('selected', selected);
+        opt.querySelector('.rv-cc-check').textContent = selected ? '✓' : '';
+        opt.setAttribute('aria-checked', String(selected));
+      });
+    }
+
     render(filter = '') {
       this.activeBlock = null;
       this.content.innerHTML = '';
       this.data.forEach((item, index) => {
         if (filter && !item.text.toLowerCase().includes(filter.toLowerCase())) return;
-
         const div = document.createElement('div');
         div.className = 'rv-block';
         div.dataset.index = index;
@@ -547,14 +671,12 @@ const { src, vtt } = Astro.props;
           <span class="rv-time">${this.formatTime(item.start)}</span>
           <span class="rv-text-content">${item.text}</span>
         `;
-
         div.onclick = () => {
           this.video.currentTime = item.start;
           this.video.play();
           this.autoScroll = true;
           this.syncBtn.classList.add('hidden');
         };
-
         this.content.appendChild(div);
       });
       this.blocks = Array.from(this.content.querySelectorAll('.rv-block'));
@@ -568,28 +690,26 @@ const { src, vtt } = Astro.props;
     seekFromEvent(e) {
       const rect = this.progressTrack.getBoundingClientRect();
       const pct  = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
-      if (isFinite(this.video.duration)) {
-        this.video.currentTime = pct * this.video.duration;
-      }
+      if (isFinite(this.video.duration)) this.video.currentTime = pct * this.video.duration;
     }
 
     setupEvents() {
+      // Play / pause
       this.playBtn.addEventListener('click', () => {
         this.video.paused ? this.video.play() : this.video.pause();
       });
-
       this.video.addEventListener('play', () => {
         this.playBtn.querySelector('.rv-icon-play').classList.add('hidden');
         this.playBtn.querySelector('.rv-icon-pause').classList.remove('hidden');
         this.playBtn.setAttribute('aria-label', 'Pause');
       });
-
       this.video.addEventListener('pause', () => {
         this.playBtn.querySelector('.rv-icon-pause').classList.add('hidden');
         this.playBtn.querySelector('.rv-icon-play').classList.remove('hidden');
         this.playBtn.setAttribute('aria-label', 'Play');
       });
 
+      // Duration
       this.video.addEventListener('loadedmetadata', () => {
         this.durationEl.textContent = this.formatTime(this.video.duration);
       });
@@ -597,64 +717,62 @@ const { src, vtt } = Astro.props;
         this.durationEl.textContent = this.formatTime(this.video.duration);
       }
 
+      // Scrub bar
       this.progressArea.addEventListener('mousedown', (e) => {
         this.seeking = true;
         this.progressArea.classList.add('seeking');
         this.seekFromEvent(e);
       });
-
-      document.addEventListener('mousemove', (e) => {
-        if (this.seeking) this.seekFromEvent(e);
-      });
-
+      document.addEventListener('mousemove', (e) => { if (this.seeking) this.seekFromEvent(e); });
       document.addEventListener('mouseup', () => {
-        if (this.seeking) {
-          this.seeking = false;
-          this.progressArea.classList.remove('seeking');
-        }
+        if (this.seeking) { this.seeking = false; this.progressArea.classList.remove('seeking'); }
       });
 
-      this.speed.onchange = (e) => {
-        this.video.playbackRate = parseFloat(e.target.value);
-      };
+      // Speed
+      this.speed.onchange = (e) => { this.video.playbackRate = parseFloat(e.target.value); };
 
+      // Volume
       const syncVolUI = () => {
         const muted = this.video.muted || this.video.volume === 0;
         this.muteBtn.querySelector('.rv-icon-vol').classList.toggle('hidden', muted);
         this.muteBtn.querySelector('.rv-icon-mute').classList.toggle('hidden', !muted);
         this.muteBtn.setAttribute('aria-label', muted ? 'Unmute' : 'Mute');
-        const pct = muted ? 0 : this.video.volume * 100;
         this.volSlider.value = muted ? 0 : this.video.volume;
-        this.volSlider.style.setProperty('--vol', pct);
+        this.volSlider.style.setProperty('--vol', muted ? 0 : this.video.volume * 100);
       };
-
       this.muteBtn.addEventListener('click', () => {
         this.video.muted = !this.video.muted;
-        if (this.video.muted) {
-          this._volBeforeMute = this.video.volume;
-        } else {
-          this.video.volume = this._volBeforeMute ?? 1;
-        }
+        if (this.video.muted) this._volBeforeMute = this.video.volume;
+        else this.video.volume = this._volBeforeMute ?? 1;
         syncVolUI();
       });
-
       this.volSlider.addEventListener('input', () => {
         const v = parseFloat(this.volSlider.value);
         this.video.volume = v;
         this.video.muted = v === 0;
         syncVolUI();
       });
-
       syncVolUI();
 
-      this.fsBtn.addEventListener('click', () => {
-        if (!document.fullscreenElement) {
-          this.videoCol.requestFullscreen();
-        } else {
-          document.exitFullscreen();
-        }
+      // CC button
+      this.ccBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const open = this.ccPopover.classList.toggle('open');
+        this.ccBtn.setAttribute('aria-expanded', String(open));
+      });
+      this.container.querySelectorAll('.rv-cc-option').forEach(opt => {
+        opt.addEventListener('click', () => this.setMode(opt.dataset.mode));
+      });
+      document.addEventListener('click', () => {
+        this.ccPopover.classList.remove('open');
+        this.ccBtn.setAttribute('aria-expanded', 'false');
       });
 
+      // Fullscreen — whole container so transcript is available inside it
+      this.fsBtn.addEventListener('click', () => {
+        if (!document.fullscreenElement) this.container.requestFullscreen();
+        else document.exitFullscreen();
+      });
       document.addEventListener('fullscreenchange', () => {
         const isFs = !!document.fullscreenElement;
         this.fsBtn.querySelector('.rv-icon-expand').classList.toggle('hidden', isFs);
@@ -662,24 +780,20 @@ const { src, vtt } = Astro.props;
         this.fsBtn.setAttribute('aria-label', isFs ? 'Exit fullscreen' : 'Fullscreen');
       });
 
+      // Search
       let searchTimer;
       this.search.oninput = (e) => {
         clearTimeout(searchTimer);
-        searchTimer = setTimeout(() => { this.render(e.target.value); }, 150);
+        searchTimer = setTimeout(() => this.render(e.target.value), 150);
       };
 
+      // Scroll sync
       this.scrollPane.addEventListener('wheel', () => {
-        if (this.autoScroll) {
-          this.autoScroll = false;
-          this.syncBtn.classList.remove('hidden');
-        }
+        if (this.autoScroll) { this.autoScroll = false; this.syncBtn.classList.remove('hidden'); }
       }, { passive: true });
+      this.syncBtn.onclick = () => { this.autoScroll = true; this.syncBtn.classList.add('hidden'); };
 
-      this.syncBtn.onclick = () => {
-        this.autoScroll = true;
-        this.syncBtn.classList.add('hidden');
-      };
-
+      // Time sync
       this.video.ontimeupdate = () => {
         const time = this.video.currentTime;
 
@@ -688,17 +802,19 @@ const { src, vtt } = Astro.props;
         }
         this.currentTimeEl.textContent = this.formatTime(time);
 
+        // Subtitle overlay
+        if (this.mode === 'subtitles') {
+          const line = this.data.find(item => time >= item.start && time <= item.end);
+          this.subtitleText.textContent = line ? line.text : '';
+        }
+
+        // Transcript highlight
         let newActive = null;
         for (const block of this.blocks) {
           const item = this.data[parseInt(block.dataset.index)];
-          if (item && time >= item.start && time <= item.end) {
-            newActive = block;
-            break;
-          }
+          if (item && time >= item.start && time <= item.end) { newActive = block; break; }
         }
-
         if (newActive === this.activeBlock) return;
-
         if (this.activeBlock) this.activeBlock.classList.remove('active');
         if (newActive) {
           newActive.classList.add('active');

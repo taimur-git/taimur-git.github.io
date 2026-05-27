@@ -278,6 +278,38 @@
   white-space: nowrap;
 }
 
+/* ── Prose tables ── */
+.blog-content table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--font-size-sm);
+  margin: var(--space-6) 0;
+  display: block;
+  overflow-x: auto;
+}
+
+.blog-content thead th {
+  text-align: left;
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-faint);
+  padding: var(--space-2) var(--space-3);
+  border-bottom: 0.5px solid var(--color-border-strong);
+  white-space: nowrap;
+}
+
+.blog-content tbody td {
+  padding: var(--space-2) var(--space-3);
+  border-bottom: 0.5px solid var(--color-border);
+  color: var(--color-text-muted);
+  vertical-align: top;
+}
+
+.blog-content tbody tr:last-child td { border-bottom: none; }
+
+.blog-content tbody tr:hover td { background: var(--color-surface); }
+
 /* ── Mobile ── */
 @media (max-width: 900px) {
   .blog-layout {

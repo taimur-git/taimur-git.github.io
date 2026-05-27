@@ -1,0 +1,361 @@
+---
+interface Example {
+  label: string;
+  values: string[];
+  winner: number;
+}
+interface Props {
+  layers: number[];
+  labels?: string[][];
+  examples?: Example[];
+  caption?: string;
+}
+const { layers, labels = [], examples = [], caption } = Astro.props;
+const uid = `nn-${Math.random().toString(36).slice(2, 9)}`;
+const hasExamples = examples.length > 0;
+---
+
+<figure class="nn-figure">
+  {hasExamples && (
+    <div class="nn-examples" id={`${uid}-examples`}>
+      {examples.map((ex, i) => (
+        <button class="nn-ex-btn" data-idx={i}>{ex.label}</button>
+      ))}
+    </div>
+  )}
+  <div id={uid} class="nn-wrap"></div>
+  <p class="nn-hint" id={`${uid}-hint`}>
+    {hasExamples ? 'select an applicant above to run' : 'click to run forward pass'}
+  </p>
+  {caption && <figcaption class="nn-caption">{caption}</figcaption>}
+</figure>
+
+<style>
+  .nn-figure { margin: var(--space-8) 0; }
+
+  .nn-examples {
+    display: flex;
+    gap: var(--space-2);
+    margin-bottom: var(--space-3);
+    flex-wrap: wrap;
+  }
+
+  .nn-ex-btn {
+    font-family: var(--font-mono);
+    font-size: var(--font-size-xs);
+    padding: 3px var(--space-3);
+    border-radius: var(--radius-full);
+    border: 0.5px solid var(--color-border-strong);
+    color: var(--color-text-muted);
+    background: transparent;
+    cursor: pointer;
+    transition: all var(--transition-base);
+  }
+
+  .nn-ex-btn:hover { border-color: var(--color-accent); color: var(--color-accent); }
+
+  .nn-ex-btn.active {
+    background: var(--color-accent);
+    border-color: var(--color-accent);
+    color: #fff;
+  }
+
+  .nn-wrap canvas {
+    display: block;
+    border-radius: var(--radius-md);
+    border: 0.5px solid var(--color-border);
+  }
+
+  .nn-hint {
+    text-align: center;
+    font-family: var(--font-mono);
+    font-size: var(--font-size-xs);
+    color: var(--color-text-faint);
+    margin: var(--space-2) 0 0;
+    min-height: 1em;
+  }
+
+  .nn-caption {
+    text-align: center;
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+    margin-top: var(--space-3);
+  }
+</style>
+
+<script define:vars={{ layers, labels, examples, uid }}>
+(async () => {
+  window.__p5Promise = window.__p5Promise || new Promise((res, rej) => {
+    if (window.p5) return res();
+    const s = document.createElement('script');
+    s.src = '/libs/manim/lib/p5/p5.min.js';
+    s.onload = res;
+    s.onerror = rej;
+    document.head.appendChild(s);
+  });
+  await window.__p5Promise;
+
+  const wrap = document.getElementById(uid);
+  const hint = document.getElementById(uid + '-hint');
+  if (!wrap) return;
+
+  function readColor(cssValue) {
+    const el = document.createElement('span');
+    el.style.cssText = 'position:absolute;opacity:0;pointer-events:none;color:' + cssValue;
+    document.body.appendChild(el);
+    const v = getComputedStyle(el).color;
+    el.remove();
+    return v;
+  }
+
+  const nL   = layers.length;
+  const maxN = Math.max(...layers);
+
+  // Layout constants
+  const hasSideLabels = (labels[0] && labels[0].length > 0) || (labels[nL - 1] && labels[nL - 1].length > 0) || examples.length > 0;
+  const PX   = hasSideLabels ? 80 : 52;
+  const R    = 14;
+  const VS   = 54;
+  const PY   = 52;
+
+  // Animation constants (frames @ 30fps)
+  const STEP = 32;
+  const FIN  = 16;
+  const EH   = 10;
+  const HOLD = 44;
+  const FOUT = 22;
+
+  const CH        = maxN * VS + PY * 2;
+  const lastStart = (nL - 1) * STEP;
+  const totalF    = lastStart + FIN + HOLD + FOUT;
+
+  let neurons = [];
+  let edges   = [];
+  let running = false;
+  let af      = 0;
+
+  // Example state
+  let activeValues = null;  // string[] — current input values to display
+  let activeWinner = null;  // number  — output neuron index that wins
+  let showResult   = false; // after animation: keep winner lit
+
+  function build(W) {
+    neurons = [];
+    edges   = [];
+    for (let l = 0; l < nL; l++) {
+      const n      = layers[l];
+      const x      = nL === 1 ? W / 2 : PX + (W - PX * 2) * l / (nL - 1);
+      const totalV = (n - 1) * VS;
+      const y0     = (CH - totalV) / 2;
+      for (let j = 0; j < n; j++) {
+        neurons.push({ x, y: y0 + j * VS, layer: l, idx: j });
+      }
+    }
+    for (let l = 0; l < nL - 1; l++) {
+      const fn = neurons.filter(n => n.layer === l);
+      const tn = neurons.filter(n => n.layer === l + 1);
+      for (const f of fn)
+        for (const t of tn)
+          edges.push({ from: f, to: t, fl: l });
+    }
+  }
+
+  function neuronA(layer, t) {
+    const a  = Math.max(0, Math.min(1, (t - layer * STEP) / FIN));
+    const fo = 1 - Math.max(0, Math.min(1, (t - lastStart - FIN - HOLD) / FOUT));
+    return a * fo;
+  }
+
+  function getActivation(n, t) {
+    // After animation: only winner output neuron stays lit
+    if (!running && showResult && n.layer === nL - 1 && activeWinner !== null) {
+      return n.idx === activeWinner ? 0.55 : 0;
+    }
+    return neuronA(n.layer, t);
+  }
+
+  function edgeA(fl, t) {
+    const peak = fl * STEP + STEP * 0.65;
+    const a    = Math.max(0, 1 - Math.abs(t - peak) / EH);
+    const fo   = 1 - Math.max(0, Math.min(1, (t - lastStart - FIN - HOLD) / FOUT));
+    return a * fo;
+  }
+
+  function startRun() {
+    running    = true;
+    showResult = false;
+    af         = 0;
+    hint.textContent = '';
+  }
+
+  // Wire up example buttons
+  const exContainer = document.getElementById(uid + '-examples');
+  if (exContainer) {
+    const btns = exContainer.querySelectorAll('.nn-ex-btn');
+    btns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const ex = examples[parseInt(btn.dataset.idx)];
+        activeValues = ex.values;
+        activeWinner = ex.winner;
+        btns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        startRun();
+        p5instance.loop();
+      });
+    });
+  }
+
+  let p5instance;
+
+  new p5(p => {
+    p5instance = p;
+    let W;
+    let cAccent, cBg, cSurface, cBorder, cMuted, cFaint;
+
+    p.setup = () => {
+      W = wrap.offsetWidth || 640;
+      build(W);
+      p.createCanvas(W, CH).parent(wrap);
+      p.frameRate(30);
+      p.textFont('system-ui, sans-serif');
+
+      cAccent  = p.color(readColor('var(--color-accent)'));
+      cBg      = p.color(readColor('var(--color-bg)'));
+      cSurface = p.color(readColor('var(--color-surface)'));
+      cBorder  = p.color(readColor('var(--color-border-strong)'));
+      cMuted   = p.color(readColor('var(--color-text-muted)'));
+      cFaint   = p.color(readColor('var(--color-text-faint)'));
+
+      p.noLoop();
+      p.redraw();
+    };
+
+    // Canvas click still works when no examples provided
+    p.mousePressed = () => {
+      if (examples.length > 0) return;
+      if (p.mouseX < 0 || p.mouseX > W || p.mouseY < 0 || p.mouseY > CH) return;
+      startRun();
+      p.loop();
+    };
+
+    p.draw = () => {
+      const t = running ? af : 0;
+      p.background(cBg);
+
+      // Layer type labels
+      p.noStroke();
+      p.textSize(10);
+      p.textAlign(p.CENTER, p.BOTTOM);
+      for (let l = 0; l < nL; l++) {
+        const nx = neurons.find(n => n.layer === l)?.x;
+        if (nx == null) continue;
+        const lbl = l === 0 ? 'input' : l === nL - 1 ? 'output' : 'hidden';
+        p.fill(cFaint);
+        p.text(lbl, nx, PY - 12);
+      }
+
+      // Edges
+      p.noFill();
+      for (const e of edges) {
+        const ea = edgeA(e.fl, t);
+        const na = neuronA(e.fl, t);
+        if (ea > 0.01) {
+          p.stroke(p.red(cAccent), p.green(cAccent), p.blue(cAccent), ea * 220);
+          p.strokeWeight(0.5 + ea * 1.5);
+        } else {
+          p.stroke(p.red(cBorder), p.green(cBorder), p.blue(cBorder), 35 + na * 50);
+          p.strokeWeight(0.5);
+        }
+        p.line(e.from.x, e.from.y, e.to.x, e.to.y);
+      }
+
+      // Neurons
+      for (const n of neurons) {
+        const na = getActivation(n, t);
+
+        // Soft glow
+        if (na > 0.05) {
+          p.noStroke();
+          p.fill(p.red(cAccent), p.green(cAccent), p.blue(cAccent), na * 38);
+          p.ellipse(n.x, n.y, (R + 10) * 2, (R + 10) * 2);
+        }
+
+        // Main circle
+        p.fill(p.lerpColor(cSurface, cAccent, na));
+        p.stroke(p.lerpColor(cBorder, cAccent, na));
+        p.strokeWeight(1);
+        p.ellipse(n.x, n.y, R * 2, R * 2);
+
+        // Input layer: feature name + value (two lines)
+        if (n.layer === 0) {
+          const lbl = labels[0] && labels[0][n.idx];
+          const val = activeValues && activeValues[n.idx];
+          const lc  = p.lerpColor(cFaint, cAccent, na);
+          const vc  = p.lerpColor(cMuted, cAccent, na);
+          p.noStroke();
+          if (lbl) {
+            p.fill(lc);
+            p.textSize(10);
+            p.textAlign(p.RIGHT, p.CENTER);
+            p.text(lbl, n.x - R - 6, val ? n.y - 7 : n.y);
+          }
+          if (val) {
+            p.fill(vc);
+            p.textSize(11);
+            p.textAlign(p.RIGHT, p.CENTER);
+            p.text(val, n.x - R - 6, lbl ? n.y + 7 : n.y);
+          }
+        }
+
+        // Output layer: label
+        if (n.layer === nL - 1) {
+          const lbl = labels[nL - 1] && labels[nL - 1][n.idx];
+          if (lbl) {
+            p.fill(p.lerpColor(cMuted, cAccent, na));
+            p.noStroke();
+            p.textSize(11);
+            p.textAlign(p.LEFT, p.CENTER);
+            p.text(lbl, n.x + R + 6, n.y);
+          }
+        }
+      }
+
+      // Winner ring after animation completes
+      if (!running && showResult && activeWinner !== null) {
+        const outNeurons = neurons.filter(n => n.layer === nL - 1);
+        const wn = outNeurons[activeWinner];
+        if (wn) {
+          p.noFill();
+          p.stroke(p.red(cAccent), p.green(cAccent), p.blue(cAccent), 200);
+          p.strokeWeight(2);
+          p.ellipse(wn.x, wn.y, (R + 7) * 2, (R + 7) * 2);
+        }
+      }
+
+      if (running) {
+        af++;
+        if (af >= totalF) {
+          running    = false;
+          showResult = activeWinner !== null;
+          p.noLoop();
+          hint.textContent = examples.length > 0 ? 'select an applicant above to run' : 'click to replay';
+          p.redraw();
+        }
+      }
+    };
+
+    let rt;
+    window.addEventListener('resize', () => {
+      clearTimeout(rt);
+      rt = setTimeout(() => {
+        const nw = wrap.offsetWidth;
+        if (nw === W) return;
+        W = nw;
+        build(W);
+        p.resizeCanvas(W, CH);
+        if (!running) p.redraw();
+      }, 150);
+    });
+  }, wrap);
+})();
+</script>

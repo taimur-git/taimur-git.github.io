@@ -5,6 +5,7 @@ interface Props {
 
 const { headings } = Astro.props;
 const filtered = headings.filter(h => h.depth <= 3);
+const minDepth = filtered.length ? Math.min(...filtered.map(h => h.depth)) : 1;
 ---
 
 {filtered.length > 2 && (
@@ -12,10 +13,36 @@ const filtered = headings.filter(h => h.depth <= 3);
     <p class="toc-heading mono">on this page</p>
     <ul>
       {filtered.map(h => (
-        <li style={`padding-left: ${(h.depth - 2) * 12}px`}>
+        <li data-depth={h.depth - minDepth}>
           <a href={`#${h.slug}`}>{h.text}</a>
         </li>
       ))}
     </ul>
   </nav>
 )}
+
+<style>
+  li[data-depth="0"] > a {
+    color: var(--color-text-muted);
+    font-size: var(--font-size-sm);
+    padding-left: 0;
+  }
+
+  li[data-depth="1"] > a {
+    color: var(--color-text-faint);
+    font-size: var(--font-size-xs);
+    padding-left: 0.75rem;
+  }
+
+  li[data-depth="2"] > a {
+    color: var(--color-text-faint);
+    font-size: var(--font-size-xs);
+    padding-left: 1.5rem;
+  }
+
+  li[data-depth="0"] > a:hover,
+  li[data-depth="1"] > a:hover,
+  li[data-depth="2"] > a:hover {
+    color: var(--color-accent);
+  }
+</style>

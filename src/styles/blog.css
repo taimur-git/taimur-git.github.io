@@ -145,6 +145,11 @@
   align-items: start;
 }
 
+.blog-layout > aside {
+  align-self: stretch;
+  position: relative;
+}
+
 .blog-content {
   max-width: var(--max-width-prose);
 }
@@ -183,6 +188,8 @@
   position: sticky;
   top: var(--space-8);
   font-size: var(--font-size-sm);
+  max-height: calc(100vh - var(--space-16));
+  overflow-y: auto;
 }
 
 .toc-heading {

@@ -5,10 +5,16 @@ import TagPill from '../../components/blog/TagPill.astro';
 import { getCollection } from 'astro:content';
 import '../../styles/blog.css';
 
-const posts = (await getCollection('blog', ({ data }) => !data.draft))
+const allPosts = await getCollection('blog', ({ data }) => !data.draft);
+const enPosts = allPosts
+  .filter(p => p.data.lang === 'en')
   .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
 
-const allTags = [...new Set(posts.flatMap(p => p.data.tags))].sort();
+const bnIds = new Set(
+  allPosts.filter(p => p.data.lang === 'bn').map(p => p.id)
+);
+
+const allTags = [...new Set(enPosts.flatMap(p => p.data.tags))].sort();
 ---
 
 <BaseLayout title="Writing">
@@ -20,7 +26,9 @@ const allTags = [...new Set(posts.flatMap(p => p.data.tags))].sort();
       </div>
     )}
     <div class="post-list">
-      {posts.map(post => <PostCard post={post} />)}
+      {enPosts.map(post => (
+        <PostCard post={post} hasBn={bnIds.has(`${post.id}-bn`)} />
+      ))}
     </div>
   </div>
 </BaseLayout>

@@ -3,9 +3,10 @@ import TagPill from './TagPill.astro';
 
 interface Props {
   post: any;
+  hasBn?: boolean;
 }
 
-const { post } = Astro.props;
+const { post, hasBn = false } = Astro.props;
 const formattedDate = post.data.date.toLocaleDateString('en-GB', {
   day: 'numeric', month: 'short', year: 'numeric'
 });
@@ -13,7 +14,10 @@ const formattedDate = post.data.date.toLocaleDateString('en-GB', {
 
 <article class="post-card">
   <a href={`/blog/${post.id}`}>
-    <span class="mono post-date">{formattedDate}</span>
+    <div class="post-card-top">
+      <span class="mono post-date">{formattedDate}</span>
+      {hasBn && <span class="bn-badge">বাং</span>}
+    </div>
     <h2 class="post-title">{post.data.title}</h2>
     <p class="post-excerpt">{post.data.excerpt}</p>
     <div class="post-tags">

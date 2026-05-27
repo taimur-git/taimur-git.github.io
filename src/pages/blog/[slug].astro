@@ -3,23 +3,38 @@ import BlogLayout from '../../layouts/BlogLayout.astro';
 import { getCollection, render } from 'astro:content';
 
 export async function getStaticPaths() {
-  const posts = await getCollection('blog');
-  return posts.map(post => ({
-    params: { slug: post.id },
-    props: { post },
-  }));
+  const allPosts = await getCollection('blog', ({ data }) => !data.draft);
+  const enPosts = allPosts.filter(p => p.data.lang === 'en');
+
+  return enPosts.map(post => {
+    const bnPost = allPosts.find(p => p.id === `${post.id}-bn` && p.data.lang === 'bn') ?? null;
+    return {
+      params: { slug: post.id },
+      props: { post, bnPost },
+    };
+  });
 }
 
-const { post } = Astro.props;
-const { Content, headings } = await render(post);
+const { post, bnPost } = Astro.props;
+const { Content: EnContent, headings } = await render(post);
+
+let BnContent: any = null;
+if (bnPost) {
+  const bnRendered = await render(bnPost);
+  BnContent = bnRendered.Content;
+}
 ---
 
 <BlogLayout
   title={post.data.title}
+  bnTitle={bnPost?.data.title}
   date={post.data.date}
   tags={post.data.tags}
   headings={headings}
-  body={post.body}
+  body={post.body ?? ''}
+  bnBody={bnPost?.body ?? ''}
+  hasBn={!!bnPost}
 >
-  <Content />
+  <EnContent slot="en" />
+  {BnContent && <BnContent slot="bn" />}
 </BlogLayout>

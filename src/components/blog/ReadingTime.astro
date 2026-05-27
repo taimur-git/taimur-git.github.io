@@ -4,8 +4,7 @@ interface Props {
 }
 
 const { body } = Astro.props;
-const words = body.trim().split(/\s+/).length;
-const mins = Math.max(1, Math.round(words / 200));
+const mins = Math.max(1, Math.round((body.trim().length + 240) / 1440));
 ---
 
 <span class="mono reading-time">{mins} min read</span>

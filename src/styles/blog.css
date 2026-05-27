@@ -1,3 +1,69 @@
+/* ── Bengali font ── */
+.bn-font {
+  font-family: 'Noto Sans Bengali', sans-serif;
+  line-height: 1.9;
+}
+
+/* ── Language selector ── */
+.blog-top-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-6);
+}
+
+.lang-selector {
+  display: flex;
+  gap: var(--space-1);
+}
+
+.lang-pill {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  padding: 2px var(--space-3);
+  border-radius: var(--radius-full);
+  border: 0.5px solid var(--color-border-strong);
+  color: var(--color-text-muted);
+  background: transparent;
+  cursor: pointer;
+  transition: all var(--transition-base);
+  line-height: 1.6;
+}
+
+.lang-pill:hover:not(:disabled) {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+.lang-pill.active {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: #fff;
+}
+
+.lang-pill:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+/* ── BN badge on post card ── */
+.post-card-top {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-1);
+}
+
+.bn-badge {
+  font-family: 'Noto Sans Bengali', sans-serif;
+  font-size: 0.65rem;
+  padding: 1px 6px;
+  border-radius: var(--radius-full);
+  border: 0.5px solid var(--color-accent);
+  color: var(--color-accent);
+  line-height: 1.6;
+}
+
 /* ── Post list ── */
 .post-list {
   display: flex;
@@ -87,7 +153,6 @@
   font-family: var(--font-mono);
   font-size: var(--font-size-xs);
   color: var(--color-text-muted);
-  margin-bottom: var(--space-6);
 }
 
 .blog-back:hover {

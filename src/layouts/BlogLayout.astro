@@ -7,13 +7,16 @@ import '../styles/blog.css';
 
 interface Props {
   title: string;
+  bnTitle?: string;
   date: Date;
   tags: string[];
   headings: Array<{ depth: number; slug: string; text: string }>;
   body?: string;
+  bnBody?: string;
+  hasBn?: boolean;
 }
 
-const { title, date, tags, headings, body = '' } = Astro.props;
+const { title, bnTitle, date, tags, headings, body = '', bnBody = '', hasBn = false } = Astro.props;
 const formattedDate = date.toLocaleDateString('en-GB', {
   day: 'numeric', month: 'long', year: 'numeric'
 });
@@ -22,17 +25,72 @@ const formattedDate = date.toLocaleDateString('en-GB', {
 <BaseLayout title={title}>
   <div class="blog-layout">
     <article class="blog-content">
-      <a href="/blog" class="blog-back">← back to writing</a>
-      <h1 class="blog-post-title">{title}</h1>
+      <div class="blog-top-row">
+        <a href="/blog" class="blog-back">← back to writing</a>
+        <div class="lang-selector">
+          <button class="lang-pill" data-lang="en">EN</button>
+          <button class="lang-pill" data-lang="bn" disabled={!hasBn}>বাংলা</button>
+        </div>
+      </div>
+
+      <h1 class="blog-post-title" id="title-en">{title}</h1>
+      {hasBn && bnTitle && <h1 class="blog-post-title bn-font" id="title-bn" style="display:none">{bnTitle}</h1>}
+
       <div class="blog-post-meta">
         <span class="mono post-date">{formattedDate}</span>
-        {body && <ReadingTime body={body} />}
+        {body && <span id="reading-time-en"><ReadingTime body={body} /></span>}
+        {hasBn && bnBody && <span id="reading-time-bn" style="display:none"><ReadingTime body={bnBody} /></span>}
         {tags.map(tag => <TagPill tag={tag} />)}
       </div>
-      <slot />
+
+      <div id="content-en">
+        <slot name="en" />
+      </div>
+      {hasBn && (
+        <div id="content-bn" class="bn-font" style="display:none">
+          <slot name="bn" />
+        </div>
+      )}
     </article>
     <aside>
       <TOC headings={headings} />
     </aside>
   </div>
+  <script is:inline>
+  (function () {
+    var stored = localStorage.getItem('blog-lang') || 'en';
+    var hasBn = document.getElementById('content-bn') !== null;
+
+    function applyLang(l) {
+      var lang = (l === 'bn' && !hasBn) ? 'en' : l;
+
+      var contentEn = document.getElementById('content-en');
+      var contentBn = document.getElementById('content-bn');
+      var titleEn = document.getElementById('title-en');
+      var titleBn = document.getElementById('title-bn');
+      var timeEn = document.getElementById('reading-time-en');
+      var timeBn = document.getElementById('reading-time-bn');
+
+      if (contentEn) contentEn.style.display = lang === 'en' ? '' : 'none';
+      if (contentBn) contentBn.style.display = lang === 'bn' ? '' : 'none';
+      if (titleEn) titleEn.style.display = lang === 'en' ? '' : 'none';
+      if (titleBn) titleBn.style.display = lang === 'bn' ? '' : 'none';
+      if (timeEn) timeEn.style.display = lang === 'en' ? '' : 'none';
+      if (timeBn) timeBn.style.display = lang === 'bn' ? '' : 'none';
+
+      document.documentElement.lang = lang === 'bn' ? 'bn' : 'en';
+      localStorage.setItem('blog-lang', lang);
+
+      document.querySelectorAll('.lang-pill').forEach(function (el) {
+        el.classList.toggle('active', el.dataset.lang === lang);
+      });
+    }
+
+    applyLang(stored);
+
+    document.querySelectorAll('.lang-pill:not([disabled])').forEach(function (el) {
+      el.addEventListener('click', function () { applyLang(el.dataset.lang); });
+    });
+  })();
+  </script>
 </BaseLayout>

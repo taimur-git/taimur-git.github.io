@@ -21,14 +21,49 @@ const allTags = [...new Set(enPosts.flatMap(p => p.data.tags))].sort();
   <div class="site-container" style="padding-top: var(--space-12);">
     <h1 style="font-size: var(--font-size-3xl); font-weight: var(--font-weight-medium); line-height: var(--line-height-tight);">writing</h1>
     {allTags.length > 0 && (
-      <div class="tag-filter">
+      <div class="tag-filter" id="tag-filter">
         {allTags.map(tag => <TagPill tag={tag} />)}
       </div>
     )}
-    <div class="post-list">
+    <div class="post-list" id="post-list">
       {enPosts.map(post => (
         <PostCard post={post} hasBn={bnIds.has(`${post.id}-bn`)} />
       ))}
     </div>
   </div>
+  <script is:inline>
+    (function () {
+      var active = null;
+
+      function getTag() {
+        return new URLSearchParams(window.location.search).get('tag');
+      }
+
+      function applyFilter(tag) {
+        active = tag;
+
+        document.querySelectorAll('#post-list .post-card').forEach(function (card) {
+          var tags = (card.dataset.tags || '').split(',');
+          card.style.display = (!tag || tags.includes(tag)) ? '' : 'none';
+        });
+
+        document.querySelectorAll('#tag-filter .tag-pill').forEach(function (pill) {
+          pill.classList.toggle('active', pill.textContent.trim() === tag);
+        });
+      }
+
+      applyFilter(getTag());
+
+      document.querySelectorAll('#tag-filter .tag-pill').forEach(function (pill) {
+        pill.addEventListener('click', function (e) {
+          e.preventDefault();
+          var tag = pill.textContent.trim();
+          var next = active === tag ? null : tag;
+          var url = next ? '?tag=' + encodeURIComponent(next) : window.location.pathname;
+          history.pushState({}, '', url);
+          applyFilter(next);
+        });
+      });
+    })();
+  </script>
 </BaseLayout>

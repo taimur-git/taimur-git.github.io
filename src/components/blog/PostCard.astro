@@ -12,7 +12,7 @@ const formattedDate = post.data.date.toLocaleDateString('en-GB', {
 });
 ---
 
-<article class="post-card">
+<article class="post-card" data-tags={post.data.tags.join(',')}>
   <a href={`/blog/${post.id}`}>
     <div class="post-card-top">
       <span class="mono post-date">{formattedDate}</span>

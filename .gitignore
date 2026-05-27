@@ -27,3 +27,4 @@ pnpm-debug.log*
 context/
 CLAUDE.md 
 .claude/
+public/libs/manim/examples

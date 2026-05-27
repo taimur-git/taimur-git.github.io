@@ -119,7 +119,8 @@
   transition: all var(--transition-base);
 }
 
-.tag-pill:hover {
+.tag-pill:hover,
+.tag-pill.active {
   border-color: var(--color-accent);
   color: var(--color-accent);
   opacity: 1;

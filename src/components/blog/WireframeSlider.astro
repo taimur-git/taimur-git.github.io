@@ -1,0 +1,386 @@
+---
+interface Props {
+  src: string;
+  height?: string;
+  angle?: 'front' | 'top' | 'side' | 'isometric' | 'three-quarter';
+  zoom?: boolean;
+  rotate?: boolean;
+  pan?: boolean;
+  autoRotate?: boolean;
+  autoSpeed?: number;
+  flat?: boolean;
+  background?: string;
+  border?: boolean;
+  initialSplit?: number;
+  wireColor?: string;
+  wireMode?: 'edges' | 'tris';
+  edgeThreshold?: number;
+}
+
+const {
+  src,
+  height       = '400px',
+  angle        = 'three-quarter',
+  zoom         = true,
+  rotate       = true,
+  pan          = false,
+  autoRotate   = false,
+  autoSpeed    = 1,
+  flat         = true,
+  background   = 'transparent',
+  border       = true,
+  initialSplit = 0.5,
+  wireColor    = '#ffffff',
+  wireMode     = 'edges',
+  edgeThreshold = 15,
+} = Astro.props;
+
+const id = `ws-${Math.random().toString(36).slice(2, 8)}`;
+---
+
+<div
+  class="ws-wrap"
+  id={id}
+  style={[
+    `height:${height}`,
+    !border             ? 'border-color:transparent' : '',
+    background === 'transparent' ? 'background:transparent' : `background:${background}`,
+  ].filter(Boolean).join(';')}
+  data-src={src}
+  data-angle={angle}
+  data-zoom={String(zoom)}
+  data-rotate={String(rotate)}
+  data-pan={String(pan)}
+  data-auto-rotate={String(autoRotate)}
+  data-auto-speed={String(autoSpeed)}
+  data-flat={String(flat)}
+  data-background={background}
+  data-initial-split={String(initialSplit)}
+  data-wire-color={wireColor}
+  data-wire-mode={wireMode}
+  data-edge-threshold={String(edgeThreshold)}
+>
+  <div class="ws-skeleton"></div>
+  <canvas class="ws-canvas"></canvas>
+  <div class="ws-divider" style={`left:${initialSplit * 100}%`} aria-hidden="true"></div>
+</div>
+
+<style>
+  .ws-wrap {
+    position: relative;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    border: 0.5px solid var(--color-border);
+    margin: var(--space-8) 0;
+  }
+
+  .ws-skeleton {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      90deg,
+      var(--color-surface) 25%,
+      var(--color-border) 50%,
+      var(--color-surface) 75%
+    );
+    background-size: 200% 100%;
+    animation: ws-shimmer 1.4s infinite;
+  }
+
+  .ws-skeleton.ws-error {
+    background: none;
+    animation: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+    font-family: var(--font-mono);
+  }
+
+  @keyframes ws-shimmer {
+    0%   { background-position:  200% 0; }
+    100% { background-position: -200% 0; }
+  }
+
+  .ws-canvas {
+    display: none;
+    position: absolute;
+    inset: 0;
+  }
+
+  .ws-divider {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: rgba(255, 255, 255, 0.7);
+    transform: translateX(-0.5px);
+    cursor: ew-resize;
+    z-index: 2;
+    display: none; /* shown after load */
+  }
+
+  /* widen hit area without widening the visual line */
+  .ws-divider::before {
+    content: '';
+    position: absolute;
+    inset: 0 -10px;
+  }
+</style>
+
+<script>
+  import * as THREE from 'three';
+  import { GLTFLoader }    from 'three/examples/jsm/loaders/GLTFLoader.js';
+  import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+
+  const ANGLES: Record<string, [number, number, number]> = {
+    'front':           [0,    0.05, 1   ],
+    'side':            [1,    0.05, 0   ],
+    'top':             [0,    1,    0.01],
+    'isometric':       [1,    1,    1   ],
+    'three-quarter':   [0.6,  0.5,  1   ],
+  };
+
+  function bool(v: string | undefined, def = true) {
+    return v === undefined ? def : v !== 'false';
+  }
+
+  function initSlider(el: HTMLElement) {
+    const d = el.dataset;
+    const cfg = {
+      src:           d.src ?? '',
+      angle:         d.angle ?? 'three-quarter',
+      zoom:          bool(d.zoom),
+      rotate:        bool(d.rotate),
+      pan:           d.pan === 'true',
+      autoRotate:    d.autoRotate === 'true',
+      autoSpeed:     parseFloat(d.autoSpeed ?? '1'),
+      flat:          bool(d.flat),
+      background:    d.background ?? 'transparent',
+      initialSplit:  parseFloat(d.initialSplit ?? '0.5'),
+      wireColor:     d.wireColor ?? '#ffffff',
+      wireMode:      d.wireMode as 'edges' | 'tris' ?? 'edges',
+      edgeThreshold: parseFloat(d.edgeThreshold ?? '15'),
+    };
+
+    const skeleton = el.querySelector<HTMLElement>('.ws-skeleton')!;
+    const canvas   = el.querySelector<HTMLCanvasElement>('.ws-canvas')!;
+    const divider  = el.querySelector<HTMLElement>('.ws-divider')!;
+
+    const w = el.offsetWidth;
+    const h = el.offsetHeight;
+
+    /* ── renderer (always alpha:true — left side may be transparent) ── */
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+    renderer.setSize(w, h);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+    renderer.toneMapping      = THREE.NoToneMapping;
+    renderer.autoClear        = false; // manual clear per scissor pass
+
+    /* ── scene & camera ── */
+    const scene = new THREE.Scene();
+    const cam   = new THREE.PerspectiveCamera(45, w / h, 0.01, 1000);
+    cam.position.set(0, 0, 5);
+
+    /* lights (only matter when flat=false) */
+    if (!cfg.flat) {
+      scene.add(new THREE.HemisphereLight(0xffffff, 0x444444, 0.8));
+      const dir = new THREE.DirectionalLight(0xffffff, 1.0);
+      dir.position.set(5, 10, 7);
+      scene.add(dir);
+    }
+
+    /* ── controls ── */
+    const controls = new OrbitControls(cam, canvas);
+    controls.enableZoom    = cfg.zoom;
+    controls.enableRotate  = cfg.rotate;
+    controls.enablePan     = cfg.pan;
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.08;
+
+    if (cfg.autoRotate) {
+      controls.autoRotate      = true;
+      controls.autoRotateSpeed = cfg.autoSpeed * 2;
+      controls.addEventListener('start', () => { controls.autoRotate = false; });
+      controls.addEventListener('end',   () => {
+        setTimeout(() => { controls.autoRotate = true; }, 2000);
+      });
+    }
+
+    /* ── slider state ── */
+    let splitRatio = cfg.initialSplit;
+
+    function updateDivider() {
+      divider.style.left = `${splitRatio * 100}%`;
+    }
+
+    divider.addEventListener('pointerdown', (e) => {
+      e.preventDefault();
+      divider.setPointerCapture(e.pointerId);
+
+      function onMove(e: PointerEvent) {
+        const rect = el.getBoundingClientRect();
+        splitRatio = Math.max(0.02, Math.min(0.98, (e.clientX - rect.left) / rect.width));
+        updateDivider();
+      }
+      function onUp(e: PointerEvent) {
+        divider.releasePointerCapture(e.pointerId);
+        divider.removeEventListener('pointermove', onMove);
+      }
+      divider.addEventListener('pointermove', onMove);
+      divider.addEventListener('pointerup',   onUp, { once: true });
+      divider.addEventListener('pointercancel', onUp, { once: true });
+    });
+
+    /* ── load GLB ── */
+    new GLTFLoader().load(
+      cfg.src,
+      (gltf) => {
+        /* fit camera */
+        const box    = new THREE.Box3().setFromObject(gltf.scene);
+        const center = box.getCenter(new THREE.Vector3());
+        const sphere = new THREE.Sphere();
+        box.getBoundingSphere(sphere);
+        const r    = sphere.radius;
+        const dist = r * 2.8;
+
+        const [dx, dy, dz] = ANGLES[cfg.angle] ?? ANGLES['three-quarter'];
+        cam.position.copy(center).addScaledVector(
+          new THREE.Vector3(dx, dy, dz).normalize(),
+          dist,
+        );
+        cam.near = dist * 0.01;
+        cam.far  = dist * 10;
+        cam.updateProjectionMatrix();
+        controls.target.copy(center);
+        controls.update();
+
+        /* ── solid model (flat BasicMaterial swap) ── */
+        const modelRoot = gltf.scene;
+        if (cfg.flat) {
+          modelRoot.traverse((node) => {
+            if (!(node as THREE.Mesh).isMesh) return;
+            const mesh = node as THREE.Mesh;
+            const oldMats = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
+            mesh.material = (Array.isArray(mesh.material)
+              ? oldMats.map(toBasic)
+              : toBasic(oldMats[0])) as any;
+            oldMats.forEach(m => m !== mesh.material && m.dispose());
+          });
+        }
+        scene.add(modelRoot);
+
+        /* ── wireframe group (all in world space) ── */
+        modelRoot.updateWorldMatrix(true, true);
+        const wireGroup = new THREE.Group();
+
+        modelRoot.traverse((node) => {
+          if (!(node as THREE.Mesh).isMesh) return;
+          const mesh = node as THREE.Mesh;
+          if (!mesh.geometry.getAttribute('position')) return;
+
+          const worldGeo = mesh.geometry.clone();
+          worldGeo.applyMatrix4(mesh.matrixWorld);
+
+          const lineGeo = cfg.wireMode === 'tris'
+            ? new THREE.WireframeGeometry(worldGeo)
+            : new THREE.EdgesGeometry(worldGeo, cfg.edgeThreshold);
+          worldGeo.dispose();
+
+          wireGroup.add(new THREE.LineSegments(
+            lineGeo,
+            new THREE.LineBasicMaterial({ color: new THREE.Color(cfg.wireColor) }),
+          ));
+        });
+        scene.add(wireGroup);
+
+        /* show canvas + divider */
+        skeleton.style.display = 'none';
+        canvas.style.display   = 'block';
+        divider.style.display  = 'block';
+
+        /* ── render loop ── */
+        (function loop() {
+          requestAnimationFrame(loop);
+          controls.update();
+
+          const pw   = renderer.domElement.width;
+          const ph   = renderer.domElement.height;
+          const split = Math.round(splitRatio * pw);
+
+          renderer.setScissorTest(true);
+
+          /* left: solid model */
+          modelRoot.visible  = true;
+          wireGroup.visible  = false;
+          renderer.setScissor(0, 0, split, ph);
+          renderer.setViewport(0, 0, pw, ph);
+          if (cfg.background === 'transparent') {
+            renderer.setClearColor(0x000000, 0);
+          } else {
+            renderer.setClearColor(new THREE.Color(cfg.background), 1);
+          }
+          renderer.clear();
+          renderer.render(scene, cam);
+
+          /* right: wireframe on black */
+          modelRoot.visible  = false;
+          wireGroup.visible  = true;
+          renderer.setScissor(split, 0, pw - split, ph);
+          renderer.setClearColor(0x000000, 1);
+          renderer.clear();
+          renderer.render(scene, cam);
+
+          renderer.setScissorTest(false);
+        })();
+
+        /* resize */
+        new ResizeObserver(() => {
+          const nw = el.offsetWidth;
+          const nh = el.offsetHeight;
+          renderer.setSize(nw, nh);
+          cam.aspect = nw / nh;
+          cam.updateProjectionMatrix();
+        }).observe(el);
+      },
+
+      undefined,
+
+      (err) => {
+        console.error('[WireframeSlider] load error:', err);
+        skeleton.textContent = '⚠ could not load model';
+        skeleton.classList.add('ws-error');
+      },
+    );
+  }
+
+  /* helper: MeshStandardMaterial → MeshBasicMaterial */
+  function toBasic(m: THREE.Material): THREE.MeshBasicMaterial {
+    const s = m as THREE.MeshStandardMaterial;
+    return new THREE.MeshBasicMaterial({
+      color:        s.color?.clone() ?? new THREE.Color(1, 1, 1),
+      map:          s.map      ?? null,
+      alphaMap:     s.alphaMap ?? null,
+      alphaTest:    s.alphaTest,
+      vertexColors: s.vertexColors,
+      transparent:  s.transparent,
+      opacity:      s.opacity,
+      side:         s.side,
+      depthWrite:   s.depthWrite,
+    });
+  }
+
+  /* lazy init */
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((e) => {
+      if (e.isIntersecting) {
+        initSlider(e.target as HTMLElement);
+        io.unobserve(e.target);
+      }
+    });
+  }, { rootMargin: '200px' });
+
+  document.querySelectorAll<HTMLElement>('.ws-wrap').forEach((el) => io.observe(el));
+</script>

@@ -1,0 +1,88 @@
+---
+interface Props {
+  labels: string[];
+}
+const { labels } = Astro.props;
+---
+
+<ol class="steps">
+  {labels.map((label, i) => (
+    <li class="step">
+      <span class="step-num" aria-hidden="true">{i + 1}</span>
+      <div class="step-body">
+        <p class="step-label">{label}</p>
+        <div class="step-content">
+          <slot name={`step-${i}`} />
+        </div>
+      </div>
+    </li>
+  ))}
+</ol>
+
+<style>
+  .steps {
+    list-style: none;
+    padding: 0;
+    margin: var(--space-8) 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .step {
+    display: flex;
+    gap: var(--space-4);
+    position: relative;
+  }
+
+  /* vertical spine between steps */
+  .step:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    left: 15px;
+    top: 32px;
+    bottom: 0;
+    width: 1px;
+    background: var(--color-border-strong);
+  }
+
+  .step-num {
+    flex-shrink: 0;
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-full);
+    background: var(--color-accent);
+    color: #fff;
+    font-family: var(--font-mono);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    z-index: 1;
+  }
+
+  .step-body {
+    flex: 1;
+    min-width: 0;
+    padding-bottom: var(--space-8);
+  }
+
+  .step:last-child .step-body { padding-bottom: 0; }
+
+  .step-label {
+    font-weight: var(--font-weight-medium);
+    font-size: var(--font-size-base);
+    margin: 4px 0 var(--space-2);
+    line-height: var(--line-height-tight);
+  }
+
+  .step-content {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+    line-height: var(--line-height-body);
+  }
+
+  .step-content :global(p:last-child) { margin-bottom: 0; }
+</style>

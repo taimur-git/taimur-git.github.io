@@ -1,0 +1,152 @@
+---
+interface RecipeStep {
+  label?: string;
+  body: string;
+  duration?: string;
+  optional?: boolean;
+  tip?: string;
+}
+interface Props {
+  steps: RecipeStep[];
+  title?: string;
+}
+const { steps, title = 'Method' } = Astro.props;
+---
+
+<div class="recipe-steps">
+  <p class="recipe-steps-heading">{title}</p>
+  <ol class="recipe-step-list">
+    {steps.map((step, i) => (
+      <li class={`recipe-step${step.optional ? ' recipe-step-optional' : ''}`}>
+        <span class="recipe-step-num" aria-hidden="true">{i + 1}</span>
+        <div class="recipe-step-body">
+          <div class="recipe-step-header">
+            {step.label && <span class="recipe-step-label">{step.label}</span>}
+            {step.duration && (
+              <span class="recipe-step-duration">◷ {step.duration}</span>
+            )}
+            {step.optional && <span class="recipe-step-tag">optional</span>}
+          </div>
+          <p class="recipe-step-text">{step.body}</p>
+          {step.tip && (
+            <p class="recipe-step-tip">
+              <span aria-hidden="true">✦ </span>{step.tip}
+            </p>
+          )}
+        </div>
+      </li>
+    ))}
+  </ol>
+</div>
+
+<style>
+  .recipe-steps {
+    margin: var(--space-8) 0;
+  }
+
+  .recipe-steps-heading {
+    font-family: var(--font-mono);
+    font-size: var(--font-size-xs);
+    color: var(--color-text-faint);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin: 0 0 var(--space-4);
+  }
+
+  .recipe-step-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .recipe-step {
+    display: flex;
+    gap: var(--space-4);
+    position: relative;
+  }
+
+  .recipe-step:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    left: 15px;
+    top: 32px;
+    bottom: 0;
+    width: 1px;
+    background: var(--color-border-strong);
+  }
+
+  .recipe-step-optional { opacity: 0.6; }
+
+  .recipe-step-num {
+    flex-shrink: 0;
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-full);
+    background: var(--color-surface);
+    border: 0.5px solid var(--color-border-strong);
+    color: var(--color-text-muted);
+    font-family: var(--font-mono);
+    font-size: var(--font-size-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    z-index: 1;
+  }
+
+  .recipe-step-body {
+    flex: 1;
+    min-width: 0;
+    padding-bottom: var(--space-6);
+  }
+
+  .recipe-step:last-child .recipe-step-body { padding-bottom: 0; }
+
+  .recipe-step-header {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin: 4px 0 var(--space-2);
+    min-height: 24px;
+  }
+
+  .recipe-step-label {
+    font-weight: var(--font-weight-medium);
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-tight);
+  }
+
+  .recipe-step-duration {
+    font-family: var(--font-mono);
+    font-size: var(--font-size-xs);
+    color: var(--color-text-faint);
+  }
+
+  .recipe-step-tag {
+    font-family: var(--font-mono);
+    font-size: var(--font-size-xs);
+    color: var(--color-text-faint);
+    border: 0.5px solid var(--color-border-strong);
+    padding: 1px 6px;
+    border-radius: var(--radius-full);
+  }
+
+  .recipe-step-text {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+    line-height: var(--line-height-body);
+    margin: 0;
+  }
+
+  .recipe-step-tip {
+    margin-top: var(--space-2);
+    font-size: var(--font-size-xs);
+    color: var(--color-text-faint);
+    font-style: italic;
+    line-height: var(--line-height-body);
+  }
+</style>

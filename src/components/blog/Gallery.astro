@@ -1,0 +1,207 @@
+---
+interface GalleryImage {
+  src: string;
+  alt: string;
+  caption?: string;
+}
+interface Props {
+  images: GalleryImage[];
+  columns?: 2 | 3 | 4;
+}
+const { images, columns = 3 } = Astro.props;
+const id = `gallery-${Math.random().toString(36).slice(2, 8)}`;
+---
+
+<div class={`gallery gallery-cols-${columns}`} id={id}>
+  {images.map((img, i) => (
+    <figure class="gallery-item">
+      <img
+        src={img.src}
+        alt={img.alt}
+        class="gallery-img"
+        data-gallery={id}
+        data-index={String(i)}
+        loading="lazy"
+      />
+      {img.caption && <figcaption class="gallery-caption">{img.caption}</figcaption>}
+    </figure>
+  ))}
+</div>
+
+<div class="gallery-lightbox" id={`${id}-lb`} role="dialog" aria-modal="true">
+  <button class="gallery-close" aria-label="Close">✕</button>
+  <button class="gallery-prev" aria-label="Previous">‹</button>
+  <button class="gallery-next" aria-label="Next">›</button>
+  <img src="" alt="" class="gallery-lb-img" />
+</div>
+
+<style>
+  .gallery {
+    display: grid;
+    gap: var(--space-3);
+    margin: var(--space-8) 0;
+  }
+
+  .gallery-cols-2 { grid-template-columns: repeat(2, 1fr); }
+  .gallery-cols-3 { grid-template-columns: repeat(3, 1fr); }
+  .gallery-cols-4 { grid-template-columns: repeat(4, 1fr); }
+
+  @media (max-width: 640px) {
+    .gallery-cols-3,
+    .gallery-cols-4 { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  @media (max-width: 400px) {
+    .gallery { grid-template-columns: 1fr; }
+  }
+
+  .gallery-item { margin: 0; }
+
+  .gallery-img {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border-radius: var(--radius-md);
+    border: 0.5px solid var(--color-border);
+    cursor: zoom-in;
+    transition: opacity var(--transition-base);
+    display: block;
+  }
+
+  .gallery-img:hover { opacity: 0.85; }
+
+  .gallery-caption {
+    margin-top: var(--space-1);
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+    font-style: italic;
+    text-align: center;
+  }
+
+  .gallery-lightbox {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    background: rgba(0, 0, 0, 0.88);
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-8);
+  }
+
+  .gallery-lightbox.open { display: flex; }
+
+  .gallery-lb-img {
+    max-width: 100%;
+    max-height: 90vh;
+    border-radius: var(--radius-md);
+    object-fit: contain;
+    cursor: default;
+  }
+
+  .gallery-close,
+  .gallery-prev,
+  .gallery-next {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.1);
+    border: 0.5px solid rgba(255, 255, 255, 0.2);
+    color: #fff;
+    border-radius: var(--radius-full);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background var(--transition-base);
+  }
+
+  .gallery-close:hover,
+  .gallery-prev:hover,
+  .gallery-next:hover { background: rgba(255, 255, 255, 0.2); }
+
+  .gallery-close {
+    top: var(--space-4);
+    right: var(--space-4);
+    width: 32px;
+    height: 32px;
+    font-size: var(--font-size-sm);
+  }
+
+  .gallery-prev,
+  .gallery-next {
+    top: 50%;
+    transform: translateY(-50%);
+    width: 44px;
+    height: 44px;
+    font-size: 1.75rem;
+    line-height: 1;
+  }
+
+  .gallery-prev { left: var(--space-4); }
+  .gallery-next { right: var(--space-4); }
+</style>
+
+<script>
+  function initGallery(galleryId: string) {
+    const lb = document.getElementById(`${galleryId}-lb`) as HTMLElement & {
+      _imgs?: HTMLImageElement[];
+      _index?: number;
+    };
+    if (!lb || lb.dataset.init) return;
+    lb.dataset.init = '1';
+
+    const imgs = Array.from(
+      document.querySelectorAll<HTMLImageElement>(`[data-gallery="${galleryId}"]`)
+    );
+
+    imgs.forEach((img) => {
+      img.addEventListener('click', () => {
+        lb._imgs = imgs;
+        lb._index = parseInt(img.dataset.index!, 10);
+        const lbImg = lb.querySelector('.gallery-lb-img') as HTMLImageElement;
+        lbImg.src = img.src;
+        lbImg.alt = img.alt;
+        lb.classList.add('open');
+      });
+    });
+
+    lb.addEventListener('click', (e) => {
+      const t = e.target as HTMLElement;
+      if (t === lb || t.classList.contains('gallery-close')) {
+        lb.classList.remove('open');
+      }
+    });
+
+    lb.querySelector('.gallery-prev')!.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (!lb._imgs) return;
+      lb._index = ((lb._index! - 1) + lb._imgs.length) % lb._imgs.length;
+      const lbImg = lb.querySelector('.gallery-lb-img') as HTMLImageElement;
+      lbImg.src = lb._imgs[lb._index].src;
+      lbImg.alt = lb._imgs[lb._index].alt;
+    });
+
+    lb.querySelector('.gallery-next')!.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (!lb._imgs) return;
+      lb._index = (lb._index! + 1) % lb._imgs.length;
+      const lbImg = lb.querySelector('.gallery-lb-img') as HTMLImageElement;
+      lbImg.src = lb._imgs[lb._index].src;
+      lbImg.alt = lb._imgs[lb._index].alt;
+    });
+  }
+
+  document.querySelectorAll<HTMLElement>('[data-gallery]').forEach((img) => {
+    initGallery(img.dataset.gallery!);
+  });
+
+  document.addEventListener('keydown', (e) => {
+    const open = document.querySelector('.gallery-lightbox.open') as HTMLElement & {
+      _imgs?: HTMLImageElement[];
+      _index?: number;
+    };
+    if (!open) return;
+    if (e.key === 'Escape') open.classList.remove('open');
+    if (e.key === 'ArrowLeft') (open.querySelector('.gallery-prev') as HTMLElement).click();
+    if (e.key === 'ArrowRight') (open.querySelector('.gallery-next') as HTMLElement).click();
+  });
+</script>

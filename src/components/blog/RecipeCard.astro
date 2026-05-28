@@ -1,0 +1,86 @@
+---
+interface Props {
+  servings?: string;
+  prepTime?: string;
+  cookTime?: string;
+  difficulty?: 'easy' | 'medium' | 'hard';
+  totalTime?: string;
+}
+const { servings, prepTime, cookTime, difficulty, totalTime } = Astro.props;
+
+const difficultyLabel = { easy: 'Easy', medium: 'Medium', hard: 'Hard' };
+
+const stats = [
+  servings  && { icon: '◎', label: 'Servings',   value: servings,                cls: '' },
+  prepTime  && { icon: '◷', label: 'Prep',        value: prepTime,               cls: '' },
+  cookTime  && { icon: '◷', label: 'Cook',        value: cookTime,               cls: '' },
+  totalTime && { icon: '◷', label: 'Total',       value: totalTime,              cls: '' },
+  difficulty && { icon: '◈', label: 'Difficulty', value: difficultyLabel[difficulty], cls: `diff-${difficulty}` },
+].filter(Boolean) as { icon: string; label: string; value: string; cls: string }[];
+---
+
+<div class="recipe-card" style={`--stat-count: ${stats.length}`}>
+  {stats.map((s) => (
+    <div class="recipe-stat">
+      <span class={`recipe-stat-value${s.cls ? ` ${s.cls}` : ''}`}>{s.value}</span>
+      <span class="recipe-stat-label">{s.icon} {s.label}</span>
+    </div>
+  ))}
+</div>
+
+<style>
+  .recipe-card {
+    display: grid;
+    grid-template-columns: repeat(var(--stat-count, 4), 1fr);
+    border: 0.5px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface);
+    margin: var(--space-6) 0;
+    overflow: hidden;
+  }
+
+  .recipe-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-1);
+    padding: var(--space-4) var(--space-2);
+    text-align: center;
+    border-right: 0.5px solid var(--color-border);
+  }
+
+  .recipe-stat:last-child { border-right: none; }
+
+  .recipe-stat-value {
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text);
+    line-height: 1.2;
+  }
+
+  .recipe-stat-label {
+    font-family: var(--font-mono);
+    font-size: var(--font-size-xs);
+    color: var(--color-text-faint);
+    white-space: nowrap;
+  }
+
+  .diff-easy   { color: var(--color-success); }
+  .diff-medium { color: var(--color-warning); }
+  .diff-hard   { color: var(--color-danger); }
+
+  @media (max-width: 480px) {
+    .recipe-card {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .recipe-stat {
+      border-bottom: 0.5px solid var(--color-border);
+      border-right: none;
+    }
+    /* right column: restore right border */
+    .recipe-stat:nth-child(odd) { border-right: 0.5px solid var(--color-border); }
+    /* last row: no bottom border */
+    .recipe-stat:nth-last-child(-n+2):not(:nth-child(odd) ~ *) { border-bottom: none; }
+  }
+</style>

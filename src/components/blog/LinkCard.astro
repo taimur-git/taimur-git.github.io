@@ -1,0 +1,75 @@
+---
+interface Props {
+  href: string;
+  title: string;
+  description?: string;
+  domain?: string;
+}
+const { href, title, description, domain } = Astro.props;
+let displayDomain = domain;
+if (!displayDomain) {
+  try { displayDomain = new URL(href).hostname; } catch { displayDomain = href; }
+}
+---
+
+<a href={href} class="link-card" target="_blank" rel="noopener noreferrer">
+  <div class="link-card-body">
+    <p class="link-card-title">{title}</p>
+    {description && <p class="link-card-desc">{description}</p>}
+  </div>
+  <span class="link-card-domain">{displayDomain} ↗</span>
+</a>
+
+<style>
+  .link-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    padding: var(--space-4) var(--space-6);
+    border: 0.5px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    text-decoration: none;
+    color: inherit;
+    margin: var(--space-6) 0;
+    transition: border-color var(--transition-base), background var(--transition-base);
+    background: var(--color-surface-raised);
+  }
+
+  .link-card:hover {
+    border-color: var(--color-accent);
+    background: var(--color-surface);
+    opacity: 1;
+  }
+
+  .link-card-body { flex: 1; min-width: 0; }
+
+  .link-card-title {
+    font-weight: var(--font-weight-medium);
+    font-size: var(--font-size-base);
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .link-card-desc {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+    margin: var(--space-1) 0 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .link-card-domain {
+    font-family: var(--font-mono);
+    font-size: var(--font-size-xs);
+    color: var(--color-text-faint);
+    white-space: nowrap;
+    flex-shrink: 0;
+    transition: color var(--transition-base);
+  }
+
+  .link-card:hover .link-card-domain { color: var(--color-accent); }
+</style>

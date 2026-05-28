@@ -1,0 +1,139 @@
+---
+interface Props {
+  title: string;
+  creator: string;
+  year?: number | string;
+  coverSrc?: string;
+  score?: number;
+  scoreMax?: number;
+  type?: 'book' | 'film' | 'album' | 'game' | 'show';
+}
+const { title, creator, year, coverSrc, score, scoreMax = 10, type } = Astro.props;
+
+const typeLabel: Record<string, string> = {
+  book: 'Book', film: 'Film', album: 'Album', game: 'Game', show: 'TV',
+};
+const scorePercent = score != null ? (score / scoreMax) * 100 : null;
+---
+
+<div class="review-card">
+  {coverSrc && (
+    <img src={coverSrc} alt={`${title} cover`} class="review-cover" loading="lazy" />
+  )}
+  <div class="review-body">
+    <div class="review-meta">
+      {type && <span class="review-type">{typeLabel[type] ?? type}</span>}
+      {year && <span class="review-year">{year}</span>}
+    </div>
+    <p class="review-title">{title}</p>
+    <p class="review-creator">{creator}</p>
+    {score != null && (
+      <div class="review-score-wrap">
+        <span class="review-score">{score}<span class="review-score-max">/{scoreMax}</span></span>
+        <div class="review-score-bar" aria-hidden="true">
+          <div class="review-score-fill" style={`width: ${scorePercent}%`}></div>
+        </div>
+      </div>
+    )}
+    <slot />
+  </div>
+</div>
+
+<style>
+  .review-card {
+    display: flex;
+    gap: var(--space-6);
+    padding: var(--space-6);
+    border: 0.5px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    margin: var(--space-8) 0;
+    background: var(--color-surface-raised);
+  }
+
+  .review-cover {
+    width: 100px;
+    flex-shrink: 0;
+    border-radius: var(--radius-sm);
+    object-fit: cover;
+    align-self: flex-start;
+    border: 0.5px solid var(--color-border);
+  }
+
+  .review-body { flex: 1; min-width: 0; }
+
+  .review-meta {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin-bottom: var(--space-2);
+  }
+
+  .review-type {
+    font-family: var(--font-mono);
+    font-size: var(--font-size-xs);
+    color: var(--color-accent-text);
+    background: var(--color-accent-muted);
+    padding: 1px 8px;
+    border-radius: var(--radius-full);
+  }
+
+  .review-year {
+    font-family: var(--font-mono);
+    font-size: var(--font-size-xs);
+    color: var(--color-text-faint);
+  }
+
+  .review-title {
+    font-weight: var(--font-weight-medium);
+    font-size: var(--font-size-lg);
+    margin: 0 0 var(--space-1);
+    line-height: var(--line-height-tight);
+  }
+
+  .review-creator {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+    margin: 0 0 var(--space-3);
+  }
+
+  .review-score-wrap {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    margin-bottom: var(--space-3);
+  }
+
+  .review-score {
+    font-family: var(--font-mono);
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text);
+    line-height: 1;
+  }
+
+  .review-score-max {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-faint);
+  }
+
+  .review-score-bar {
+    flex: 1;
+    height: 4px;
+    background: var(--color-border-strong);
+    border-radius: var(--radius-full);
+    overflow: hidden;
+  }
+
+  .review-score-fill {
+    height: 100%;
+    background: var(--color-accent);
+    border-radius: var(--radius-full);
+  }
+
+  .review-body :global(p:last-child) { margin-bottom: 0; }
+
+  @media (max-width: 480px) {
+    .review-card { flex-direction: column; }
+    .review-cover { width: 80px; }
+  }
+</style>

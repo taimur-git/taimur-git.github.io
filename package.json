@@ -16,6 +16,10 @@
     "@astrojs/sitemap": "^3.7.2",
     "astro": "^6.1.9",
     "rehype-katex": "^7.0.1",
-    "remark-math": "^6.0.0"
+    "remark-math": "^6.0.0",
+    "three": "^0.184.0"
+  },
+  "devDependencies": {
+    "@types/three": "^0.184.1"
   }
 }

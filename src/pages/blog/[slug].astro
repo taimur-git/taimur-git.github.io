@@ -4,18 +4,41 @@ import { getCollection, render } from 'astro:content';
 
 export async function getStaticPaths() {
   const allPosts = await getCollection('blog', ({ data }) => !data.draft);
-  const enPosts = allPosts.filter(p => p.data.lang === 'en');
+  const enPosts = allPosts
+    .filter(p => p.data.lang === 'en')
+    .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
 
-  return enPosts.map(post => {
+  return enPosts.map((post, i) => {
     const bnPost = allPosts.find(p => p.id === `${post.id}-bn` && p.data.lang === 'bn') ?? null;
+
+    const newer = enPosts[i - 1] ?? null;
+    const older = enPosts[i + 1] ?? null;
+
+    const related = enPosts
+      .filter(p => p.id !== post.id)
+      .map(p => ({
+        post: p,
+        shared: p.data.tags.filter(t => post.data.tags.includes(t)).length,
+      }))
+      .filter(r => r.shared > 0)
+      .sort((a, b) => b.shared - a.shared || b.post.data.date.getTime() - a.post.data.date.getTime())
+      .slice(0, 2)
+      .map(r => ({ id: r.post.id, title: r.post.data.title }));
+
     return {
       params: { slug: post.id },
-      props: { post, bnPost },
+      props: {
+        post,
+        bnPost,
+        newer: newer && { id: newer.id, title: newer.data.title },
+        older: older && { id: older.id, title: older.data.title },
+        related,
+      },
     };
   });
 }
 
-const { post, bnPost } = Astro.props;
+const { post, bnPost, newer, older, related } = Astro.props;
 const { Content: EnContent, headings } = await render(post);
 
 let BnContent: any = null;
@@ -34,6 +57,10 @@ if (bnPost) {
   body={post.body ?? ''}
   bnBody={bnPost?.body ?? ''}
   hasBn={!!bnPost}
+  excerpt={post.data.excerpt}
+  newer={newer}
+  older={older}
+  related={related}
 >
   <EnContent slot="en" />
   {BnContent && <BnContent slot="bn" />}

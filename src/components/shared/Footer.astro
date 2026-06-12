@@ -1,10 +1,12 @@
 ---
+import SocialLinks from './SocialLinks.astro';
 const year = new Date().getFullYear();
 ---
 
 <footer class="footer">
   <div class="footer-inner site-container">
     <span class="mono">© {year} Taimur Rahman</span>
+    <SocialLinks />
   </div>
 </footer>
 
@@ -18,6 +20,9 @@ const year = new Date().getFullYear();
   .footer-inner {
     color: var(--color-text-faint);
     font-size: var(--font-size-xs);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
   }
 
   @media print {

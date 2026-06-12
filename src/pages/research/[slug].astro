@@ -14,9 +14,32 @@ export async function getStaticPaths() {
 const { paper } = Astro.props;
 const { data } = paper;
 const doiUrl = data.doi ? `https://doi.org/${data.doi}` : undefined;
+
+const citeKey = `${(data.authors[0]?.split(' ').pop() ?? 'paper').toLowerCase()}${data.year}${paper.id.split('-')[0]}`;
+const bibtex = [
+  `@inproceedings{${citeKey},`,
+  `  title     = {${data.title}},`,
+  `  author    = {${data.authors.join(' and ')}},`,
+  `  booktitle = {${data.venue}},`,
+  `  year      = {${data.year}},`,
+  ...(data.doi ? [`  doi       = {${data.doi}},`] : []),
+  `}`,
+].join('\n');
+
+const articleLd = {
+  '@context': 'https://schema.org',
+  '@type': 'ScholarlyArticle',
+  headline: data.title,
+  author: data.authors.map(name => ({ '@type': 'Person', name })),
+  datePublished: String(data.year),
+  abstract: data.abstract,
+  ...(data.doi ? { sameAs: doiUrl, identifier: data.doi } : {}),
+  publisher: { '@type': 'Organization', name: data.venue },
+};
 ---
 
-<BaseLayout title={data.title}>
+<BaseLayout title={data.title} description={data.abstract.slice(0, 160)} ogType="article">
+  <script type="application/ld+json" set:html={JSON.stringify(articleLd)} />
   <div class="blog-layout">
     <article class="blog-content">
       <a href="/research" class="blog-back">← back to research</a>
@@ -29,6 +52,7 @@ const doiUrl = data.doi ? `https://doi.org/${data.doi}` : undefined;
         {data.pdf && (
           <a href={data.pdf} class="tag-pill mono" target="_blank" rel="noopener">PDF ↗</a>
         )}
+        <button class="tag-pill mono bibtex-btn" data-bibtex={bibtex} type="button">bibtex</button>
         {data.citations != null && data.citations > 0 && (
           <span class="research-cites">
             <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4.583 17.321C3.553 16.227 3 15 3 13.011c0-3.5 2.457-6.637 6.03-8.188l.893 1.378c-3.335 1.804-3.987 4.145-4.247 5.621.537-.278 1.24-.375 1.929-.311 1.804.167 3.226 1.648 3.226 3.489a3.5 3.5 0 0 1-3.5 3.5c-1.073 0-2.099-.49-2.748-1.179zm10 0C13.553 16.227 13 15 13 13.011c0-3.5 2.457-6.637 6.03-8.188l.893 1.378c-3.335 1.804-3.987 4.145-4.247 5.621.537-.278 1.24-.375 1.929-.311 1.804.167 3.226 1.648 3.226 3.489a3.5 3.5 0 0 1-3.5 3.5c-1.073 0-2.099-.49-2.748-1.179z"/></svg>
@@ -44,3 +68,38 @@ const doiUrl = data.doi ? `https://doi.org/${data.doi}` : undefined;
     </article>
   </div>
 </BaseLayout>
+
+<style>
+  .bibtex-btn {
+    background: transparent;
+    cursor: pointer;
+  }
+
+  .bibtex-btn:hover {
+    color: var(--color-accent);
+    border-color: var(--color-accent);
+  }
+
+  .bibtex-btn.copied {
+    color: var(--color-success);
+    border-color: var(--color-success);
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLButtonElement>('.bibtex-btn').forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(btn.dataset.bibtex ?? '');
+        btn.textContent = 'copied ✓';
+        btn.classList.add('copied');
+      } catch {
+        btn.textContent = 'copy failed';
+      }
+      setTimeout(() => {
+        btn.textContent = 'bibtex';
+        btn.classList.remove('copied');
+      }, 1600);
+    });
+  });
+</script>

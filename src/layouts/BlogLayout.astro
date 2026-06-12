@@ -14,15 +14,23 @@ interface Props {
   body?: string;
   bnBody?: string;
   hasBn?: boolean;
+  excerpt?: string;
+  newer?: { id: string; title: string } | null;
+  older?: { id: string; title: string } | null;
+  related?: { id: string; title: string }[];
 }
 
-const { title, bnTitle, date, tags, headings, body = '', bnBody = '', hasBn = false } = Astro.props;
+const {
+  title, bnTitle, date, tags, headings,
+  body = '', bnBody = '', hasBn = false, excerpt,
+  newer = null, older = null, related = [],
+} = Astro.props;
 const formattedDate = date.toLocaleDateString('en-GB', {
   day: 'numeric', month: 'long', year: 'numeric'
 });
 ---
 
-<BaseLayout title={title}>
+<BaseLayout title={title} description={excerpt} ogType="article">
   <Fragment slot="head">
     <link rel="stylesheet" href="/libs/manim/lib/katex/katex.min.css" />
     {hasBn && (
@@ -58,6 +66,32 @@ const formattedDate = date.toLocaleDateString('en-GB', {
         <div id="content-bn" class="bn-font" style="display:none">
           <slot name="bn" />
         </div>
+      )}
+
+      {related.length > 0 && (
+        <aside class="post-related">
+          <p class="post-related-label mono">related</p>
+          {related.map(r => (
+            <a href={`/blog/${r.id}`} class="post-related-item">{r.title}</a>
+          ))}
+        </aside>
+      )}
+
+      {(older || newer) && (
+        <nav class="post-nav" aria-label="Post navigation">
+          {older ? (
+            <a href={`/blog/${older.id}`} class="post-nav-link">
+              <span class="post-nav-dir mono">← older</span>
+              <span class="post-nav-title">{older.title}</span>
+            </a>
+          ) : <span />}
+          {newer ? (
+            <a href={`/blog/${newer.id}`} class="post-nav-link post-nav-next">
+              <span class="post-nav-dir mono">newer →</span>
+              <span class="post-nav-title">{newer.title}</span>
+            </a>
+          ) : <span />}
+        </nav>
       )}
     </article>
     <aside>
@@ -101,5 +135,30 @@ const formattedDate = date.toLocaleDateString('en-GB', {
       el.addEventListener('click', function () { applyLang(el.dataset.lang); });
     });
   })();
+  </script>
+  <script>
+    // copy button on every code block
+    document.querySelectorAll('.blog-content pre').forEach((pre) => {
+      const btn = document.createElement('button');
+      btn.className = 'code-copy-btn';
+      btn.type = 'button';
+      btn.textContent = 'copy';
+      btn.setAttribute('aria-label', 'Copy code to clipboard');
+      btn.addEventListener('click', async () => {
+        const code = pre.querySelector('code')?.textContent ?? pre.textContent ?? '';
+        try {
+          await navigator.clipboard.writeText(code);
+          btn.textContent = 'copied ✓';
+          btn.classList.add('copied');
+        } catch {
+          btn.textContent = 'failed';
+        }
+        setTimeout(() => {
+          btn.textContent = 'copy';
+          btn.classList.remove('copied');
+        }, 1600);
+      });
+      pre.appendChild(btn);
+    });
   </script>
 </BaseLayout>

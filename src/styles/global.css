@@ -42,6 +42,25 @@ a:hover { opacity: 0.75; }
   padding: 0 var(--space-6);
 }
 
+/* visually hidden until keyboard-focused */
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  z-index: 100;
+  padding: var(--space-2) var(--space-4);
+  background: var(--color-accent);
+  color: #fff;
+  font-family: var(--font-mono);
+  font-size: var(--font-size-sm);
+  border-radius: 0 0 var(--radius-md) 0;
+}
+
+.skip-link:focus {
+  left: 0;
+  top: 0;
+  opacity: 1;
+}
+
 /* ── Timeline ── */
 .timeline-section {
   max-width: var(--max-width-site);

@@ -1,9 +1,25 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ExperienceTimeline from '../components/timeline/ExperienceTimeline.astro';
+import { getEntry } from 'astro:content';
+
+const cv = await getEntry('cv', 'index');
+const { contact, title: jobTitle } = cv!.data;
+
+const personLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: 'Taimur Rahman',
+  jobTitle,
+  url: Astro.site?.href,
+  ...(contact.github || contact.linkedin
+    ? { sameAs: [contact.github, contact.linkedin].filter(Boolean).map(h => `https://${h}`) }
+    : {}),
+};
 ---
 
 <BaseLayout title="Taimur Rahman" fullTitle>
+  <script type="application/ld+json" set:html={JSON.stringify(personLd)} />
   <section class="hero site-container">
     <div class="hero-inner">
       <h1 class="hero-name">Taimur Rahman</h1>

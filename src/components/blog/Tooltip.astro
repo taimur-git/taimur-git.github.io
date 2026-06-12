@@ -3,11 +3,12 @@ interface Props {
   term: string;
 }
 const { term } = Astro.props;
+const id = `tt-${Math.random().toString(36).slice(2, 8)}`;
 ---
 
 <span class="tooltip-wrap">
-  <span class="tooltip-trigger" tabindex="0">{term}</span>
-  <span class="tooltip-card" role="tooltip">
+  <span class="tooltip-trigger" tabindex="0" aria-describedby={id}>{term}</span>
+  <span class="tooltip-card" role="tooltip" id={id}>
     <slot />
   </span>
 </span>
@@ -29,8 +30,8 @@ const { term } = Astro.props;
   .tooltip-wrap:hover .tooltip-trigger,
   .tooltip-wrap:focus-within .tooltip-trigger,
   .tooltip-wrap.open .tooltip-trigger {
-    background: #ffffff;
-    color: #000000;
+    background: var(--color-accent-muted);
+    color: var(--color-accent-text);
     border-bottom-color: transparent;
   }
 
@@ -50,7 +51,6 @@ const { term } = Astro.props;
     line-height: var(--line-height-body);
     z-index: 100;
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
-    pointer-events: none;
     text-align: left;
   }
 
@@ -58,6 +58,11 @@ const { term } = Astro.props;
   .tooltip-wrap:focus-within .tooltip-card,
   .tooltip-wrap.open .tooltip-card {
     display: block;
+  }
+
+  /* Esc-dismissed (WCAG 1.4.13) — stays hidden until pointer/focus leaves */
+  .tooltip-wrap.dismissed .tooltip-card {
+    display: none;
   }
 </style>
 
@@ -67,10 +72,21 @@ const { term } = Astro.props;
       e.stopPropagation();
       wrap.classList.toggle('open');
     });
+    wrap.addEventListener('mouseleave', function () { wrap.classList.remove('dismissed'); });
+    wrap.addEventListener('focusout',   function () { wrap.classList.remove('dismissed'); });
   });
   document.addEventListener('click', function () {
     document.querySelectorAll('.tooltip-wrap.open').forEach(function (w) {
       w.classList.remove('open');
     });
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== 'Escape') return;
+    document
+      .querySelectorAll('.tooltip-wrap.open, .tooltip-wrap:hover, .tooltip-wrap:focus-within')
+      .forEach(function (w) {
+        w.classList.remove('open');
+        w.classList.add('dismissed');
+      });
   });
 </script>

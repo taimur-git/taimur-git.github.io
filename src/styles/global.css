@@ -216,12 +216,16 @@ a:hover { opacity: 0.75; }
 .timeline-body-wrap {
   display: grid;
   grid-template-rows: 0fr;
-  transition: grid-template-rows var(--transition-slow);
+  /* visibility flips after the collapse animation, removing links from tab order */
+  transition: grid-template-rows var(--transition-slow), visibility 0s var(--transition-slow);
   overflow: hidden;
+  visibility: hidden;
 }
 
 .timeline-card.expanded .timeline-body-wrap {
   grid-template-rows: 1fr;
+  visibility: visible;
+  transition: grid-template-rows var(--transition-slow);
 }
 
 .timeline-body {
@@ -286,4 +290,16 @@ a:hover { opacity: 0.75; }
 @media print {
   .timeline-section,
   .timeline-filters { display: none !important; }
+}
+
+/* ── Reduced motion ── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

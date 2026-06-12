@@ -62,7 +62,17 @@ const id = `ws-${Math.random().toString(36).slice(2, 8)}`;
 >
   <div class="ws-skeleton"></div>
   <canvas class="ws-canvas"></canvas>
-  <div class="ws-divider" style={`left:${initialSplit * 100}%`} aria-hidden="true"></div>
+  <div
+    class="ws-divider"
+    style={`left:${initialSplit * 100}%`}
+    role="separator"
+    aria-orientation="vertical"
+    aria-label="Solid / wireframe split"
+    aria-valuenow={Math.round(initialSplit * 100)}
+    aria-valuemin="2"
+    aria-valuemax="98"
+    tabindex="0"
+  ></div>
 </div>
 
 <style>
@@ -126,6 +136,11 @@ const id = `ws-${Math.random().toString(36).slice(2, 8)}`;
     content: '';
     position: absolute;
     inset: 0 -10px;
+  }
+
+  .ws-divider:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 4px;
   }
 </style>
 
@@ -194,11 +209,18 @@ const id = `ws-${Math.random().toString(36).slice(2, 8)}`;
 
     /* ── controls ── */
     const controls = new OrbitControls(cam, canvas);
-    controls.enableZoom    = cfg.zoom;
+    controls.enableZoom    = false; // armed on first interaction, see below
     controls.enableRotate  = cfg.rotate;
     controls.enablePan     = cfg.pan;
     controls.enableDamping = true;
     controls.dampingFactor = 0.08;
+
+    /* don't hijack page scroll: wheel-zoom only after the viewer is clicked,
+       released again when the pointer leaves */
+    if (cfg.zoom) {
+      el.addEventListener('pointerdown', () => { controls.enableZoom = true; });
+      el.addEventListener('mouseleave',  () => { controls.enableZoom = false; });
+    }
 
     if (cfg.autoRotate) {
       controls.autoRotate      = true;
@@ -214,7 +236,17 @@ const id = `ws-${Math.random().toString(36).slice(2, 8)}`;
 
     function updateDivider() {
       divider.style.left = `${splitRatio * 100}%`;
+      divider.setAttribute('aria-valuenow', String(Math.round(splitRatio * 100)));
     }
+
+    divider.addEventListener('keydown', (e) => {
+      const step = e.shiftKey ? 0.1 : 0.02;
+      if (e.key === 'ArrowLeft')       splitRatio = Math.max(0.02, splitRatio - step);
+      else if (e.key === 'ArrowRight') splitRatio = Math.min(0.98, splitRatio + step);
+      else return;
+      e.preventDefault();
+      updateDivider();
+    });
 
     divider.addEventListener('pointerdown', (e) => {
       e.preventDefault();

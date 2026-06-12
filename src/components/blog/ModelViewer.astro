@@ -196,11 +196,18 @@ const id = `mv-${Math.random().toString(36).slice(2, 8)}`;
 
     /* ── controls ── */
     const controls = new OrbitControls(cam, renderer.domElement);
-    controls.enableZoom    = cfg.zoom;
+    controls.enableZoom    = false; // armed on first interaction, see below
     controls.enableRotate  = cfg.rotate;
     controls.enablePan     = cfg.pan;
     controls.enableDamping = true;
     controls.dampingFactor = 0.08;
+
+    /* don't hijack page scroll: wheel-zoom only after the viewer is clicked,
+       released again when the pointer leaves */
+    if (cfg.zoom) {
+      el.addEventListener('pointerdown', () => { controls.enableZoom = true; });
+      el.addEventListener('mouseleave',  () => { controls.enableZoom = false; });
+    }
 
     if (cfg.autoRotate) {
       controls.autoRotate      = true;

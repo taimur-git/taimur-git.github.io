@@ -3,6 +3,7 @@ interface Props {
   labels: string[];
 }
 const { labels } = Astro.props;
+const id = `tabs-${Math.random().toString(36).slice(2, 8)}`;
 ---
 
 <div class="tabs-wrap" data-tabs>
@@ -11,14 +12,23 @@ const { labels } = Astro.props;
       <button
         class={`tab-btn${i === 0 ? ' active' : ''}`}
         role="tab"
+        id={`${id}-tab-${i}`}
+        aria-controls={`${id}-panel-${i}`}
         aria-selected={i === 0 ? 'true' : 'false'}
+        tabindex={i === 0 ? 0 : -1}
         data-tab={String(i)}
       >{label}</button>
     ))}
   </div>
   <div class="tabs-panels">
     {labels.map((_, i) => (
-      <div class={`tab-panel${i === 0 ? ' active' : ''}`} data-panel={String(i)}>
+      <div
+        class={`tab-panel${i === 0 ? ' active' : ''}`}
+        role="tabpanel"
+        id={`${id}-panel-${i}`}
+        aria-labelledby={`${id}-tab-${i}`}
+        data-panel={String(i)}
+      >
         <slot name={`tab-${i}`} />
       </div>
     ))}
@@ -83,18 +93,40 @@ const { labels } = Astro.props;
 </style>
 
 <script>
-  document.querySelectorAll('[data-tabs]').forEach(function (wrap) {
-    wrap.querySelectorAll('.tab-btn').forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        var idx = btn.dataset.tab;
-        wrap.querySelectorAll('.tab-btn').forEach(function (b) {
-          b.classList.toggle('active', b.dataset.tab === idx);
-          b.setAttribute('aria-selected', b.dataset.tab === idx ? 'true' : 'false');
-        });
-        wrap.querySelectorAll('.tab-panel').forEach(function (p) {
-          p.classList.toggle('active', p.dataset.panel === idx);
-        });
+  document.querySelectorAll<HTMLElement>('[data-tabs]').forEach(function (wrap) {
+    const tabs = Array.from(wrap.querySelectorAll<HTMLButtonElement>('.tab-btn'));
+
+    function select(btn: HTMLButtonElement) {
+      const idx = btn.dataset.tab;
+      tabs.forEach(function (b) {
+        const active = b.dataset.tab === idx;
+        b.classList.toggle('active', active);
+        b.setAttribute('aria-selected', String(active));
+        b.tabIndex = active ? 0 : -1;
       });
+      wrap.querySelectorAll<HTMLElement>('.tab-panel').forEach(function (p) {
+        p.classList.toggle('active', p.dataset.panel === idx);
+      });
+    }
+
+    tabs.forEach(function (btn) {
+      btn.addEventListener('click', function () { select(btn); });
+    });
+
+    // ARIA tabs pattern: arrow keys move focus + selection
+    wrap.querySelector('.tabs-nav')!.addEventListener('keydown', function (e) {
+      const key = (e as KeyboardEvent).key;
+      const i = tabs.indexOf(document.activeElement as HTMLButtonElement);
+      if (i < 0) return;
+      let next = -1;
+      if (key === 'ArrowRight') next = (i + 1) % tabs.length;
+      else if (key === 'ArrowLeft') next = (i - 1 + tabs.length) % tabs.length;
+      else if (key === 'Home') next = 0;
+      else if (key === 'End') next = tabs.length - 1;
+      if (next < 0) return;
+      e.preventDefault();
+      tabs[next].focus();
+      select(tabs[next]);
     });
   });
 </script>

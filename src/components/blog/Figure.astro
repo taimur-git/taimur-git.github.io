@@ -10,13 +10,13 @@ const id = `fig-${Math.random().toString(36).slice(2, 8)}`;
 ---
 
 <figure class="post-figure">
-  <img
-    src={src}
-    alt={alt}
-    class={`figure-img${zoom ? ' zoomable' : ''}`}
-    data-lightbox={zoom ? id : undefined}
-    loading="lazy"
-  />
+  {zoom ? (
+    <button class="figure-zoom-btn" data-lightbox={id} aria-label={`Enlarge image: ${alt}`}>
+      <img src={src} alt={alt} class="figure-img zoomable" loading="lazy" />
+    </button>
+  ) : (
+    <img src={src} alt={alt} class="figure-img" loading="lazy" />
+  )}
   {caption && <figcaption class="figure-caption">{caption}</figcaption>}
 </figure>
 
@@ -41,12 +41,21 @@ const id = `fig-${Math.random().toString(36).slice(2, 8)}`;
     margin: 0 auto;
   }
 
-  .figure-img.zoomable {
+  .figure-zoom-btn {
+    display: block;
+    margin: 0 auto;
+    padding: 0;
+    border: none;
+    background: none;
     cursor: zoom-in;
+    border-radius: var(--radius-md);
+  }
+
+  .figure-img.zoomable {
     transition: opacity var(--transition-base);
   }
 
-  .figure-img.zoomable:hover { opacity: 0.9; }
+  .figure-zoom-btn:hover .figure-img { opacity: 0.9; }
 
   .figure-caption {
     margin-top: var(--space-2);
@@ -100,27 +109,43 @@ const id = `fig-${Math.random().toString(36).slice(2, 8)}`;
 </style>
 
 <script>
-  document.querySelectorAll<HTMLImageElement>('[data-lightbox]').forEach(function (img) {
-    img.addEventListener('click', function () {
-      var lb = document.getElementById(img.dataset.lightbox!);
-      if (lb) lb.classList.add('open');
+  let lastTrigger: HTMLElement | null = null;
+
+  function closeLightbox(lb: Element) {
+    lb.classList.remove('open');
+    document.body.style.overflow = '';
+    lastTrigger?.focus();
+    lastTrigger = null;
+  }
+
+  document.querySelectorAll<HTMLElement>('[data-lightbox]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      const lb = document.getElementById(btn.dataset.lightbox!);
+      if (!lb) return;
+      lastTrigger = btn;
+      lb.classList.add('open');
+      document.body.style.overflow = 'hidden';
+      lb.querySelector<HTMLElement>('.fig-close')?.focus();
     });
   });
 
   document.querySelectorAll('.fig-lightbox').forEach(function (lb) {
     lb.addEventListener('click', function (e) {
-      var t = e.target as HTMLElement;
-      if (t === lb || t.classList.contains('fig-close')) {
-        lb.classList.remove('open');
+      const t = e.target as HTMLElement;
+      if (t === lb || t.classList.contains('fig-close')) closeLightbox(lb);
+    });
+    // close button is the only focusable element — keep focus on it
+    lb.addEventListener('keydown', function (e) {
+      if ((e as KeyboardEvent).key === 'Tab') {
+        e.preventDefault();
+        (lb.querySelector('.fig-close') as HTMLElement)?.focus();
       }
     });
   });
 
   document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape') {
-      document.querySelectorAll('.fig-lightbox.open').forEach(function (lb) {
-        lb.classList.remove('open');
-      });
+      document.querySelectorAll('.fig-lightbox.open').forEach(closeLightbox);
     }
   });
 </script>

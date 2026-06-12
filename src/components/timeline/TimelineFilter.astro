@@ -3,9 +3,9 @@ const types = ['work', 'education', 'certification', 'research'];
 ---
 
 <div class="timeline-filters" id="timeline-filters">
-  <button class="filter-pill active" data-filter="all">all</button>
+  <button class="filter-pill active" data-filter="all" aria-pressed="true">all</button>
   {types.map(t => (
-    <button class="filter-pill" data-filter={t}>{t}</button>
+    <button class="filter-pill" data-filter={t} aria-pressed="false">{t}</button>
   ))}
 </div>
 
@@ -17,8 +17,10 @@ const types = ['work', 'education', 'certification', 'research'];
     btn.addEventListener('click', () => {
       const filter = btn.dataset.filter!;
 
-      filters.forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
+      filters.forEach(b => {
+        b.classList.toggle('active', b === btn);
+        b.setAttribute('aria-pressed', String(b === btn));
+      });
 
       entries.forEach(entry => {
         const show = filter === 'all' || entry.dataset.type === filter;

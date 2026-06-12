@@ -56,7 +56,10 @@ const allTags = [...new Set(enPosts.flatMap(p => p.data.tags))].sort();
         });
 
         document.querySelectorAll('#tag-filter .tag-pill').forEach(function (pill) {
-          pill.classList.toggle('active', pill.textContent.trim() === tag);
+          var on = pill.textContent.trim() === tag;
+          pill.classList.toggle('active', on);
+          if (on) pill.setAttribute('aria-current', 'true');
+          else pill.removeAttribute('aria-current');
         });
       }
 

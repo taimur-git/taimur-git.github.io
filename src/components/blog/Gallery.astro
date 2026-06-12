@@ -15,14 +15,14 @@ const id = `gallery-${Math.random().toString(36).slice(2, 8)}`;
 <div class={`gallery gallery-cols-${columns}`} id={id}>
   {images.map((img, i) => (
     <figure class="gallery-item">
-      <img
-        src={img.src}
-        alt={img.alt}
-        class="gallery-img"
+      <button
+        class="gallery-zoom-btn"
         data-gallery={id}
         data-index={String(i)}
-        loading="lazy"
-      />
+        aria-label={`View image: ${img.alt}`}
+      >
+        <img src={img.src} alt={img.alt} class="gallery-img" loading="lazy" />
+      </button>
       {img.caption && <figcaption class="gallery-caption">{img.caption}</figcaption>}
     </figure>
   ))}
@@ -57,18 +57,27 @@ const id = `gallery-${Math.random().toString(36).slice(2, 8)}`;
 
   .gallery-item { margin: 0; }
 
+  .gallery-zoom-btn {
+    display: block;
+    width: 100%;
+    padding: 0;
+    border: none;
+    background: none;
+    cursor: zoom-in;
+    border-radius: var(--radius-md);
+  }
+
   .gallery-img {
     width: 100%;
     aspect-ratio: 4 / 3;
     object-fit: cover;
     border-radius: var(--radius-md);
     border: 0.5px solid var(--color-border);
-    cursor: zoom-in;
     transition: opacity var(--transition-base);
     display: block;
   }
 
-  .gallery-img:hover { opacity: 0.85; }
+  .gallery-zoom-btn:hover .gallery-img { opacity: 0.85; }
 
   .gallery-caption {
     margin-top: var(--space-1);
@@ -141,66 +150,86 @@ const id = `gallery-${Math.random().toString(36).slice(2, 8)}`;
 </style>
 
 <script>
+  interface LbState {
+    _imgs?: { src: string; alt: string }[];
+    _index?: number;
+    _opener?: HTMLElement | null;
+  }
+
+  function closeGalleryLb(lb: HTMLElement & LbState) {
+    lb.classList.remove('open');
+    document.body.style.overflow = '';
+    lb._opener?.focus();
+    lb._opener = null;
+  }
+
   function initGallery(galleryId: string) {
-    const lb = document.getElementById(`${galleryId}-lb`) as HTMLElement & {
-      _imgs?: HTMLImageElement[];
-      _index?: number;
-    };
+    const lb = document.getElementById(`${galleryId}-lb`) as (HTMLElement & LbState) | null;
     if (!lb || lb.dataset.init) return;
     lb.dataset.init = '1';
 
-    const imgs = Array.from(
-      document.querySelectorAll<HTMLImageElement>(`[data-gallery="${galleryId}"]`)
+    const triggers = Array.from(
+      document.querySelectorAll<HTMLElement>(`[data-gallery="${galleryId}"]`)
     );
+    const imgs = triggers.map((btn) => {
+      const img = btn.querySelector('img')!;
+      return { src: img.src, alt: img.alt };
+    });
+    const lbImg = lb.querySelector('.gallery-lb-img') as HTMLImageElement;
 
-    imgs.forEach((img) => {
-      img.addEventListener('click', () => {
+    function show(i: number) {
+      lb!._index = i;
+      lbImg.src = imgs[i].src;
+      lbImg.alt = imgs[i].alt;
+    }
+
+    triggers.forEach((btn) => {
+      btn.addEventListener('click', () => {
         lb._imgs = imgs;
-        lb._index = parseInt(img.dataset.index!, 10);
-        const lbImg = lb.querySelector('.gallery-lb-img') as HTMLImageElement;
-        lbImg.src = img.src;
-        lbImg.alt = img.alt;
+        lb._opener = btn;
+        show(parseInt(btn.dataset.index!, 10));
         lb.classList.add('open');
+        document.body.style.overflow = 'hidden';
+        (lb.querySelector('.gallery-close') as HTMLElement).focus();
       });
     });
 
     lb.addEventListener('click', (e) => {
       const t = e.target as HTMLElement;
-      if (t === lb || t.classList.contains('gallery-close')) {
-        lb.classList.remove('open');
-      }
+      if (t === lb || t.classList.contains('gallery-close')) closeGalleryLb(lb);
     });
 
     lb.querySelector('.gallery-prev')!.addEventListener('click', (e) => {
       e.stopPropagation();
-      if (!lb._imgs) return;
-      lb._index = ((lb._index! - 1) + lb._imgs.length) % lb._imgs.length;
-      const lbImg = lb.querySelector('.gallery-lb-img') as HTMLImageElement;
-      lbImg.src = lb._imgs[lb._index].src;
-      lbImg.alt = lb._imgs[lb._index].alt;
+      show(((lb._index! - 1) + imgs.length) % imgs.length);
     });
 
     lb.querySelector('.gallery-next')!.addEventListener('click', (e) => {
       e.stopPropagation();
-      if (!lb._imgs) return;
-      lb._index = (lb._index! + 1) % lb._imgs.length;
-      const lbImg = lb.querySelector('.gallery-lb-img') as HTMLImageElement;
-      lbImg.src = lb._imgs[lb._index].src;
-      lbImg.alt = lb._imgs[lb._index].alt;
+      show((lb._index! + 1) % imgs.length);
+    });
+
+    // focus trap: cycle between the three lightbox buttons
+    lb.addEventListener('keydown', (e) => {
+      if (e.key !== 'Tab') return;
+      const btns = Array.from(lb.querySelectorAll<HTMLElement>('button'));
+      const i = btns.indexOf(document.activeElement as HTMLElement);
+      e.preventDefault();
+      const next = e.shiftKey
+        ? (i - 1 + btns.length) % btns.length
+        : (i + 1) % btns.length;
+      btns[next].focus();
     });
   }
 
-  document.querySelectorAll<HTMLElement>('[data-gallery]').forEach((img) => {
-    initGallery(img.dataset.gallery!);
+  document.querySelectorAll<HTMLElement>('[data-gallery]').forEach((btn) => {
+    initGallery(btn.dataset.gallery!);
   });
 
   document.addEventListener('keydown', (e) => {
-    const open = document.querySelector('.gallery-lightbox.open') as HTMLElement & {
-      _imgs?: HTMLImageElement[];
-      _index?: number;
-    };
+    const open = document.querySelector('.gallery-lightbox.open') as (HTMLElement & LbState) | null;
     if (!open) return;
-    if (e.key === 'Escape') open.classList.remove('open');
+    if (e.key === 'Escape') closeGalleryLb(open);
     if (e.key === 'ArrowLeft') (open.querySelector('.gallery-prev') as HTMLElement).click();
     if (e.key === 'ArrowRight') (open.querySelector('.gallery-next') as HTMLElement).click();
   });

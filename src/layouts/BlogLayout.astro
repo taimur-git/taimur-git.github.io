@@ -34,9 +34,9 @@ const formattedDate = date.toLocaleDateString('en-GB', {
       <div class="blog-top-row">
         <a href="/blog" class="blog-back">← back to writing</a>
         {hasBn && (
-          <div class="lang-selector">
-            <button class="lang-pill" data-lang="en">EN</button>
-            <button class="lang-pill" data-lang="bn">বাংলা</button>
+          <div class="lang-selector" role="group" aria-label="Post language">
+            <button class="lang-pill" data-lang="en" aria-pressed="false">EN</button>
+            <button class="lang-pill" data-lang="bn" aria-pressed="false">বাংলা</button>
           </div>
         )}
       </div>
@@ -91,6 +91,7 @@ const formattedDate = date.toLocaleDateString('en-GB', {
 
       document.querySelectorAll('.lang-pill').forEach(function (el) {
         el.classList.toggle('active', el.dataset.lang === lang);
+        el.setAttribute('aria-pressed', String(el.dataset.lang === lang));
       });
     }
 

@@ -21,7 +21,7 @@ const id = `ing-${Math.random().toString(36).slice(2, 8)}`;
       <button class="step-btn" data-action="dec" aria-label="Fewer servings">−</button>
       <span class="servings-display">
         <span class="servings-label">Serves</span>
-        <span class="servings-count">{baseServings}</span>
+        <span class="servings-count" aria-live="polite">{baseServings}</span>
       </span>
       <button class="step-btn" data-action="inc" aria-label="More servings">+</button>
     </div>

@@ -179,9 +179,11 @@ const hasCaption = images.some(img => img.caption);
     const next    = carousel.querySelector<HTMLButtonElement>('.carousel-next');
     const caption = carousel.querySelector<HTMLElement>('.carousel-caption');
     const total   = slides.length;
-    const ms      = parseInt(carousel.dataset.autoplay ?? '0', 10);
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const ms      = reduced ? 0 : parseInt(carousel.dataset.autoplay ?? '0', 10);
 
     let current = 0;
+    let paused  = false;
     let timer: ReturnType<typeof setInterval> | null = null;
 
     function goTo(index: number) {
@@ -201,9 +203,13 @@ const hasCaption = images.some(img => img.caption);
     function advance() { goTo(current + 1); }
     function retreat() { goTo(current - 1); }
 
+    function stopTimer() {
+      if (timer) { clearInterval(timer); timer = null; }
+    }
+
     function resetTimer() {
-      if (timer) clearInterval(timer);
-      if (ms > 0) timer = setInterval(advance, ms);
+      stopTimer();
+      if (ms > 0 && !paused && !document.hidden) timer = setInterval(advance, ms);
     }
 
     next?.addEventListener('click', () => { resetTimer(); advance(); });
@@ -225,6 +231,14 @@ const hasCaption = images.some(img => img.caption);
       dx < 0 ? advance() : retreat();
     });
 
-    if (ms > 0) resetTimer();
+    if (ms > 0) {
+      // pause while hovered/focused or tab hidden (WCAG 2.2.2)
+      carousel.addEventListener('mouseenter', () => { paused = true; stopTimer(); });
+      carousel.addEventListener('mouseleave', () => { paused = false; resetTimer(); });
+      carousel.addEventListener('focusin',    () => { paused = true; stopTimer(); });
+      carousel.addEventListener('focusout',   () => { paused = false; resetTimer(); });
+      document.addEventListener('visibilitychange', resetTimer);
+      resetTimer();
+    }
   });
 </script>

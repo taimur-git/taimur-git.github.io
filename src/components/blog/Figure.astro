@@ -99,17 +99,18 @@ const id = `fig-${Math.random().toString(36).slice(2, 8)}`;
   .fig-close:hover { background: rgba(255, 255, 255, 0.2); }
 </style>
 
-<script is:inline>
-  document.querySelectorAll('[data-lightbox]').forEach(function (img) {
+<script>
+  document.querySelectorAll<HTMLImageElement>('[data-lightbox]').forEach(function (img) {
     img.addEventListener('click', function () {
-      var lb = document.getElementById(img.dataset.lightbox);
+      var lb = document.getElementById(img.dataset.lightbox!);
       if (lb) lb.classList.add('open');
     });
   });
 
   document.querySelectorAll('.fig-lightbox').forEach(function (lb) {
     lb.addEventListener('click', function (e) {
-      if (e.target === lb || e.target.classList.contains('fig-close')) {
+      var t = e.target as HTMLElement;
+      if (t === lb || t.classList.contains('fig-close')) {
         lb.classList.remove('open');
       }
     });

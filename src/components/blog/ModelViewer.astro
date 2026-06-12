@@ -311,15 +311,29 @@ const id = `mv-${Math.random().toString(36).slice(2, 8)}`;
         skeleton.style.display = 'none';
         canvas.style.display   = 'block';
 
-        /* render loop */
+        /* render loop — paused while off-screen */
         const clock = new THREE.Clock();
-        (function loop() {
-          requestAnimationFrame(loop);
-          const dt = clock.getDelta();
+        let rafId = 0;
+        function loop() {
+          rafId = requestAnimationFrame(loop);
+          const dt = Math.min(clock.getDelta(), 0.1);
           controls.update();
           if (mixer) mixer.update(dt);
           renderer.render(scene, cam);
-        })();
+        }
+        loop();
+
+        new IntersectionObserver((entries) => {
+          if (entries[0].isIntersecting) {
+            if (!rafId) {
+              clock.getDelta(); // discard time accumulated while paused
+              loop();
+            }
+          } else if (rafId) {
+            cancelAnimationFrame(rafId);
+            rafId = 0;
+          }
+        }).observe(el);
 
         /* resize */
         new ResizeObserver(() => {

@@ -12,7 +12,6 @@ const papers = (await getCollection('research'))
     <h1 style="font-size: var(--font-size-3xl); font-weight: var(--font-weight-medium); line-height: var(--line-height-tight); margin-bottom: var(--space-8);">research</h1>
     <div class="post-list">
       {papers.map(paper => {
-        const doiUrl = paper.data.doi ? `https://doi.org/${paper.data.doi}` : undefined;
         return (
           <article class="post-card">
             <a href={`/research/${paper.id}`}>

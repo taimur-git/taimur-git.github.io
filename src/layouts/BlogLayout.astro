@@ -23,6 +23,12 @@ const formattedDate = date.toLocaleDateString('en-GB', {
 ---
 
 <BaseLayout title={title}>
+  <Fragment slot="head">
+    <link rel="stylesheet" href="/libs/manim/lib/katex/katex.min.css" />
+    {hasBn && (
+      <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;500&display=swap" rel="stylesheet" />
+    )}
+  </Fragment>
   <div class="blog-layout">
     <article class="blog-content">
       <div class="blog-top-row">

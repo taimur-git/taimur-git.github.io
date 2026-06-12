@@ -1,0 +1,18 @@
+---
+title: "Priv-FedTL: Privacy-preserving federated transfer learning for resource constrained devices"
+authors:
+  - "Anas Mohammad Ishfaqul Muktadir Osmani"
+  - "Taimur Rahman"
+  - "Salekul Islam"
+  - "Mohammad Shahriar Rahman"
+venue: "Elsevier Computer Networks 2026 Journal"
+year: 2026
+doi: "10.1016/j.comnet.2026.112449"
+citations: 0
+abstract: "Federated learning (FL) enables collaborative model training without sharing raw data, but gradient inversion attacks can still reconstruct private training samples from model updates. This threat is particularly critical for resource-constrained IoT devices, where limited hardware makes robust defences difficult to deploy. We propose Priv-FedTL, a privacy-preserving federated transfer learning algorithm that integrates CKKS fully homomorphic encryption (FHE) scheme with transfer learning (TL) to address this on low-power hardware. By restricting encryption to the fine-tuned last-layer parameters, Priv-FedTL achieves a reduction in per-client ciphertext size relative to full-model encryption, making FHE feasible within the memory constraints of the Raspberry Pi 4. We evaluate the system on three benchmark datasets, using four Raspberry Pi 4 clients and a complementary 10-client simulation, benchmarking against differential privacy (DP) and secure multiparty computation (SMC). Security is assessed through gradient inversion simulations using three attack variants: DLG, iDLG, and cosine similarity. All three attacks fail unconditionally against FHE encrypted gradients. Incorporating FHE reduces accuracy by 2.73% and 1.93% relative to unencrypted federated transfer learning on PneumoniaMNIST and BreastMNIST respectively, a bounded cost independent of the privacy level. RAM is identified as the primary feasibility constraint, peaking at 2252 MB on physical hardware."
+tags:
+  - homomorphic encryption
+  - transfer learning
+  - resource-constrained devices
+  - federated learning
+---

@@ -137,14 +137,14 @@ const { before, after, beforeAlt = 'Before', afterAlt = 'After', caption } = Ast
   }
 </style>
 
-<script is:inline>
+<script>
   document.querySelectorAll('.compare-wrap').forEach(function (wrap) {
-    var slider = wrap.querySelector('.compare-slider');
-    var before = wrap.querySelector('.compare-before');
-    var handle = wrap.querySelector('.compare-handle');
+    var slider = wrap.querySelector<HTMLInputElement>('.compare-slider')!;
+    var before = wrap.querySelector<HTMLElement>('.compare-before')!;
+    var handle = wrap.querySelector<HTMLElement>('.compare-handle')!;
 
-    function update(val) {
-      before.style.clipPath = 'inset(0 ' + (100 - val) + '% 0 0)';
+    function update(val: string | number) {
+      before.style.clipPath = 'inset(0 ' + (100 - Number(val)) + '% 0 0)';
       handle.style.left = val + '%';
     }
 

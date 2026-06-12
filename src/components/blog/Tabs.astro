@@ -17,10 +17,11 @@ const { labels } = Astro.props;
     ))}
   </div>
   <div class="tabs-panels">
-    <div class="tab-panel active" data-panel="0"><slot name="tab-0" /></div>
-    <div class="tab-panel"        data-panel="1"><slot name="tab-1" /></div>
-    <div class="tab-panel"        data-panel="2"><slot name="tab-2" /></div>
-    <div class="tab-panel"        data-panel="3"><slot name="tab-3" /></div>
+    {labels.map((_, i) => (
+      <div class={`tab-panel${i === 0 ? ' active' : ''}`} data-panel={String(i)}>
+        <slot name={`tab-${i}`} />
+      </div>
+    ))}
   </div>
 </div>
 
@@ -81,7 +82,7 @@ const { labels } = Astro.props;
   }
 </style>
 
-<script is:inline>
+<script>
   document.querySelectorAll('[data-tabs]').forEach(function (wrap) {
     wrap.querySelectorAll('.tab-btn').forEach(function (btn) {
       btn.addEventListener('click', function () {

@@ -831,15 +831,7 @@ const { src, vtt } = Astro.props;
     }
   }
 
-  function initPlayers() {
-    document.querySelectorAll('.rv-main-container').forEach(el => {
-      if (!el.dataset.rvInit) {
-        el.dataset.rvInit = '1';
-        new TranscriptPlayer(el);
-      }
-    });
-  }
-
-  initPlayers();
-  document.addEventListener('astro:after-swap', initPlayers);
+  document.querySelectorAll('.rv-main-container').forEach(el => {
+    new TranscriptPlayer(el);
+  });
 </script>

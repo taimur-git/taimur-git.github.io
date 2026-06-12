@@ -61,7 +61,7 @@ const { term } = Astro.props;
   }
 </style>
 
-<script is:inline>
+<script>
   document.querySelectorAll('.tooltip-wrap').forEach(function (wrap) {
     wrap.addEventListener('click', function (e) {
       e.stopPropagation();

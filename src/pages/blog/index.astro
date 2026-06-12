@@ -18,6 +18,14 @@ const allTags = [...new Set(enPosts.flatMap(p => p.data.tags))].sort();
 ---
 
 <BaseLayout title="Writing">
+  <Fragment slot="head">
+    {bnIds.size > 0 && (
+      <link
+        href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;500&display=swap"
+        rel="stylesheet"
+      />
+    )}
+  </Fragment>
   <div class="site-container" style="padding-top: var(--space-12);">
     <h1 style="font-size: var(--font-size-3xl); font-weight: var(--font-weight-medium); line-height: var(--line-height-tight);">writing</h1>
     {allTags.length > 0 && (

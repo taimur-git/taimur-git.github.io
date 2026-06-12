@@ -301,9 +301,10 @@ const id = `ws-${Math.random().toString(36).slice(2, 8)}`;
         canvas.style.display   = 'block';
         divider.style.display  = 'block';
 
-        /* ── render loop ── */
-        (function loop() {
-          requestAnimationFrame(loop);
+        /* ── render loop — paused while off-screen ── */
+        let rafId = 0;
+        function loop() {
+          rafId = requestAnimationFrame(loop);
           controls.update();
 
           const pw   = renderer.domElement.width;
@@ -334,7 +335,17 @@ const id = `ws-${Math.random().toString(36).slice(2, 8)}`;
           renderer.render(scene, cam);
 
           renderer.setScissorTest(false);
-        })();
+        }
+        loop();
+
+        new IntersectionObserver((entries) => {
+          if (entries[0].isIntersecting) {
+            if (!rafId) loop();
+          } else if (rafId) {
+            cancelAnimationFrame(rafId);
+            rafId = 0;
+          }
+        }).observe(el);
 
         /* resize */
         new ResizeObserver(() => {

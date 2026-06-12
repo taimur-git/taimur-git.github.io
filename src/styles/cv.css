@@ -78,12 +78,37 @@
   color: var(--color-text-muted);
 }
 
+/* Screen/print swap utility */
+.print-only { display: none; }
+
 /* ── Print ── */
 @media print {
+  .screen-only { display: none !important; }
+  .print-only  { display: inline !important; }
+
   @page {
     size: A4;
-    margin: 18mm 16mm;
+    margin: 14mm 13mm;
   }
+
+  /* Force the light palette regardless of OS theme, and darken the gray
+     scale a step — light grays print too faint */
+  :root {
+    --color-accent:         #2563eb;
+    --color-accent-muted:   #dbeafe;
+    --color-accent-text:    #1e40af;
+    --color-bg:             #ffffff;
+    --color-surface:        #f4f4f3;
+    --color-surface-raised: #ffffff;
+    --color-border:         rgba(0, 0, 0, 0.12);
+    --color-border-strong:  rgba(0, 0, 0, 0.25);
+    --color-text:           #111111;
+    --color-text-muted:     #374151;
+    --color-text-faint:     #4b5563;
+  }
+
+  /* Scale the whole rem-based type system down to print sizes */
+  html { font-size: 12.5px !important; }
 
   /* Hide all screen-only chrome */
   nav, footer, .print-btn, .cv-print-bar { display: none !important; }
@@ -92,14 +117,13 @@
   body {
     min-height: 0 !important;
     background: white !important;
-    color: black !important;
   }
 
-  /* Preserve two-column grid with concrete values (no CSS vars for safety) */
+  /* Narrower sidebar — main column gets the space back */
   .cv-layout {
     display: grid !important;
-    grid-template-columns: 240px 1fr !important;
-    gap: 24px !important;
+    grid-template-columns: 180px 1fr !important;
+    gap: 20px !important;
     padding: 0 !important;
     max-width: none !important;
     background: white !important;
@@ -108,22 +132,72 @@
   .cv-sidebar {
     position: static !important;
     background: white !important;
-    color: black !important;
   }
 
+  .profile-photo { max-width: 140px !important; }
+
+  /* ── Pagination ── */
+  /* Chrome fragments flex containers badly (slices lines in half mid-page).
+     Convert column-flex containers to block flow; restore spacing via margins. */
+  .cv-entries,
+  .profile-card,
+  .sidebar-section,
+  .skill-group,
+  .contact-list,
+  .experience-block,
+  .publication-card {
+    display: block !important;
+  }
+
+  .cv-entries > * + *      { margin-top: var(--space-6); }
+  .profile-card > * + *    { margin-top: var(--space-4); }
+  .sidebar-section > * + * { margin-top: var(--space-2); }
+  .contact-list > * + *    { margin-top: var(--space-1); }
+  .experience-block .exp-bullets { margin-top: var(--space-2); }
+  .publication-card > * + * { margin-top: var(--space-1); }
+
+  .cv-header,
   .experience-block,
   .education-block,
-  .publication-card {
+  .publication-card,
+  .cert-item,
+  .skill-group,
+  .lang-item,
+  .contact-list,
+  li {
     break-inside: avoid;
   }
 
-  a[href]::after {
-    content: " (" attr(href) ")";
-    font-size: 0.7em;
-    color: #666;
+  /* paper noise — authors, research tag pills, cert badge images */
+  .pub-authors,
+  .pub-tags,
+  .cert-badge-img {
+    display: none !important;
   }
 
-  a.no-print-href::after { content: ""; }
+  /* never strand a heading at the bottom of a page */
+  .cv-section-title,
+  .sidebar-label,
+  .skill-category {
+    break-after: avoid;
+  }
+
+  p, li {
+    orphans: 3;
+    widows: 3;
+  }
+
+  /* tighten section rhythm for paper */
+  .cv-section {
+    margin-bottom: var(--space-6);
+    padding-bottom: var(--space-6);
+  }
+
+  /* keep links readable, not decorated — no appended URLs */
+  a[href] {
+    color: inherit;
+    text-decoration: none;
+  }
 }
 
 /* ── Mobile ── */

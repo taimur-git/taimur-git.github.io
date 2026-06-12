@@ -39,7 +39,10 @@ const doiUrl = doi ? `https://doi.org/${doi}` : undefined;
   )}
   <div class="pub-links">
     {doiUrl && (
-      <a href={doiUrl} class="pub-link no-print-href" target="_blank" rel="noopener">DOI ↗</a>
+      <a href={doiUrl} class="pub-link no-print-href" target="_blank" rel="noopener">
+        <span class="screen-only">DOI ↗</span>
+        <span class="print-only">doi:{doi}</span>
+      </a>
     )}
     {pdf && (
       <a href={pdf} class="pub-link no-print-href" target="_blank" rel="noopener">PDF ↗</a>

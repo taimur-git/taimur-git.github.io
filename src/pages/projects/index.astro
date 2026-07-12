@@ -1,7 +1,10 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { getCollection } from 'astro:content';
+import { getCollection, getEntry } from 'astro:content';
 import '../../styles/blog.css';
+
+const cv = await getEntry('cv', 'index');
+const ghUser = cv!.data.contact.github.split('/').filter(Boolean).pop()!;
 
 const projects = (await getCollection('projects'))
   .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
@@ -16,11 +19,11 @@ function fmtDate(d: Date) {
     <h1 style="font-size: var(--font-size-3xl); font-weight: var(--font-weight-medium); line-height: var(--line-height-tight); margin-bottom: var(--space-8);">projects</h1>
 
     <section class="gh-section">
-      <span class="mono gh-label">github activity · taimur-git</span>
-      <div class="gh-chart-wrap" id="gh-chart">
+      <span class="mono gh-label">github activity · {ghUser}</span>
+      <div class="gh-chart-wrap" id="gh-chart" data-user={ghUser}>
         <div class="gh-skeleton" id="gh-skeleton"></div>
         <div class="gh-scroll" id="gh-scroll" hidden>
-          <svg class="gh-svg" id="gh-svg" role="img" aria-label="GitHub contribution chart for taimur-git"></svg>
+          <svg class="gh-svg" id="gh-svg" role="img" aria-label={`GitHub contribution chart for ${ghUser}`}></svg>
         </div>
         <div class="gh-footer" id="gh-footer" hidden>
           <span class="mono" id="gh-total"></span>
@@ -74,7 +77,8 @@ function fmtDate(d: Date) {
 </BaseLayout>
 
 <script>
-  const USER = 'taimur-git';
+  // handle comes from cv frontmatter (contact.github) via the data attribute
+  const USER = document.getElementById('gh-chart')!.dataset.user!;
   const CELL = 11;
   const GAP  = 3;
   const STEP = CELL + GAP;

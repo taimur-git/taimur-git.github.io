@@ -691,6 +691,7 @@ const { src, vtt } = Astro.props;
       const rect = this.progressTrack.getBoundingClientRect();
       const pct  = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
       if (isFinite(this.video.duration)) this.video.currentTime = pct * this.video.duration;
+      this.setProgress(pct * 100); // timeupdate is suppressed while seeking
     }
 
     setupEvents() {

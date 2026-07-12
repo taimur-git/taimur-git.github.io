@@ -23,7 +23,8 @@ const id = `fig-${Math.random().toString(36).slice(2, 8)}`;
 {zoom && (
   <div class="fig-lightbox" id={id} role="dialog" aria-modal="true" aria-label={alt}>
     <button class="fig-close" aria-label="Close">✕</button>
-    <img src={src} alt={alt} class="fig-lightbox-img" />
+    {/* src assigned on open so the full-size copy isn't fetched at page load */}
+    <img data-src={src} alt={alt} class="fig-lightbox-img" />
   </div>
 )}
 
@@ -122,6 +123,8 @@ const id = `fig-${Math.random().toString(36).slice(2, 8)}`;
     btn.addEventListener('click', function () {
       const lb = document.getElementById(btn.dataset.lightbox!);
       if (!lb) return;
+      const img = lb.querySelector<HTMLImageElement>('.fig-lightbox-img');
+      if (img && !img.getAttribute('src')) img.src = img.dataset.src ?? '';
       lastTrigger = btn;
       lb.classList.add('open');
       document.body.style.overflow = 'hidden';

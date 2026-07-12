@@ -75,6 +75,10 @@ const allTags = [...new Set(enPosts.flatMap(p => p.data.tags))].sort();
           applyFilter(next);
         });
       });
+
+      window.addEventListener('popstate', function () {
+        applyFilter(getTag());
+      });
     })();
   </script>
 </BaseLayout>

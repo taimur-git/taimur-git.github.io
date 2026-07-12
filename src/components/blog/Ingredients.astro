@@ -175,15 +175,26 @@ const id = `ing-${Math.random().toString(36).slice(2, 8)}`;
     [5/8,'⅝'],[2/3,'⅔'],[3/4,'¾'],[7/8,'⅞'],
   ];
 
+  const FRAC_VALUES: Record<string, number> = {};
+  for (const [val, ch] of FRACS) FRAC_VALUES[ch] = val;
+
+  /* handles "2", "1.5", "1/2", "1 1/2", "½", "1½", "1 ½" */
   function parseAmount(str: string): { num: number; sep: string; suffix: string } | null {
-    const m = str.match(/^(\d+(?:\/\d+)?(?:\.\d+)?)(\s*)(.*)/);
+    const m = str.match(
+      /^(\d+\s+\d+\/\d+|\d+\/\d+|\d+(?:\.\d+)?\s*[⅛¼⅓⅜½⅝⅔¾⅞]|[⅛¼⅓⅜½⅝⅔¾⅞]|\d+(?:\.\d+)?)(\s*)(.*)/
+    );
     if (!m) return null;
+    const raw = m[1];
     let num: number;
-    if (m[1].includes('/')) {
-      const [a, b] = m[1].split('/');
-      num = parseInt(a) / parseInt(b);
+    const frac = raw.match(/[⅛¼⅓⅜½⅝⅔¾⅞]/);
+    if (frac) {
+      const whole = raw.match(/^\d+/);
+      num = (whole ? parseInt(whole[0], 10) : 0) + FRAC_VALUES[frac[0]];
+    } else if (raw.includes('/')) {
+      const parts = raw.split(/[\s/]+/).map(Number);
+      num = parts.length === 3 ? parts[0] + parts[1] / parts[2] : parts[0] / parts[1];
     } else {
-      num = parseFloat(m[1]);
+      num = parseFloat(raw);
     }
     return { num, sep: m[2], suffix: m[3] };
   }

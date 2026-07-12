@@ -50,39 +50,39 @@ const minDepth = filtered.length ? Math.min(...filtered.map(h => h.depth)) : 1;
   }
 </style>
 
-<script is:inline>
-  (function () {
-    var headings = Array.from(
-      document.querySelectorAll('.blog-content h1[id], .blog-content h2[id], .blog-content h3[id]')
-    );
-    var links = Array.from(document.querySelectorAll('.toc a[href^="#"]'));
+<script>
+  const headings = Array.from(
+    document.querySelectorAll<HTMLElement>('.blog-content h1[id], .blog-content h2[id], .blog-content h3[id]')
+  );
+  const links = Array.from(document.querySelectorAll('.toc a[href^="#"]'));
 
-    if (!headings.length || !links.length) return;
-
-    function getActiveId() {
-      var scrollY = window.scrollY + 120;
-      var active = headings[0].id;
-      for (var i = 0; i < headings.length; i++) {
-        if (headings[i].offsetTop <= scrollY) active = headings[i].id;
+  if (headings.length && links.length) {
+    const getActiveId = () => {
+      const scrollY = window.scrollY + 120;
+      let active = '';
+      for (const h of headings) {
+        // skip headings hidden with the inactive language (offsetTop would be 0)
+        if (h.offsetParent === null) continue;
+        if (!active || h.offsetTop <= scrollY) active = h.id;
       }
       return active;
-    }
+    };
 
-    function update() {
-      var active = getActiveId();
-      links.forEach(function (link) {
+    const update = () => {
+      const active = getActiveId();
+      links.forEach((link) => {
         link.classList.toggle('toc-active', link.getAttribute('href') === '#' + active);
       });
-    }
+    };
 
-    var ticking = false;
-    window.addEventListener('scroll', function () {
+    let ticking = false;
+    window.addEventListener('scroll', () => {
       if (!ticking) {
-        requestAnimationFrame(function () { update(); ticking = false; });
+        requestAnimationFrame(() => { update(); ticking = false; });
         ticking = true;
       }
     }, { passive: true });
 
     update();
-  })();
+  }
 </script>

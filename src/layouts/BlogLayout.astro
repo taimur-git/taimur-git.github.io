@@ -4,6 +4,7 @@ import TagPill from '../components/blog/TagPill.astro';
 import ReadingTime from '../components/blog/ReadingTime.astro';
 import TOC from '../components/blog/TOC.astro';
 import '../styles/blog.css';
+import 'katex/dist/katex.min.css';
 
 interface Props {
   title: string;
@@ -32,7 +33,6 @@ const formattedDate = date.toLocaleDateString('en-GB', {
 
 <BaseLayout title={title} description={excerpt} ogType="article">
   <Fragment slot="head">
-    <link rel="stylesheet" href="/libs/manim/lib/katex/katex.min.css" />
     {hasBn && (
       <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;500&display=swap" rel="stylesheet" />
     )}

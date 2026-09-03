@@ -139,9 +139,22 @@
   display: block;
   border: 0.5px solid var(--color-border);
   border-radius: var(--radius-lg);
-  padding: var(--space-4) var(--space-6);
   background: var(--color-surface-raised);
+  overflow: hidden;
   transition: border-color var(--transition-base);
+}
+
+/* optional: only rendered when the recipe declares an image */
+.recipe-card-thumb {
+  display: block;
+  width: 100%;
+  aspect-ratio: 3 / 2;
+  object-fit: cover;
+  border-bottom: 0.5px solid var(--color-border);
+}
+
+.recipe-card-body {
+  padding: var(--space-4) var(--space-6);
 }
 
 .recipe-card-link:hover {

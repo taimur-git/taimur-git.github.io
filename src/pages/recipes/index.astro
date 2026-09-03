@@ -40,13 +40,18 @@ const facetsOf = (r: (typeof recipes)[number]) =>
       <div class="recipe-grid" id="recipe-grid">
         {recipes.map((recipe) => (
           <a href={`/recipes/${recipe.id}`} class="recipe-card-link" data-facets={facetsOf(recipe)}>
-            <h2 class="recipe-card-title">{recipe.data.title}</h2>
-            <p class="recipe-card-summary">{recipe.data.summary}</p>
-            <div class="recipe-card-meta">
-              <span>{recipe.data.yield}</span>
-              <span>·</span>
-              <span>{formatDuration(recipe.data.prep + recipe.data.cook)}</span>
-              {recipe.data.heat !== 'none' && <><span>·</span><span>{recipe.data.heat}</span></>}
+            {recipe.data.image && (
+              <img class="recipe-card-thumb" src={recipe.data.image} alt="" loading="lazy" decoding="async" />
+            )}
+            <div class="recipe-card-body">
+              <h2 class="recipe-card-title">{recipe.data.title}</h2>
+              <p class="recipe-card-summary">{recipe.data.summary}</p>
+              <div class="recipe-card-meta">
+                <span>{recipe.data.yield}</span>
+                <span>·</span>
+                <span>{formatDuration(recipe.data.prep + recipe.data.cook)}</span>
+                {recipe.data.heat !== 'none' && <><span>·</span><span>{recipe.data.heat}</span></>}
+              </div>
             </div>
           </a>
         ))}

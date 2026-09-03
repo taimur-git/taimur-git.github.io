@@ -106,7 +106,7 @@ const id = `mv-${Math.random().toString(36).slice(2, 8)}`;
 </style>
 
 <script>
-  /* lazy init — the Three.js chunk (src/scripts/glb-viewer.ts) is only
+  /* lazy init: the Three.js chunk (src/scripts/glb-viewer.ts) is only
      fetched when a viewer nears the viewport */
   const io = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {

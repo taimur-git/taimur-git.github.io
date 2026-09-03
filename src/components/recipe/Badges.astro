@@ -1,0 +1,75 @@
+---
+interface Props {
+  allergens: string[];
+  diet: string[];
+  heat: string;
+}
+const { allergens, diet, heat } = Astro.props;
+
+const HEAT_LEVEL: Record<string, number> = { none: 0, mild: 1, medium: 2, hot: 3 };
+const level = HEAT_LEVEL[heat] ?? 0;
+---
+
+{(allergens.length > 0 || diet.length > 0 || level > 0) && (
+  <div class="badges">
+    {diet.map((d) => <span class="badge badge-diet">{d}</span>)}
+    {level > 0 && (
+      <span class="badge badge-heat" title={`Heat: ${heat}`}>
+        <span aria-hidden="true">{'◆'.repeat(level)}{'◇'.repeat(3 - level)}</span>
+        <span class="sr-only">Heat: </span>{heat}
+      </span>
+    )}
+    {allergens.length > 0 && (
+      <span class="badge badge-allergen">
+        contains {allergens.join(', ')}
+      </span>
+    )}
+  </div>
+)}
+
+<style>
+  .badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin: var(--space-4) 0;
+  }
+
+  .badge {
+    font-family: var(--font-mono);
+    font-size: var(--font-size-xs);
+    padding: 2px 8px;
+    border-radius: var(--radius-full);
+    border: 0.5px solid transparent;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+  }
+
+  .badge-diet {
+    background: var(--color-tag-work);
+    color: var(--color-tag-work-text);
+  }
+
+  .badge-heat {
+    background: var(--color-tag-cert);
+    color: var(--color-tag-cert-text);
+  }
+
+  .badge-allergen {
+    border-color: var(--color-border-strong);
+    color: var(--color-text-muted);
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+</style>

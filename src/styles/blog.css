@@ -254,7 +254,7 @@
   position: relative;
 }
 
-/* copy button — injected by BlogLayout script */
+/* copy button: injected by BlogLayout script */
 .code-copy-btn {
   position: absolute;
   top: var(--space-2);
@@ -287,7 +287,7 @@
   opacity: 1;
 }
 
-/* touch devices have no hover — keep it visible */
+/* touch devices have no hover: keep it visible */
 @media (pointer: coarse) {
   .code-copy-btn { opacity: 1; }
 }

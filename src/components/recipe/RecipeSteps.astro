@@ -2,6 +2,7 @@
 interface RecipeStep {
   label?: string;
   body: string;
+  list?: string[];
   duration?: string;
   optional?: boolean;
   tip?: string;
@@ -20,13 +21,22 @@ const { steps, title = 'Method' } = Astro.props;
       <li class={`recipe-step${step.optional ? ' recipe-step-optional' : ''}`}>
         <span class="recipe-step-num" aria-hidden="true">{i + 1}</span>
         <div class="recipe-step-body">
-          <div class="recipe-step-header">
-            {step.label && <span class="recipe-step-label">{step.label}</span>}
-            {step.duration && (
-              <span class="recipe-step-duration">◷ {step.duration}</span>
-            )}
-            {step.optional && <span class="recipe-step-tag">optional</span>}
-          </div>
+          {/* omit the header entirely when empty: a blank one still reserves
+              its height and pushes the text off the number beside it */}
+          {(step.label || step.duration || step.optional) && (
+            <div class="recipe-step-header">
+              {step.label && <span class="recipe-step-label">{step.label}</span>}
+              {step.duration && (
+                <span class="recipe-step-duration">◷ {step.duration}</span>
+              )}
+              {step.optional && <span class="recipe-step-tag">optional</span>}
+            </div>
+          )}
+          {step.list && (
+            <ol class="recipe-step-list-inner">
+              {step.list.map((item) => <li>{item}</li>)}
+            </ol>
+          )}
           <p class="recipe-step-text">{step.body}</p>
           {step.tip && (
             <p class="recipe-step-tip">
@@ -100,6 +110,8 @@ const { steps, title = 'Method' } = Astro.props;
   .recipe-step-body {
     flex: 1;
     min-width: 0;
+    /* centres the first line, heading or text, against the 32px number */
+    padding-top: 4px;
     padding-bottom: var(--space-6);
   }
 
@@ -110,8 +122,7 @@ const { steps, title = 'Method' } = Astro.props;
     align-items: center;
     flex-wrap: wrap;
     gap: var(--space-2);
-    margin: 4px 0 var(--space-2);
-    min-height: 24px;
+    margin: 0 0 var(--space-2);
   }
 
   .recipe-step-label {
@@ -141,6 +152,15 @@ const { steps, title = 'Method' } = Astro.props;
     line-height: var(--line-height-body);
     margin: 0;
   }
+
+  .recipe-step-list-inner {
+    margin: 0 0 var(--space-2);
+    padding-left: 1.2rem;
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+  }
+
+  .recipe-step-list-inner li { line-height: var(--line-height-body); }
 
   .recipe-step-tip {
     margin-top: var(--space-2);

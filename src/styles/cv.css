@@ -92,7 +92,7 @@
   }
 
   /* Force the light palette regardless of OS theme, and darken the gray
-     scale a step — light grays print too faint */
+     scale a step: light grays print too faint */
   :root {
     --color-accent:         #2563eb;
     --color-accent-muted:   #dbeafe;
@@ -119,7 +119,7 @@
     background: white !important;
   }
 
-  /* Narrower sidebar — main column gets the space back */
+  /* Narrower sidebar: main column gets the space back */
   .cv-layout {
     display: grid !important;
     grid-template-columns: 180px 1fr !important;
@@ -168,7 +168,7 @@
     break-inside: avoid;
   }
 
-  /* paper noise — authors, research tag pills, cert badge images */
+  /* paper noise: authors, research tag pills, cert badge images */
   .pub-authors,
   .pub-tags,
   .cert-badge-img {
@@ -193,7 +193,7 @@
     padding-bottom: var(--space-6);
   }
 
-  /* keep links readable, not decorated — no appended URLs */
+  /* keep links readable, not decorated: no appended URLs */
   a[href] {
     color: inherit;
     text-decoration: none;

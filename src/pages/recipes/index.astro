@@ -1,0 +1,89 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+import { formatDuration } from '../../lib/recipe/format';
+import '../../styles/recipe.css';
+
+const recipes = (await getCollection('recipes', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.date.getTime() - a.data.date.getTime(),
+);
+
+/* one flat facet list: tags, diet claims and "no <allergen>" all filter alike */
+const facets = [
+  ...new Set(recipes.flatMap((r) => [...r.data.tags, ...r.data.diet])),
+].sort();
+
+const facetsOf = (r: (typeof recipes)[number]) =>
+  [...r.data.tags, ...r.data.diet].join(',');
+---
+
+<BaseLayout title="Recipes" description="Recipes, written twice: as prose and as a dependency graph.">
+  <div class="site-container" style="padding-top: var(--space-12); padding-bottom: var(--space-16);">
+    <h1 style="font-size: var(--font-size-3xl); font-weight: var(--font-weight-medium); line-height: var(--line-height-tight);">recipes</h1>
+    <p style="color: var(--color-text-muted); max-width: var(--max-width-prose); line-height: var(--line-height-body);">
+      Here are my recipes I adapted from places. Sources are attached, exports support Paprika and OpenRecipe.
+    </p>
+
+    {facets.length > 0 && (
+      <div class="recipe-filters" id="recipe-filters">
+        {facets.map((facet) => (
+          <button type="button" class="recipe-filter" data-facet={facet} aria-pressed="false">
+            {facet}
+          </button>
+        ))}
+      </div>
+    )}
+
+    {recipes.length === 0 ? (
+      <p class="recipe-empty">Nothing here yet.</p>
+    ) : (
+      <div class="recipe-grid" id="recipe-grid">
+        {recipes.map((recipe) => (
+          <a href={`/recipes/${recipe.id}`} class="recipe-card-link" data-facets={facetsOf(recipe)}>
+            <h2 class="recipe-card-title">{recipe.data.title}</h2>
+            <p class="recipe-card-summary">{recipe.data.summary}</p>
+            <div class="recipe-card-meta">
+              <span>{recipe.data.yield}</span>
+              <span>·</span>
+              <span>{formatDuration(recipe.data.prep + recipe.data.cook)}</span>
+              {recipe.data.heat !== 'none' && <><span>·</span><span>{recipe.data.heat}</span></>}
+            </div>
+          </a>
+        ))}
+      </div>
+    )}
+  </div>
+
+  <script is:inline>
+    (function () {
+      var active = null;
+
+      function apply(facet) {
+        active = facet;
+        document.querySelectorAll('#recipe-grid .recipe-card-link').forEach(function (card) {
+          var facets = (card.dataset.facets || '').split(',');
+          card.style.display = !facet || facets.includes(facet) ? '' : 'none';
+        });
+        document.querySelectorAll('#recipe-filters .recipe-filter').forEach(function (btn) {
+          btn.setAttribute('aria-pressed', String(btn.dataset.facet === facet));
+        });
+      }
+
+      function fromUrl() {
+        return new URLSearchParams(window.location.search).get('tag');
+      }
+
+      apply(fromUrl());
+
+      document.querySelectorAll('#recipe-filters .recipe-filter').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var next = active === btn.dataset.facet ? null : btn.dataset.facet;
+          history.pushState({}, '', next ? '?tag=' + encodeURIComponent(next) : window.location.pathname);
+          apply(next);
+        });
+      });
+
+      window.addEventListener('popstate', function () { apply(fromUrl()); });
+    })();
+  </script>
+</BaseLayout>

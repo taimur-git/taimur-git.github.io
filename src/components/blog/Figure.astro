@@ -137,7 +137,7 @@ const id = `fig-${Math.random().toString(36).slice(2, 8)}`;
       const t = e.target as HTMLElement;
       if (t === lb || t.classList.contains('fig-close')) closeLightbox(lb);
     });
-    // close button is the only focusable element — keep focus on it
+    // close button is the only focusable element, so keep focus on it
     lb.addEventListener('keydown', function (e) {
       if ((e as KeyboardEvent).key === 'Tab') {
         e.preventDefault();

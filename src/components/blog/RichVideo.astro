@@ -515,7 +515,7 @@ const { src, vtt } = Astro.props;
     flex: 1;
   }
 
-  /* ── Transcript blocks — :global because JS creates these at runtime ── */
+  /* ── Transcript blocks, :global because JS creates these at runtime ── */
   :global(.rv-block) {
     padding: var(--space-3) var(--space-4);
     border-radius: var(--radius-md);
@@ -769,7 +769,7 @@ const { src, vtt } = Astro.props;
         this.ccBtn.setAttribute('aria-expanded', 'false');
       });
 
-      // Fullscreen — whole container so transcript is available inside it
+      // Fullscreen: whole container so transcript is available inside it
       this.fsBtn.addEventListener('click', () => {
         if (!document.fullscreenElement) this.container.requestFullscreen();
         else document.exitFullscreen();

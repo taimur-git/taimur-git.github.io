@@ -1,5 +1,6 @@
 import { defineCollection, z } from 'astro:content';
 import { glob } from 'astro/loaders';
+import { recipeSchema } from './lib/recipe/schema';
 
 const cvCollection = defineCollection({
   loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/cv' }),
@@ -89,9 +90,15 @@ const projectsCollection = defineCollection({
   }),
 });
 
+const recipesCollection = defineCollection({
+  loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/recipes' }),
+  schema: recipeSchema,
+});
+
 export const collections = {
   cv: cvCollection,
   blog: blogCollection,
   research: researchCollection,
   projects: projectsCollection,
+  recipes: recipesCollection,
 };

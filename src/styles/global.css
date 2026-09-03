@@ -273,7 +273,7 @@ a:hover { opacity: 0.75; }
 }
 
 .timeline-bullets li::before {
-  content: '–';
+  content: '-';
   position: absolute;
   left: 0;
   color: var(--color-text-faint);

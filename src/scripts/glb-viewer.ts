@@ -21,7 +21,7 @@ function bool(v: string | undefined, def = true) {
 }
 
 /* MeshStandardMaterial → MeshBasicMaterial so colours render exactly as
-   authored — no lighting calculation, no dimming */
+   authored: no lighting calculation, no dimming */
 function toBasic(m: THREE.Material): THREE.MeshBasicMaterial {
   const s = m as THREE.MeshStandardMaterial;
   return new THREE.MeshBasicMaterial({
@@ -270,7 +270,7 @@ export function initModelViewer(el: HTMLElement) {
       skeleton.style.display = 'none';
       canvas.style.display   = 'block';
 
-      /* render loop — paused while off-screen */
+      /* render loop, paused while off-screen */
       const clock = new THREE.Clock();
       runLoopWhileVisible(
         el,
@@ -302,7 +302,7 @@ export function initModelViewer(el: HTMLElement) {
       }).observe(el);
     },
 
-    /* progress — no-op */
+    /* progress: no-op */
     undefined,
 
     (err) => showLoadError('ModelViewer', skeleton, 'mv-error', err),
@@ -335,12 +335,12 @@ export function initWireframeSlider(el: HTMLElement) {
 
   const w = el.offsetWidth;
   const h = el.offsetHeight;
-  /* CSS-pixel viewport size — setViewport/setScissor take CSS px and are
+  /* CSS-pixel viewport size: setViewport/setScissor take CSS px and are
      multiplied by the pixel ratio internally by three.js */
   let vw = w;
   let vh = h;
 
-  /* ── renderer (always alpha:true — left side may be transparent) ── */
+  /* ── renderer (always alpha:true, left side may be transparent) ── */
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
   renderer.setSize(w, h);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -438,7 +438,7 @@ export function initWireframeSlider(el: HTMLElement) {
       canvas.style.display   = 'block';
       divider.style.display  = 'block';
 
-      /* ── render loop — paused while off-screen ── */
+      /* ── render loop, paused while off-screen ── */
       runLoopWhileVisible(el, () => {
         controls.update();
 

@@ -1,0 +1,189 @@
+---
+import { layoutComponent } from '../../lib/recipe/graph';
+import { renderQty } from '../../lib/recipe/format';
+import type { RecipeComponent } from '../../lib/recipe/schema';
+
+interface Props {
+  component: RecipeComponent;
+}
+const { component } = Astro.props;
+const { width, rows } = layoutComponent(component);
+
+/* **bold** and *italic* inside an op's lines */
+const segments = (line: string) =>
+  line.split(/(\*\*[^*]+\*\*|\*[^*]+\*)/).filter(Boolean);
+---
+
+<div class="graph-wrap">
+  <table class="graph" style={`--cols: ${width}`}>
+    <tbody>
+      {rows.map((cells) => (
+        <tr>
+          {cells.map((cell) =>
+            cell.kind === 'ing' ? (
+              <td class="graph-ing" rowspan={cell.rowspan} colspan={cell.colspan}>
+                <div class="graph-ing-row">
+                  <button
+                    type="button"
+                    class="ing-check"
+                    data-ing={`${component.id}:${cell.id}`}
+                    aria-pressed="false"
+                  >
+                    <span class={`ing-label${cell.optional ? ' is-optional' : ''}`}>
+                      {cell.qty !== undefined && (
+                        <span class="ingredient-amount" data-qty={cell.qty} data-unit={cell.unit ?? ''}>
+                          {renderQty(cell.qty, cell.unit)}
+                        </span>
+                      )}{cell.qty !== undefined && ' '}
+                      {cell.name}
+                      {cell.note && <span class="ing-note">, {cell.note}</span>}
+                    </span>
+                  </button>
+                  {cell.ref && (
+                    <a
+                      class="ing-ref"
+                      href={`#${cell.ref}`}
+                      data-ref={cell.ref}
+                      aria-label={`Jump to ${cell.name}`}
+                    >↗</a>
+                  )}
+                </div>
+              </td>
+            ) : cell.kind === 'gap' ? (
+              <td class="graph-op" rowspan={cell.rowspan} colspan={cell.colspan}></td>
+            ) : (
+              <td
+                class={`graph-op${cell.final ? ' graph-final' : ''}`}
+                rowspan={cell.rowspan}
+                colspan={cell.colspan}
+              >
+                {cell.list && (
+                  <ol>
+                    {cell.list.map((item) => <li>{item}</li>)}
+                  </ol>
+                )}
+                {cell.lines?.map((line, i) => (
+                  <>
+                    {i > 0 && <br />}
+                    {segments(line).map((part) =>
+                      part.startsWith('**') ? (
+                        <strong>{part.slice(2, -2)}</strong>
+                      ) : part.startsWith('*') ? (
+                        <em>{part.slice(1, -1)}</em>
+                      ) : (
+                        part
+                      ),
+                    )}
+                  </>
+                ))}
+              </td>
+            ),
+          )}
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>
+
+<style>
+  .graph-wrap {
+    overflow-x: auto;
+    margin: var(--space-4) 0 var(--space-8);
+  }
+
+  .graph {
+    border-collapse: collapse;
+    width: 100%;
+    min-width: calc(var(--cols, 4) * 128px);
+    font-size: var(--font-size-sm);
+  }
+
+  .graph td {
+    border: 0.5px solid var(--color-border-strong);
+    padding: var(--space-2) var(--space-3);
+    vertical-align: middle;
+    line-height: var(--line-height-tight);
+  }
+
+  .graph-ing {
+    width: 1%;
+    white-space: nowrap;
+    padding: 0;
+  }
+
+  .graph-ing-row {
+    display: flex;
+    align-items: center;
+  }
+
+  /* sibling of the toggle, never nested inside it: a link inside a button
+     is invalid and the button swallows the click */
+  .ing-ref {
+    flex-shrink: 0;
+    padding: var(--space-2) var(--space-2);
+    font-size: var(--font-size-xs);
+    color: var(--color-text-faint);
+    line-height: 1;
+    text-decoration: none;
+  }
+
+  .ing-ref:hover { color: var(--color-accent); opacity: 1; }
+
+  .ing-check {
+    display: block;
+    flex: 1;
+    min-width: 0;
+    padding: var(--space-2) var(--space-3);
+    background: none;
+    border: 0;
+    font: inherit;
+    color: inherit;
+    text-align: left;
+    cursor: pointer;
+  }
+
+  .ing-check:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: -2px;
+  }
+
+  .ing-check[aria-pressed='true'] .ing-label {
+    text-decoration: line-through;
+    opacity: 0.4;
+  }
+
+  .is-optional { font-style: italic; opacity: 0.7; }
+
+  .ingredient-amount {
+    font-family: var(--font-mono);
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+    transition: color var(--transition-fast);
+  }
+
+  .ingredient-amount.updated { color: var(--color-accent); }
+
+  .ing-note { color: var(--color-text-faint); }
+
+  .graph-op {
+    text-align: center;
+    background: var(--color-surface);
+    color: var(--color-text-muted);
+  }
+
+  .graph-final {
+    background: var(--color-surface-raised);
+    color: var(--color-text);
+    white-space: nowrap;
+  }
+
+  .graph-op strong { color: var(--color-text); font-weight: var(--font-weight-medium); }
+
+  .graph-final ol {
+    margin: 0 0 var(--space-2);
+    padding-left: 1.2rem;
+    text-align: left;
+  }
+
+  .graph-final li { line-height: var(--line-height-tight); }
+</style>

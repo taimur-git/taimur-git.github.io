@@ -1,0 +1,87 @@
+---
+interface Props {
+  nutrition: {
+    basis: string;
+    calories?: number;
+    fat?: number;
+    carbs?: number;
+    protein?: number;
+    salt?: number;
+  };
+}
+const { nutrition } = Astro.props;
+
+const rows = [
+  ['Calories', nutrition.calories, 'kcal'],
+  ['Fat', nutrition.fat, 'g'],
+  ['Carbs', nutrition.carbs, 'g'],
+  ['Protein', nutrition.protein, 'g'],
+  ['Salt', nutrition.salt, 'g'],
+].filter(([, value]) => value !== undefined) as [string, number, string][];
+---
+
+<div class="nutrition">
+  <p class="nutrition-heading">Nutrition <span class="nutrition-basis">{nutrition.basis}</span></p>
+  <dl class="nutrition-grid">
+    {rows.map(([label, value, unit]) => (
+      <div class="nutrition-item">
+        <dt>{label}</dt>
+        <dd>{value.toLocaleString('en-GB')}{unit}</dd>
+      </div>
+    ))}
+  </dl>
+  <p class="nutrition-caveat">Estimated, not measured.</p>
+</div>
+
+<style>
+  .nutrition {
+    border: 0.5px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface);
+    padding: var(--space-4) var(--space-6);
+    margin: var(--space-6) 0;
+  }
+
+  .nutrition-heading {
+    font-family: var(--font-mono);
+    font-size: var(--font-size-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-text-faint);
+    margin: 0 0 var(--space-3);
+  }
+
+  .nutrition-basis {
+    text-transform: none;
+    letter-spacing: 0;
+    margin-left: var(--space-2);
+  }
+
+  .nutrition-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(72px, 1fr));
+    gap: var(--space-3);
+    margin: 0;
+  }
+
+  .nutrition-item { display: flex; flex-direction: column; gap: 2px; }
+
+  .nutrition-item dt {
+    font-family: var(--font-mono);
+    font-size: var(--font-size-xs);
+    color: var(--color-text-faint);
+  }
+
+  .nutrition-item dd {
+    margin: 0;
+    font-size: var(--font-size-base);
+    color: var(--color-text);
+  }
+
+  .nutrition-caveat {
+    margin: var(--space-3) 0 0;
+    font-size: var(--font-size-xs);
+    color: var(--color-text-faint);
+    font-style: italic;
+  }
+</style>

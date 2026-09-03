@@ -1,0 +1,40 @@
+---
+/* Swaps the method region only. Everything above and below it stays put. */
+---
+
+<div class="view-toggle" role="group" aria-label="Method view">
+  <button type="button" class="view-pill" data-view="prose" aria-pressed="true">prose</button>
+  <button type="button" class="view-pill" data-view="graph" aria-pressed="false">engineer</button>
+</div>
+
+<style>
+  .view-toggle {
+    display: inline-flex;
+    border: 0.5px solid var(--color-border-strong);
+    border-radius: var(--radius-full);
+    overflow: hidden;
+  }
+
+  .view-pill {
+    background: transparent;
+    border: 0;
+    padding: 4px 12px;
+    font-family: var(--font-mono);
+    font-size: var(--font-size-xs);
+    color: var(--color-text-faint);
+    cursor: pointer;
+    transition: background var(--transition-base), color var(--transition-base);
+  }
+
+  .view-pill:hover { color: var(--color-text); }
+
+  .view-pill[aria-pressed='true'] {
+    background: var(--color-accent);
+    color: #fff;
+  }
+
+  .view-pill:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: -2px;
+  }
+</style>

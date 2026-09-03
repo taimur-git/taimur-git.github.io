@@ -17,7 +17,7 @@ const endLabel = end === null ? 'present' : end.toString();
       <span class="exp-role">{role}</span>
       <span class="exp-org">{org}</span>
     </div>
-    <span class="exp-dates mono">{start} – {endLabel}</span>
+    <span class="exp-dates mono">{start} - {endLabel}</span>
   </div>
   {bullets && bullets.length > 0 && (
     <ul class="exp-bullets">
@@ -77,7 +77,7 @@ const endLabel = end === null ? 'present' : end.toString();
   }
 
   .exp-bullets li::before {
-    content: '–';
+    content: '-';
     position: absolute;
     left: calc(-1 * var(--space-4));
     color: var(--color-text-faint);

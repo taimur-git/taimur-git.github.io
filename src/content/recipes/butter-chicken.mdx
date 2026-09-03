@@ -1,0 +1,141 @@
+---
+title: "Butter Chicken"
+date: 2026-09-03
+summary: "Butter chicken recipe consolidated from different recipes."
+tags: ["curry", "chicken"]
+cuisine: "Indian"
+category: "Main"
+
+yield: "serves 3 to 4 with rice or naan"
+servings: 4
+prep: 15
+cook: 30
+
+allergens: ["dairy"]
+diet: ["gluten-free"]
+heat: "medium"
+
+nutrition:
+  basis: "per serving at 4 servings, sauce and chicken only"
+  calories: 560
+  fat: 38
+  carbs: 14
+  protein: 38
+  salt: 1.6
+
+sources:
+  - name: "Vijaya Selvaraju"
+    url: "https://www.youtube.com/@vijaya16"
+  - name: "Atanur Rannaghar"
+    url: "https://www.youtube.com/@AtanurRannaghar"
+  - name: "Chet Sharma / Fallow"
+    url: "https://www.youtube.com/@FallowChefs"
+  - name: "Joshua Weissman"
+    url: "https://www.joshuaweissman.com/"
+  - name: "Preppy Kitchen"
+    url: "https://preppykitchen.com/butter-chicken/"
+
+components:
+  - id: butter-chicken
+    name: "Butter chicken"
+    note: "Marinate 2 hours minimum, overnight is better. Then about 30 minutes to cook."
+    ingredients:
+      - { id: chicken, qty: 500, unit: g, name: "chicken", note: "3cm cubes, thigh if you can" }
+      - { id: yoghurt, qty: 150, unit: g, name: "plain yoghurt", note: "⅔ cup" }
+      - { id: lemon1, qty: 15, unit: ml, name: "lemon juice", note: "1 tbsp, half the total" }
+      - { id: garam1, qty: 2, unit: tsp, name: "garam masala" }
+      - { id: chilli1, qty: 1, unit: tsp, name: "chilli powder" }
+      - { id: coriander, qty: 1, unit: tsp, name: "ground coriander" }
+      - { id: turmeric, qty: 1, unit: tsp, name: "turmeric" }
+      - { id: salt1, qty: 1, unit: tsp, name: "salt" }
+      - { id: ghee, qty: 30, unit: g, name: "ghee", note: "2 tbsp" }
+      - { id: butter1, qty: 30, unit: g, name: "butter", note: "2 tbsp, for the base" }
+      - { id: cardamom, qty: 4, unit: piece, name: "green cardamom pods", optional: true }
+      - { id: onion, qty: 1, unit: piece, name: "onion", note: "coarsely grated" }
+      - { id: ginger, qty: 1, unit: tbsp, name: "ginger", note: "grated" }
+      - { id: garlic, qty: 1, unit: tbsp, name: "garlic", note: "grated, 3 to 4 cloves" }
+      - { id: chilli2, qty: 1, unit: tsp, name: "chilli powder" }
+      - { id: garam2, qty: 1, unit: tsp, name: "garam masala" }
+      - { id: tomato, qty: 500, unit: g, name: "ripe tomato" }
+      - { id: sugar, qty: 2, unit: tsp, name: "sugar or gur", optional: true }
+      - { id: methi, qty: 2, unit: tsp, name: "kasuri methi", note: "dried fenugreek leaves" }
+      - { id: cream, qty: 180, unit: ml, name: "cream", note: "¾ cup, whipping or cooking cream" }
+      - { id: butter2, qty: 15, unit: g, name: "butter", note: "1 tbsp, held back to finish" }
+      - { id: lemon2, qty: 15, unit: ml, name: "lemon juice", note: "1 tbsp, to finish" }
+      - { id: salt2, name: "salt, to taste" }
+    ops:
+      - id: marinate
+        in: [chicken, yoghurt, lemon1, garam1, chilli1, coriander, turmeric, salt1]
+        do: "mix\ncover, fridge\n**2 hours minimum**, overnight better"
+      - id: sear
+        in: [marinate, ghee]
+        do: "high heat, wide pan\nin batches: crowding steams it grey\n~2 min a side, browned\nnot cooked through\nlift out"
+      - id: bloom
+        in: [butter1, cardamom]
+        do: "medium heat\nbloom the cardamom 1 min\nif using"
+      - id: aromatics
+        in: [bloom, onion, ginger, garlic]
+        do: "5-6 min\nscrape up the spice stuck to the pan\nuntil it darkens and the raw garlic smell is gone"
+      - id: toastspice
+        in: [aromatics, chilli2, garam2]
+        do: "30-60 s in the fat\nfragrant\n**don't let them catch**"
+      - id: blend
+        in: [tomato]
+        do: "blend raw to a smooth puree\nno cooking down, no straining"
+      - id: simmer
+        in: [toastspice, blend, sugar]
+        do: "12-15 min, stirring now and then\n**until the fat separates at the edges**\nthat is the cue, not the clock"
+      - id: methistep
+        in: [simmer, methi]
+        do: "crush between your palms as you add it\nstir through"
+      - id: back
+        in: [sear, methistep]
+        do: "chicken back in, with its juices\nsimmer 5 min\ncooked through"
+      - id: finish
+        in: [back, cream, butter2, lemon2, salt2]
+        final: true
+        do: "**off the heat**\ncream first: boiled cream splits\nthen the butter, until glossy\nthen the lemon\nsalt to taste"
+    root: finish
+---
+
+## Notes
+
+**Tomato:** swapped tinned passata for fresh tomato, blended raw. Passata means an imported can and a
+superstore trip in Dhaka; ripe tomato is a bazar staple. Most fresh-tomato versions of this dish
+simmer the tomato down, blend it, then strain it: three extra steps and a sieve. Blending it raw
+before it goes in skips all of that; the 12-15 minute simmer cooks out the raw taste just the same.
+
+**Cream:** "double cream" isn't sold here. Any whipping cream or a local brand's cooking cream
+(Nestlé, Igloo, or similar) does the job. If it's thick, loosen with a splash of milk.
+
+**Kasuri methi:** the one ingredient on this list that genuinely needs a special-aisle or online
+order (Chaldal, Daraz, or a bigger superstore's spice section). It's also what separates this from a
+tomato-cream curry rather than a garnish. Worth the one trip; nothing else on this list is.
+
+**Spice bloom and finishing butter:** Joshua Weissman's version stirs its ground spices into the hot
+fat for a minute before any liquid hits the pan, rather than adding them with the tomato. More
+fragrant for no extra cost. It also holds back a knob of butter to stir in off-heat after the cream,
+for gloss and a tighter emulsion, on top of the butter used earlier to cook the onion. Both folded in
+here; neither needs a new ingredient, just using the existing butter in two stages.
+
+**Cardamom and green chilli, optional:** Chet Sharma's version blooms whole cardamom (plus cinnamon
+and cloves) in the fat, and adds fresh green chilli to the sauce. Left both optional rather than core:
+whole garam masala spices are already in most Bangladeshi kitchens for polao and biryani, and green
+chilli is a fridge staple, so there's no shopping cost to adding them, but the recipe is not worse
+without them.
+
+**Sugar, optional, or gur:** the 2 tsp is there to pull the acid off fresh tomato, which runs sharper
+and more variable than passata. A properly ripe bazar tomato in season needs none, so taste before you
+add anything. If it needs it, gur does the job as well or better; khejur gur in winter, regular gur
+otherwise. Same 2 tsp, melted in a splash of hot water first so it does not sit in a lump. It reads
+slightly smoky against the kasuri methi, which suits the dish. Honey works but not here: a 15-minute
+simmer cooks off the part you are paying for. If honey is all you have, use 1.5 tsp and stir it in off
+the heat at the end with the lemon.
+
+**Cut, not kept:** cashews blended into the sauce, a common way to get a smooth sauce without grating
+the onion, but the grated-onion trick here already gets there with no blender and no
+soak-then-blend-then-strain step. Adding cashews on top would be two ways of solving the same problem.
+Also skipped: mustard oil (ghee already does the sear), Kashmiri-specific chilli powder (colour only,
+regular chilli powder is fine), amchur, malt vinegar, kewra water, khoya, and stovetop
+charcoal-smoking (dhungar): real flavour, but a second piece of equipment for a finishing touch, not
+the dish itself.

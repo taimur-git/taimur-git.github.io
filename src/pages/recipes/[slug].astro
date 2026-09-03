@@ -1,0 +1,122 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import RecipeCard from '../../components/recipe/RecipeCard.astro';
+import Ingredients from '../../components/recipe/Ingredients.astro';
+import RecipeSteps from '../../components/recipe/RecipeSteps.astro';
+import RecipeGraph from '../../components/recipe/RecipeGraph.astro';
+import ViewToggle from '../../components/recipe/ViewToggle.astro';
+import ServingsStepper from '../../components/recipe/ServingsStepper.astro';
+import Badges from '../../components/recipe/Badges.astro';
+import Nutrition from '../../components/recipe/Nutrition.astro';
+import TagPill from '../../components/blog/TagPill.astro';
+import { getCollection, render } from 'astro:content';
+import { formatDuration } from '../../lib/recipe/format';
+import { flattenOps } from '../../lib/recipe/graph';
+import { recipeJsonLd } from '../../lib/recipe/jsonld';
+import '../../styles/recipe.css';
+
+export async function getStaticPaths() {
+  const recipes = await getCollection('recipes', ({ data }) => !data.draft);
+  return recipes.map((recipe) => ({ params: { slug: recipe.id }, props: { recipe } }));
+}
+
+const { recipe } = Astro.props;
+const { Content } = await render(recipe);
+const data = recipe.data;
+
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const jsonLd = recipeJsonLd(data, canonical, 'Taimur Rahman');
+
+const formattedDate = data.date.toLocaleDateString('en-GB', {
+  day: 'numeric', month: 'long', year: 'numeric',
+});
+
+const proseSteps = data.components.flatMap((c) =>
+  flattenOps(c).map((step, i) => ({
+    label: i === 0 ? c.name : undefined,
+    body: step.text,
+    list: step.list,
+  })),
+);
+---
+
+<BaseLayout title={data.title} description={data.summary} ogType="article">
+  <Fragment slot="head">
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  </Fragment>
+
+  <div class="site-container recipe-page" data-recipe-slug={recipe.id}>
+    <a href="/recipes" class="recipe-back">← back to recipes</a>
+
+    <h1 class="recipe-title">{data.title}</h1>
+    <p class="recipe-summary">{data.summary}</p>
+
+    <div class="recipe-meta">
+      <span class="mono recipe-date">{formattedDate}</span>
+      {data.tags.map((tag) => <TagPill tag={tag} href={`/recipes?tag=${tag}`} />)}
+    </div>
+
+    {data.sources.length > 0 && (
+      <p class="recipe-sources">
+        Adapted from{' '}
+        {data.sources.map((source, i) => (
+          <>
+            {i > 0 && (i === data.sources.length - 1 ? ' and ' : ', ')}
+            {source.url ? <a href={source.url}>{source.name}</a> : source.name}
+          </>
+        ))}.
+      </p>
+    )}
+
+    <RecipeCard
+      servings={data.yield}
+      prepTime={formatDuration(data.prep)}
+      cookTime={formatDuration(data.cook)}
+      totalTime={formatDuration(data.prep + data.cook)}
+    />
+
+    <Badges allergens={data.allergens} diet={data.diet} heat={data.heat} />
+
+    <div class="recipe-controls">
+      <ServingsStepper servings={data.servings} />
+      <ViewToggle />
+    </div>
+
+    <div data-method-view="prose">
+      {data.components.map((component) => (
+        <section class="recipe-component" id={component.id} data-component={component.id}>
+          <h2 class="recipe-component-title">{component.name}</h2>
+          {component.note && <p class="recipe-component-note">{component.note}</p>}
+          <Ingredients componentId={component.id} items={component.ingredients} title="Ingredients" />
+        </section>
+      ))}
+      <RecipeSteps steps={proseSteps} />
+    </div>
+
+    <div data-method-view="graph" class="recipe-graph-region" hidden>
+      {data.components.map((component) => (
+        <section class="recipe-component" data-component={component.id}>
+          <h2 class="recipe-component-title">{component.name}</h2>
+          {component.note && <p class="recipe-component-note">{component.note}</p>}
+          <RecipeGraph component={component} />
+        </section>
+      ))}
+    </div>
+
+    {data.nutrition && <Nutrition nutrition={data.nutrition} />}
+
+    <div class="recipe-prose">
+      <Content />
+    </div>
+
+    <div class="recipe-exports">
+      <span class="mono recipe-exports-label">export</span>
+      <a href={`/recipes/${recipe.id}.paprikarecipes`} download>Paprika</a>
+      <a href={`/recipes/${recipe.id}.openrecipes`} download>openrecipes</a>
+    </div>
+  </div>
+
+  <script>
+    import '../../scripts/recipe';
+  </script>
+</BaseLayout>

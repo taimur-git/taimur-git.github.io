@@ -1,0 +1,180 @@
+---
+title: "Standard Smash Burger"
+date: 2026-09-03
+summary: "Smash burger with Bangladeshi ingredients."
+tags: ["burger", "beef"]
+cuisine: "Bangladeshi"
+category: "Main"
+
+yield: "4 burgers"
+servings: 4
+prep: 15
+cook: 20
+
+allergens: ["gluten", "dairy", "egg", "soy", "mustard"]
+diet: []
+heat: "mild"
+
+nutrition:
+  basis: "per burger, built as written, with all the sauce"
+  calories: 1150
+  fat: 92
+  carbs: 40
+  protein: 36
+  salt: 2
+
+sources:
+  - name: "Fallow"
+    url: "https://www.youtube.com/@FallowChefs"
+  - name: "Joshua Weissman"
+    url: "https://www.youtube.com/@JoshuaWeissman"
+
+components:
+  - id: beef-salt
+    name: "Beef salt"
+    note: "Pantry batch. Make once, keeps months in a jar. You need about 15g per batch of burgers."
+    ingredients:
+      - { id: bs-beresta, qty: 30, unit: g, name: "beresta" }
+      - { id: bs-salt, qty: 150, unit: g, name: "coarse sea salt", note: "or regular salt" }
+      - { id: bs-garlic, qty: 25, unit: g, name: "garlic powder", note: "or dried garlic flakes" }
+      - { id: bs-pepper, qty: 30, unit: g, name: "coarsely cracked black pepper" }
+      - { id: bs-paprika, qty: 6, unit: g, name: "paprika", note: "or mild red chilli powder" }
+      - { id: bs-cube, qty: 1, unit: piece, name: "beef stock cube", note: "crushed" }
+      - { id: bs-msg, qty: 10, unit: g, name: "MSG" }
+    ops:
+      - id: bs-blitz
+        in: [bs-beresta]
+        do: "blitz to a coarse powder\nwith the garlic flakes, if using those"
+      - id: bs-mix
+        in: [bs-blitz, bs-salt, bs-garlic, bs-pepper, bs-paprika, bs-cube, bs-msg]
+        do: "mix\nif the beresta was soft or oily:\ndry 15 min @ 120 °C, cool completely\nthen stir in the cube + MSG\n**airtight jar**"
+    root: bs-mix
+
+  - id: burger
+    name: "The burger"
+    ingredients:
+      - { id: mince, qty: 560, unit: g, name: "beef mince", note: "20-25% fat" }
+      - { id: beefsalt, qty: 15, unit: g, name: "beef salt", ref: "beef-salt" }
+      - { id: season, name: "salt and cracked black pepper" }
+      - { id: onion, qty: 0.5, unit: piece, name: "onion" }
+      - { id: cheese, qty: 8, unit: slice, name: "processed cheese" }
+      - { id: spring, qty: 2, unit: piece, name: "spring onions", note: "or ¼ onion in thick slabs" }
+      - { id: mayo, qty: 200, unit: g, name: "mayonnaise" }
+      - { id: ketchup, qty: 2, unit: tbsp, name: "tomato ketchup" }
+      - { id: sgarlic, qty: 1, unit: clove, name: "garlic", note: "finely grated" }
+      - { id: soy, qty: 2, unit: tsp, name: "soy sauce" }
+      - { id: kasundi, qty: 1, unit: tsp, name: "kasundi", note: "or ½ tsp mustard powder" }
+      - { id: gur, qty: 1, unit: tsp, name: "khejur gur", note: "melted in a splash of hot water" }
+      - { id: vinegar, qty: 1, unit: tsp, name: "vinegar" }
+      - { id: sauceseason, name: "a pinch of MSG, salt, black pepper" }
+      - { id: rpickles, qty: 4, unit: piece, name: "jarred dill pickles", note: "drained" }
+      - { id: greens, qty: 2, unit: tbsp, name: "spring onion greens", note: "finely sliced" }
+      - { id: coriander, qty: 1, unit: tbsp, name: "coriander leaf", note: "or dill" }
+      - { id: rpepper, qty: 0.5, unit: tsp, name: "cracked black pepper" }
+      - { id: butter, qty: 75, unit: g, name: "butter" }
+      - { id: buns, qty: 4, unit: piece, name: "burger buns" }
+      - { id: bpickles, qty: 4, unit: piece, name: "jarred pickles" }
+      - { id: lettuce, qty: 4, unit: piece, name: "lettuce leaves", note: "whole" }
+      - { id: beresta, qty: 4, unit: tbsp, name: "beresta" }
+    ops:
+      - id: mixmince
+        in: [mince, beefsalt, season]
+        do: "mix gently\nstop before paste\n8 × 70 g balls\nchill"
+      - id: shave
+        in: [onion]
+        do: "shave paper-thin"
+      - id: smash
+        in: [mixmince, shave]
+        do: "smash to 3 mm\non a hot dry pan\nseason\n**90 s, don't touch**\nscrape hard, flip"
+      - id: melt
+        in: [smash, cheese]
+        do: "cheese on\ncover 1 min\nstack two patties"
+      - id: char
+        in: [spring]
+        do: "char black on the flame\nchop fine"
+      - id: stir
+        in: [char, mayo, ketchup, sgarlic, soy, kasundi, gur, vinegar, sauceseason]
+        do: "stir together"
+      - id: sauce
+        in: [stir]
+        do: "**sauce**\nbetter after 30 min chilled"
+      - id: relish
+        in: [rpickles, greens, coriander, rpepper]
+        do: "dice the pickles fine\nmix with the rest\n**relish**"
+      - id: toast
+        in: [butter, buns]
+        do: "brown until the solids go dark gold and it smells nutty\ntoast buns cut-side down, ~2 min"
+      - id: prep
+        in: [bpickles, lettuce, beresta]
+        do: "cut pickles into 6 mm planks\nlettuce, whole leaves\nberesta stays in the packet until the last second"
+      - id: build
+        in: [melt, sauce, relish, toast, prep]
+        final: true
+        list:
+          - "sauce both bun faces"
+          - "3 pickle planks"
+          - "double patty, cheese up"
+          - "relish"
+          - "beresta"
+          - "lettuce"
+          - "top bun"
+        do: "**eat now**\nberesta softens fast"
+    root: build
+---
+
+## Shopping
+
+Supermarket: Agora, Meena Bazar, Shwapno, Unimart, Lavender. Meat from Bengal Meat or your kasai.
+
+- **Beef mince, 560g, 20 to 25% fat.** Ask for it ground with chorbi. Local mince runs lean and lean
+  mince makes a dry, grey patty. If they will not do it, buy beef and a piece of fat separately and
+  have both ground together. This is the one thing worth being fussy about.
+- **Beresta.** Buy a packet, or fry your own. Used twice.
+- **Cheese slices, 8.** Plain processed. Two per burger.
+- **Buns, 4.** Any shop burger bun. The soft slightly sweet local bakery ones are the best of them,
+  close to a potato bun.
+- **Jarred dill pickles.** Whole or spears are better than pre-sliced; you want to cut your own planks.
+- **Khejur gur.** Winter item. Regular gur, or honey, if it is out of season.
+
+## Equipment
+
+A heavy pan, cast iron or a thick tawa. A heavy spatula or a flat press, something you can lean on.
+A sharp knife.
+
+## What does the work
+
+Four things: beresta both in the seasoning and as a crisp layer in the burger, charred onion blitzed
+through the sauce, gur in place of sugar, and buns toasted in browned butter.
+
+## Notes
+
+- The onion smash is not optional. Raw onion pressed into the meat steams, then fries in the beef
+  fat, and fuses into the crust. It is the single biggest thing separating this from a normal burger,
+  and it costs nothing.
+- Two thin patties beat one thick one. Four browned faces instead of two, and that is where the
+  flavour is.
+- Do not crowd the pan. Two patties at a time, no more. Crowding drops the temperature and you steam
+  the meat instead of searing it.
+- Beresta twice is deliberate. Ground into the salt it seasons from the inside; scattered on top it
+  is texture. Add it last so it stays crisp.
+- The sauce is better after 30 minutes in the fridge, but usable straight away.
+
+## If you need to cut further
+
+- Skip the relish and use the pickle planks alone. Saves 3 minutes, loses a layer.
+- Skip browning the butter and toast in plain butter. Saves 3 minutes, but it is a bad trade:
+  browned butter is the cheapest flavour in the recipe.
+- Skip the beef salt batch. Season the mince with salt, pepper, garlic powder, a crushed stock cube
+  and MSG. Blitzed beresta stirred into the mince gets you most of the way back.
+
+## On the nutrition estimate
+
+The sauce is the swing factor. 50g of it per burger is about 355 kcal and 38g of fat, so using half
+takes off roughly 175 kcal. Browned butter on the buns is another 110 kcal, and the two cheese slices
+are 120.
+
+A rough breakdown: patties 340 kcal, sauce 355, bun 160, butter 110, cheese 120, beresta and
+vegetables the remaining 65.
+
+Salt is high. The beef salt, cheese, pickles and bun come to roughly 2g of salt per burger before you
+season the patties at the pan.

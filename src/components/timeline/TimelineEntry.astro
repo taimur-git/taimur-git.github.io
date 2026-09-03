@@ -45,7 +45,7 @@ const hasDetails = (entry.bullets && entry.bullets.length > 0) || !!entry.notes 
       </div>
     )}
     <div class="timeline-meta mono">
-      {showPresent || entry.start !== (entry.end ?? entry.start) ? `${entry.start} – ${endLabel}` : entry.start}
+      {showPresent || entry.start !== (entry.end ?? entry.start) ? `${entry.start} - ${endLabel}` : entry.start}
     </div>
     {hasDetails && (
       <div class="timeline-body-wrap">

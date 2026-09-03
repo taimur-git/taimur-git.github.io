@@ -145,7 +145,7 @@ const id = `ws-${Math.random().toString(36).slice(2, 8)}`;
 </style>
 
 <script>
-  /* lazy init — the Three.js chunk (src/scripts/glb-viewer.ts, shared with
+  /* lazy init: the Three.js chunk (src/scripts/glb-viewer.ts, shared with
      ModelViewer) is only fetched when a slider nears the viewport */
   const io = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {

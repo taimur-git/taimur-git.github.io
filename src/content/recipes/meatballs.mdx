@@ -1,0 +1,59 @@
+---
+title: "Meatballs"
+date: 2026-09-04
+summary: "Oven meatballs, all beef. Forty-eight of them, and they freeze."
+tags: ["meal", "beef"]
+cuisine: "Italian-American"
+category: "Main"
+
+yield: "48 meatballs"
+servings: 12
+prep: 20
+cook: 20
+
+allergens: ["gluten", "dairy", "egg"]
+diet: []
+heat: "none"
+
+nutrition:
+  basis: "per serving of 4 meatballs, 12 servings from the batch, no sauce"
+  calories: 190
+  fat: 11
+  carbs: 5
+  protein: 18
+  salt: 0.6
+
+sources:
+  - name: "Spend With Pennies"
+    url: "https://www.spendwithpennies.com/easy-meatball-recipe/"
+
+components:
+  - id: meatballs
+    name: "Meatballs"
+    ingredients:
+      - { id: beef, qty: 900, unit: g, name: "lean beef mince", note: "stands in for the beef and pork mix" }
+      - { id: crumbs, qty: 60, unit: g, name: "seasoned breadcrumbs", note: "or crushed toast rusk" }
+      - { id: milk, qty: 80, unit: ml, name: "milk" }
+      - { id: onion, qty: 40, unit: g, name: "onion", note: "finely diced; or ½ tsp onion powder" }
+      - { id: herbs, qty: 15, unit: g, name: "coriander leaves or parsley", note: "chopped; or 1 tbsp dried" }
+      - { id: cheese, qty: 25, unit: g, name: "grated cheese", note: "Parmesan if you have it, otherwise any hard or processed cheese" }
+      - { id: egg, qty: 1, unit: piece, name: "large egg" }
+      - { id: italian, qty: 1, unit: tsp, name: "mixed dried herbs", note: "oregano and basil", optional: true }
+      - { id: garlicpowder, qty: 0.5, unit: tsp, name: "garlic powder" }
+      - { id: salt, qty: 0.5, unit: tsp, name: "salt" }
+      - { id: pepper, qty: 0.5, unit: tsp, name: "black pepper" }
+    ops:
+      - id: mix
+        in: [beef, crumbs, milk, onion, herbs, cheese, egg, italian, garlicpowder, salt, pepper]
+        do: "**oven to 200 °C**\nline a 23 × 33 cm tin with parchment\nmix **gently** until just combined\n*working it hard makes them tough*"
+      - id: shape
+        in: [mix]
+        do: "**48 balls**, about 1½ tbsp each\nonto the tin"
+      - id: bake
+        in: [shape]
+        final: true
+        do: "**18-20 min at 200 °C**\nuntil they reach **71 °C**\n*to serve with sauce: stir them in and simmer 3-4 min*"
+    root: bake
+---
+
+Softening the onion in butter first makes it milder, or use ½ tsp onion powder. Freezes raw or cooked for up to four months.

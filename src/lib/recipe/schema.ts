@@ -39,10 +39,26 @@ const op = z.object({
   final: z.boolean().default(false),
 });
 
+const nutrition = z.object({
+  basis: z.string(),
+  calories: z.number().optional(),
+  fat: z.number().optional(),
+  carbs: z.number().optional(),
+  protein: z.number().optional(),
+  salt: z.number().optional(),
+});
+
 const component = z.object({
   id: z.string(),
   name: z.string(),
   note: z.string().optional(),
+  /* an alternate path, not a part of the dish: rendered dimmed and tagged,
+     and left out of every export so it cannot double the shopping list */
+  optional: z.boolean().default(false),
+  /* only for a component that changes the finished dish enough that the
+     recipe-level figures no longer describe it. Display only — the exports
+     carry one nutrition block and it is the recipe's */
+  nutrition: nutrition.optional(),
   ingredients: z.array(ingredient).min(1),
   ops: z.array(op).min(1),
   /* id of the op every other node feeds into */
@@ -69,14 +85,7 @@ export const recipeSchema = z.object({
   diet: z.array(z.enum(DIETS)).default([]),
   heat: z.enum(HEAT).default('none'),
 
-  nutrition: z.object({
-    basis: z.string(),
-    calories: z.number().optional(),
-    fat: z.number().optional(),
-    carbs: z.number().optional(),
-    protein: z.number().optional(),
-    salt: z.number().optional(),
-  }).optional(),
+  nutrition: nutrition.optional(),
 
   sources: z.array(z.object({
     name: z.string(),

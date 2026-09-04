@@ -16,15 +16,30 @@ const DIET_URL: Record<string, string> = {
   'low-calorie': 'https://schema.org/LowCalorieDiet',
 };
 
+/* schema.org sodiumContent is sodium, but every recipe here declares salt,
+   which is what a nutrition label in this part of the world prints. NaCl is
+   39.34% sodium by mass, so salt / 2.5. Without this an importing app reads
+   2.5x the sodium that is actually in the dish. */
+export function sodiumFromSalt(salt: number): number {
+  return Math.round((salt / 2.5) * 100) / 100;
+}
+
+/** The components an importing app should treat as the recipe. Optional ones
+    are alternate paths, so including them would double the shopping list and
+    read as extra steps rather than a substitution. */
+export function exportedComponents(recipe: Recipe) {
+  return recipe.components.filter((c) => !c.optional);
+}
+
 /** Ingredient lines, component headings deliberately omitted: a heading in
     recipeIngredient arrives in the importing app as food. */
 export function ingredientLines(recipe: Recipe): string[] {
-  return recipe.components.flatMap((c) => c.ingredients.map((i) => renderIngredient(i)));
+  return exportedComponents(recipe).flatMap((c) => c.ingredients.map((i) => renderIngredient(i)));
 }
 
 /** Steps in method order, tagged with the component they belong to. */
 export function instructionSteps(recipe: Recipe): { name?: string; text: string }[] {
-  return recipe.components.flatMap((c) =>
+  return exportedComponents(recipe).flatMap((c) =>
     flattenOps(c).map((step, i) => {
       const listed = step.list ? step.list.join('; ') : '';
       const text = [listed, step.text].filter(Boolean).join('. ');
@@ -90,7 +105,7 @@ export function recipeJsonLd(recipe: Recipe, url: URL, author: string) {
               ? { proteinContent: `${recipe.nutrition.protein} g` }
               : {}),
             ...(recipe.nutrition.salt !== undefined
-              ? { sodiumContent: `${recipe.nutrition.salt} g` }
+              ? { sodiumContent: `${sodiumFromSalt(recipe.nutrition.salt)} g` }
               : {}),
             servingSize: recipe.nutrition.basis,
           },

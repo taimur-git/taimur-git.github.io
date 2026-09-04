@@ -1,0 +1,120 @@
+---
+title: "Jamaican Beef Patties"
+date: 2026-09-04
+summary: "Turmeric-yellow pastry, fierce beef filling. Freezes raw and bakes from frozen."
+tags: ["snack", "beef"]
+cuisine: "Jamaican"
+category: "Snack"
+
+yield: "8 patties"
+servings: 8
+prep: 45
+cook: 30
+
+allergens: ["gluten", "dairy", "egg"]
+diet: []
+heat: "hot"
+
+nutrition:
+  basis: "per patty, 8 from the batch"
+  calories: 560
+  fat: 34
+  carbs: 45
+  protein: 18
+  salt: 1.5
+
+sources:
+  - name: "America's Test Kitchen"
+    url: "https://www.americastestkitchen.com/recipes/12502-jamaican-beef-patties"
+
+components:
+  - id: crust
+    name: "Crust"
+    note: "Needs an hour in the fridge, and keeps two days there. Food processor recipe."
+    ingredients:
+      - { id: flour, qty: 425, unit: g, name: "plain flour", note: "moyda" }
+      - { id: sugar, qty: 1, unit: tbsp, name: "caster sugar" }
+      - { id: salt, qty: 1.25, unit: tsp, name: "fine salt" }
+      - { id: turmeric, qty: 1, unit: tsp, name: "ground turmeric" }
+      - { id: butter, qty: 230, unit: g, name: "unsalted butter", note: "1 cm dice, chilled" }
+      - { id: doi, qty: 160, unit: g, name: "thick strained doi", note: "stands in for sour cream, chilled" }
+      - { id: egg, qty: 1, unit: piece, name: "large egg", note: "lightly beaten" }
+    ops:
+      - id: dryblitz
+        in: [flour, sugar, salt, turmeric]
+        do: "food processor\n**3 s**"
+      - id: cutin
+        in: [dryblitz, butter]
+        do: "scatter over the top\n**~10 pulses**, until no piece is bigger than a pea"
+      - id: wet
+        in: [doi, egg]
+        do: "whisk together in a small bowl"
+      - id: bind
+        in: [cutin, wet]
+        do: "half of it, **5 pulses**\nthe rest, **~15 pulses**, until the dough starts to come together"
+      - id: chill
+        in: [bind]
+        final: true
+        do: "onto cling film, shape into a **15 cm square**, smooth the cracks\nwrap tight\n**fridge 1 h**\n*keeps 2 days*"
+    root: chill
+
+  - id: filling
+    name: "Filling"
+    note: "Has to cool completely before it goes near the dough. Keeps 24 hours in the fridge."
+    ingredients:
+      - { id: water-a, qty: 1, unit: tbsp, name: "water" }
+      - { id: f-salt, qty: 0.75, unit: tsp, name: "fine salt" }
+      - { id: bakingsoda, qty: 0.25, unit: tsp, name: "baking soda" }
+      - { id: beef, qty: 450, unit: g, name: "beef mince", note: "about 15% fat" }
+      - { id: oil, qty: 1, unit: tbsp, name: "vegetable oil" }
+      - { id: springonion, qty: 12, unit: piece, name: "spring onions", note: "piyaj koli, chopped fine" }
+      - { id: f-garlic, qty: 4, unit: clove, name: "garlic", note: "minced" }
+      - { id: chilli, qty: 1, unit: piece, name: "naga morich", note: "or 2-3 bird's eye chillies; stemmed, seeded, minced. Wear gloves" }
+      - { id: thyme, qty: 1, unit: tsp, name: "dried thyme" }
+      - { id: curry, qty: 0.75, unit: tsp, name: "curry powder", note: "or ¼ tsp each turmeric, ground coriander, ground cumin" }
+      - { id: mixedspice, qty: 0.75, unit: tsp, name: "mixed spice", note: "a pinch each of cinnamon, clove and nutmeg; stands in for allspice" }
+      - { id: f-pepper, qty: 0.5, unit: tsp, name: "black pepper" }
+      - { id: bread, qty: 1, unit: slice, name: "white sandwich bread", note: "torn into 2 cm pieces" }
+      - { id: water-b, qty: 240, unit: ml, name: "water" }
+    ops:
+      - id: treat
+        in: [water-a, f-salt, bakingsoda, beef]
+        do: "mix through the beef **thoroughly**\n**10 min** at room temperature"
+      - id: fry
+        in: [treat, oil]
+        do: "wide nonstick pan, medium-high, **just smoking**\nbreak it up with a wooden spoon\n**5-7 min**, starting to brown"
+      - id: season
+        in: [fry, springonion, f-garlic, chilli, thyme, curry, mixedspice, f-pepper]
+        do: "stirring often\n**~3 min**, until the spring onion softens"
+      - id: braise
+        in: [season, bread, water-b]
+        do: "boil, then low\n**8-10 min**, until the sauce thickens and coats the beef"
+      - id: mash
+        in: [braise]
+        final: true
+        do: "**off the heat**\npotato masher, **~2 min**, until fine-textured and the bread has disappeared\ninto a clean bowl, **cool completely**"
+    root: mash
+
+  - id: assembly
+    name: "Assembly"
+    ingredients:
+      - { id: dough, name: "the chilled dough", ref: "crust" }
+      - { id: meat, name: "the cooled filling", ref: "filling" }
+      - { id: brushwater, name: "water", note: "for brushing" }
+    ops:
+      - id: roll
+        in: [dough]
+        do: "**oven to 190 °C**, rack upper-middle, tray lined\ncut into **4 equal pieces**, keep the rest covered\none at a time on a floured counter\nroll to **28 × 23 cm**, about 3 mm thick, long side facing you"
+      - id: fill
+        in: [roll, meat, brushwater]
+        do: "two scant ⅓-cup mounds on the bottom half\n**10 cm apart**, 5 cm from the edge\nflatten each to an 8 cm round\nbrush the bottom half with water\nfold the top over: press the sides, the bottom edge, and between the mounds"
+      - id: cut
+        in: [fill]
+        do: "cut between the mounds\ntrim to two **13 × 10 cm** rectangles\ncrimp with a floured fork\nonto the tray"
+      - id: bake
+        in: [cut]
+        final: true
+        do: "**~30 min at 190 °C**, puffed and lightly browned\nonto a rack, **10 min** before eating\n*to freeze: freeze solid on the tray after crimping, then bag. Bake from frozen, 40-45 min*"
+    root: bake
+---
+

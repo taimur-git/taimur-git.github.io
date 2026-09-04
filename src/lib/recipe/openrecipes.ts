@@ -7,6 +7,7 @@
 
 import type { Recipe } from './schema';
 import { flattenOps } from './graph';
+import { exportedComponents } from './jsonld';
 import { renderIngredient } from './format';
 
 /* the vocabulary observed in the sample. Anything absent has no representation. */
@@ -32,9 +33,10 @@ function escapeAttr(value: string): string {
 }
 
 export function openRecipesDocument(recipe: Recipe): string {
+  const parts = exportedComponents(recipe);
   const ingredients: string[] = [];
 
-  recipe.components.forEach((component, index) => {
+  parts.forEach((component, index) => {
     if (index > 0) {
       ingredients.push('<ingredient count="0" unit="--" article="--" />');
     }
@@ -55,9 +57,9 @@ export function openRecipesDocument(recipe: Recipe): string {
     }
   });
 
-  const instruction = recipe.components
+  const instruction = parts
     .flatMap((component) => [
-      recipe.components.length > 1 ? `${component.name}:` : null,
+      parts.length > 1 ? `${component.name}:` : null,
       ...flattenOps(component).map((step) =>
         [step.list ? step.list.join('; ') : '', step.text].filter(Boolean).join('. '),
       ),

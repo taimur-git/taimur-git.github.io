@@ -197,6 +197,11 @@ export function layoutComponent(c: RecipeComponent): Layout {
   return { width, rows };
 }
 
+/* The same two shapes RecipeGraph renders as <strong> and <em>. Matched as
+   pairs rather than stripped character by character, so a stray asterisk
+   stays visible as the typo it is instead of silently disappearing. */
+const EMPHASIS = /\*\*([^*]+)\*\*|\*([^*]+)\*/g;
+
 /* Ops in method order, for the prose view and every export. */
 export function flattenOps(c: RecipeComponent): { text: string; list?: string[] }[] {
   const ops = new Map(c.ops.map((o) => [o.id, o]));
@@ -209,7 +214,7 @@ export function flattenOps(c: RecipeComponent): { text: string; list?: string[] 
     seen.add(id);
     for (const input of op.in) walk(input);
     out.push({
-      text: (op.do ?? '').replace(/\n/g, ' ').replace(/\*\*/g, '').trim(),
+      text: (op.do ?? '').replace(/\n/g, ' ').replace(EMPHASIS, (_, bold, italic) => bold ?? italic).trim(),
       list: op.list,
     });
   }

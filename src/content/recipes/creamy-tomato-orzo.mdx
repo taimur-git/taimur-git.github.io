@@ -1,0 +1,105 @@
+---
+title: "Creamy Tomato Orzo with Crispy Parmesan Chicken"
+date: 2026-09-04
+summary: "Orzo cooked risotto-style in tomato paste, with a crumbed cutlet on top."
+tags: ["meal", "chicken"]
+cuisine: "Italian-American"
+category: "Main"
+
+yield: "serves 4 to 6"
+servings: 4
+prep: 20
+cook: 40
+
+allergens: ["gluten", "egg", "dairy"]
+diet: []
+heat: "none"
+
+nutrition:
+  basis: "per serving at 4 servings, orzo and chicken together"
+  calories: 700
+  fat: 32
+  carbs: 65
+  protein: 38
+  salt: 2.4
+
+sources:
+  - name: "America's Test Kitchen"
+    url: "https://www.americastestkitchen.com/recipes/17157-creamy-tomato-orzo-with-crispy-parmesan-chicken"
+
+components:
+  - id: orzo
+    name: "Tomato orzo"
+    ingredients:
+      - { id: butter, qty: 30, unit: g, name: "unsalted butter" }
+      - { id: shallot, qty: 1, unit: piece, name: "large shallot", note: "minced; or a small onion" }
+      - { id: salt-a, qty: 1.5, unit: tsp, name: "salt" }
+      - { id: garlic, qty: 1, unit: tsp, name: "garlic", note: "minced" }
+      - { id: tomatopaste, qty: 60, unit: g, name: "tomato paste" }
+      - { id: oregano, qty: 0.5, unit: tsp, name: "dried oregano" }
+      - { id: pepper, qty: 0.25, unit: tsp, name: "black pepper" }
+      - { id: pasta, qty: 300, unit: g, name: "orzo", note: "or small broken pasta, or macaroni" }
+      - { id: lemon, qty: 30, unit: ml, name: "lemon juice", note: "with the stock below, stands in for white wine" }
+      - { id: stock-a, qty: 60, unit: ml, name: "chicken stock" }
+      - { id: water, qty: 720, unit: ml, name: "water" }
+      - { id: stock-b, qty: 480, unit: ml, name: "chicken stock" }
+      - { id: basil-a, qty: 1, unit: tbsp, name: "basil or coriander leaves", note: "chopped" }
+    ops:
+      - id: sweat
+        in: [butter, shallot, salt-a]
+        do: "medium saucepan, medium heat\n**3-5 min**, softened but **not browned**"
+      - id: garlicstep
+        in: [sweat, garlic]
+        do: "**30 s**, fragrant"
+      - id: paste
+        in: [garlicstep, tomatopaste, oregano, pepper]
+        do: "stir in"
+      - id: coat
+        in: [paste, pasta]
+        do: "stir **until every grain is coated**"
+      - id: deglaze
+        in: [coat, lemon, stock-a]
+        do: "**30 s**, stirring constantly"
+      - id: cook
+        in: [deglaze, water, stock-b]
+        do: "boil, then a **vigorous** simmer\n**~15 min**, reduced and thickened, orzo al dente\nif it starts to stick near the end, lower the heat and stir more\nsalt to taste"
+      - id: stirbasil
+        in: [cook, basil-a]
+        final: true
+        do: "stir through, into a serving bowl"
+    root: stirbasil
+
+  - id: cutlets
+    name: "Parmesan chicken"
+    ingredients:
+      - { id: egg, qty: 1, unit: piece, name: "large egg" }
+      - { id: flour, qty: 1, unit: tbsp, name: "plain flour" }
+      - { id: parmesan, qty: 45, unit: g, name: "Parmesan", note: "grated; or any hard or cheddar cheese" }
+      - { id: panko, qty: 25, unit: g, name: "panko breadcrumbs", note: "or crushed toast rusk" }
+      - { id: breast, qty: 2, unit: piece, name: "chicken breasts", note: "boneless and skinless, ~200 g each" }
+      - { id: salt-b, qty: 0.25, unit: tsp, name: "salt" }
+      - { id: oil, qty: 80, unit: ml, name: "vegetable oil" }
+      - { id: basil-b, qty: 4, unit: tbsp, name: "basil or coriander leaves", note: "chopped" }
+    ops:
+      - id: eggwash
+        in: [egg, flour]
+        do: "shallow dish\nwhisk **until smooth**"
+      - id: crumb
+        in: [parmesan, panko]
+        do: "second shallow dish\ncombine"
+      - id: slice
+        in: [breast, salt-b]
+        do: "slice each breast horizontally: **4 cutlets**\npat dry, season"
+      - id: bread
+        in: [eggwash, crumb, slice]
+        do: "one at a time\negg first, let the excess drip off\nthen the crumb, all sides, **press gently to stick**"
+      - id: fry
+        in: [bread, oil]
+        do: "wide nonstick pan, medium-high, **until shimmering**\n**1½-2 min a side**, deep golden\n*do not move them while the first side cooks*\nonto a double layer of paper towel"
+      - id: serve
+        in: [fry, basil-b]
+        final: true
+        do: "slice crosswise into 2 cm strips\nshingle over the orzo\nscatter the rest of the basil"
+    root: serve
+---
+

@@ -1,0 +1,94 @@
+---
+title: "Red Beans and Rice"
+date: 2026-09-04
+summary: "Two hours of vigorous simmering is the whole trick. Half batch; a full one overflows the pot."
+tags: ["meal", "beef"]
+cuisine: "American"
+category: "Main"
+
+yield: "serves 4"
+servings: 4
+prep: 15
+cook: 150
+
+allergens: ["celery"]
+diet: ["dairy-free"]
+heat: "mild"
+
+nutrition:
+  basis: "per serving at 4 servings, beans and rice together"
+  calories: 590
+  fat: 18
+  carbs: 78
+  protein: 27
+  salt: 2.2
+
+sources:
+  - name: "Miles Evans"
+
+components:
+  - id: beans
+    name: "Red beans"
+    note: "Keep it at a real simmer, not a low one. That is what pulls starch out of the beans and makes the broth creamy."
+    ingredients:
+      - { id: bacon, qty: 60, unit: g, name: "beef bacon", note: "chopped" }
+      - { id: onion, qty: 1, unit: piece, name: "small onion", note: "finely chopped" }
+      - { id: capsicum, qty: 0.5, unit: piece, name: "green capsicum", note: "finely chopped" }
+      - { id: celery, qty: 1, unit: piece, name: "celery rib", note: "minced; or more onion and capsicum if there is none" }
+      - { id: garlic, qty: 2, unit: clove, name: "garlic", note: "minced" }
+      - { id: stock, qty: 840, unit: ml, name: "chicken stock" }
+      - { id: water, qty: 840, unit: ml, name: "water" }
+      - { id: kidneybeans, qty: 225, unit: g, name: "dried red kidney beans", note: "rajma" }
+      - { id: bay, qty: 2, unit: leaf, name: "bay", note: "tejpata" }
+      - { id: oregano, qty: 0.5, unit: tsp, name: "dried oregano" }
+      - { id: thyme, qty: 0.5, unit: tsp, name: "dried thyme" }
+      - { id: cayenne, qty: 0.25, unit: tsp, name: "cayenne or chilli powder" }
+      - { id: pepper, qty: 0.5, unit: tsp, name: "black pepper" }
+      - { id: sausage, qty: 110, unit: g, name: "beef smoked sausage", note: "sliced" }
+      - { id: saltpepper, name: "salt and pepper" }
+    ops:
+      - id: render
+        in: [bacon]
+        do: "dutch oven, medium heat\n**~5 min**, until crisp"
+      - id: soften
+        in: [render, onion, capsicum, celery]
+        do: "**~8 min**, softened"
+      - id: garlicstep
+        in: [soften, garlic]
+        do: "**30 s**, fragrant"
+      - id: pot
+        in: [garlicstep, stock, water, kidneybeans, bay, oregano, thyme, cayenne, pepper]
+        do: "bring to a boil, then down to a **vigorous** simmer"
+      - id: simmer
+        in: [pot]
+        do: "**uncovered**, stirring now and then\n**1½-2 h**, until the beans are soft and the liquid has thickened\n**do not drop the heat** — medium is right"
+      - id: addsausage
+        in: [simmer, sausage]
+        do: "**~30 min** more, until thick and creamy\nlift out the bay leaves"
+      - id: season
+        in: [addsausage, saltpepper]
+        final: true
+        do: "salt and pepper to taste"
+    root: season
+
+  - id: rice
+    name: "The rice"
+    ingredients:
+      - { id: r-oil, qty: 1, unit: tbsp, name: "vegetable oil" }
+      - { id: rice, qty: 280, unit: g, name: "long grain white rice" }
+      - { id: r-water, qty: 540, unit: ml, name: "water" }
+      - { id: r-salt, qty: 0.75, unit: tsp, name: "salt" }
+    ops:
+      - id: toast
+        in: [r-oil, rice]
+        do: "medium heat, stirring constantly\n**1-3 min**, until the grains turn opaque and chalky"
+      - id: boil
+        in: [toast, r-water, r-salt]
+        do: "bring to a boil"
+      - id: steam
+        in: [boil]
+        final: true
+        do: "covered, lowest heat\n**~15 min**, until the water is gone\n**off the heat, lid on, 15 min more**\nthen fluff"
+    root: steam
+---
+

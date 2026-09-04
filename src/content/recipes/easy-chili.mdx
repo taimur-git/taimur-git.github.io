@@ -1,0 +1,65 @@
+---
+title: "Easy Chili"
+date: 2026-09-04
+summary: "Long simmer, short ingredient list."
+tags: ["meal", "beef"]
+cuisine: "American"
+category: "Main"
+
+yield: "serves 6"
+servings: 6
+prep: 20
+cook: 100
+
+allergens: []
+diet: ["dairy-free", "gluten-free"]
+heat: "medium"
+
+nutrition:
+  basis: "per serving at 6 servings, no rice or bread"
+  calories: 290
+  fat: 13
+  carbs: 22
+  protein: 22
+  salt: 1.2
+
+sources:
+  - name: "Allrecipes"
+    url: "https://www.allrecipes.com/recipe/15401/easy-chili-i/"
+
+components:
+  - id: chili
+    name: "Chili"
+    ingredients:
+      - { id: beef, qty: 450, unit: g, name: "beef mince" }
+      - { id: onion, qty: 150, unit: g, name: "onion", note: "chopped" }
+      - { id: capsicum, qty: 75, unit: g, name: "green capsicum", note: "chopped" }
+      - { id: chillipowder, qty: 2.5, unit: tbsp, name: "chilli powder", note: "morich gura" }
+      - { id: garlic, qty: 1, unit: clove, name: "garlic", note: "minced" }
+      - { id: cumin, qty: 0.5, unit: tsp, name: "ground cumin", note: "jeera gura" }
+      - { id: bay, qty: 1, unit: leaf, name: "bay", note: "tejpata" }
+      - { id: tomatoes, qty: 700, unit: g, name: "fresh tomatoes", note: "chopped" }
+      - { id: puree, qty: 240, unit: ml, name: "tomato puree" }
+      - { id: greenchilli, qty: 2, unit: piece, name: "green chillies", note: "kacha morich, chopped fine" }
+      - { id: beans, qty: 400, unit: g, name: "cooked red kidney beans", note: "rajma, or one tin" }
+      - { id: saltpepper, name: "salt and pepper" }
+    ops:
+      - id: brown
+        in: [beef, onion, capsicum]
+        do: "large saucepan, medium-high\n**~5 min**, until the beef browns\ndrain the excess fat"
+      - id: spice
+        in: [brown, chillipowder, garlic, cumin, bay]
+        do: "stir in"
+      - id: simmer
+        in: [spice, tomatoes, puree, greenchilli]
+        do: "boil, then down to low\ncovered, **1½ h**, stirring occasionally"
+      - id: addbeans
+        in: [simmer, beans]
+        do: "stir in\nheat through"
+      - id: season
+        in: [addbeans, saltpepper]
+        final: true
+        do: "lift out the bay leaf\nsalt and pepper to taste"
+    root: season
+---
+

@@ -11,6 +11,7 @@ import { gzipSync } from 'node:zlib';
 import { createHash } from 'node:crypto';
 import type { Recipe } from './schema';
 import { flattenOps } from './graph';
+import { exportedComponents } from './jsonld';
 import { formatDuration, renderIngredient } from './format';
 import { nutritionLines } from './jsonld';
 
@@ -93,17 +94,19 @@ function stableUid(slug: string): string {
 export function paprikaRecord(recipe: Recipe, slug: string, url: URL) {
   /* section headings are kept here, unlike in the JSON-LD: every sample export
      carries them and they read better in the app than a flat list does */
-  const ingredients = recipe.components
+  const parts = exportedComponents(recipe);
+
+  const ingredients = parts
     .flatMap((c) => [
-      recipe.components.length > 1 ? c.name : null,
+      parts.length > 1 ? c.name : null,
       ...c.ingredients.map((i) => renderIngredient(i)),
     ])
     .filter(Boolean)
     .join('\n');
 
-  const directions = recipe.components
+  const directions = parts
     .flatMap((c) => [
-      recipe.components.length > 1 ? `${c.name}:` : null,
+      parts.length > 1 ? `${c.name}:` : null,
       ...flattenOps(c).map((step) =>
         [step.list ? step.list.join('; ') : '', step.text].filter(Boolean).join('. '),
       ),

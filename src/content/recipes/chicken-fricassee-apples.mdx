@@ -1,0 +1,77 @@
+---
+title: "Chicken Fricassee with Apples"
+date: 2026-09-04
+summary: "One pan, browned apples, a cream sauce that takes two minutes."
+tags: ["meal", "chicken"]
+cuisine: "French"
+category: "Main"
+
+yield: "serves 4"
+servings: 4
+prep: 15
+cook: 45
+
+allergens: ["gluten", "dairy"]
+diet: []
+heat: "none"
+
+nutrition:
+  basis: "per serving at 4 servings, chicken, apples and sauce"
+  calories: 480
+  fat: 28
+  carbs: 18
+  protein: 45
+  salt: 1.4
+
+sources:
+  - name: "America's Test Kitchen"
+    url: "https://www.americastestkitchen.com/recipes/9414-chicken-fricassee-with-apples"
+
+components:
+  - id: fricassee
+    name: "Fricassee"
+    note: "The two butters are the same butter, used at two points. The apples brown first and go back in at the very end."
+    ingredients:
+      - { id: chicken, qty: 4, unit: piece, name: "chicken breasts", note: "boneless and skinless, ~200 g each, trimmed" }
+      - { id: saltpepper, name: "salt and pepper" }
+      - { id: flour, qty: 30, unit: g, name: "plain flour", note: "moyda" }
+      - { id: butter-a, qty: 15, unit: g, name: "unsalted butter", note: "1 tbsp, for the chicken" }
+      - { id: onion, qty: 1, unit: piece, name: "onion", note: "chopped" }
+      - { id: thyme, qty: 2, unit: tsp, name: "dried thyme" }
+      - { id: applejuice, qty: 120, unit: ml, name: "apple juice", note: "stands in for cider, which is not sold here" }
+      - { id: stock, qty: 120, unit: ml, name: "chicken stock" }
+      - { id: butter-b, qty: 30, unit: g, name: "unsalted butter", note: "2 tbsp, for the apples" }
+      - { id: apples, qty: 2, unit: piece, name: "apples", note: "cored, each cut into 16 wedges" }
+      - { id: cream, qty: 120, unit: ml, name: "cooking or whipping cream" }
+      - { id: vinegar, qty: 2, unit: tsp, name: "cider or white vinegar" }
+      - { id: herbs, qty: 1, unit: tbsp, name: "spring onion greens or coriander leaves", note: "chopped; stands in for chives" }
+    ops:
+      - id: season
+        in: [chicken, saltpepper]
+        do: "pat dry\nsalt and pepper both sides"
+      - id: dredge
+        in: [season, flour]
+        do: "shallow dish\ncoat, **shake off the excess**\nonto a plate"
+      - id: brown
+        in: [dredge, butter-a]
+        do: "wide nonstick pan, medium\n**~2 min a side**, lightly browned\nback onto the plate"
+      - id: soffritto
+        in: [brown, onion, thyme]
+        do: "into the empty pan, medium\n¼ tsp each salt and pepper\n**5-7 min**, softened and browned"
+      - id: braise
+        in: [soffritto, applejuice, stock]
+        do: "bring to a boil\nchicken back in\ncovered, medium-low\n**8-12 min**, until it registers **71 °C**"
+      - id: brownapples
+        in: [butter-b, apples]
+        do: "melt over medium\nsalt and pepper the wedges\ncut side down, **~5 min a side**\nmove them around for even colour\nonto a second plate"
+      - id: sauce
+        in: [braise, brownapples, cream]
+        do: "chicken out, tent with foil\ncream and apples in\nmedium-high, bring to a boil\n**~2 min**, slightly thickened"
+      - id: finish
+        in: [sauce, vinegar, herbs]
+        final: true
+        do: "vinegar, plus any juices off the plate\nsalt and pepper to taste\nspoon over the chicken, scatter the greens"
+    root: finish
+---
+
+

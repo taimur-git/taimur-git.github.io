@@ -1,0 +1,49 @@
+---
+title: "Quickles"
+date: 2026-09-04
+summary: "Quick sweet-sour pickle. Cuts through anything fried."
+tags: ["side", "vegetable"]
+cuisine: "East Asian"
+category: "Side"
+
+yield: "about 2 cups"
+servings: 4
+prep: 10
+cook: 5
+
+allergens: []
+diet: ["vegan", "vegetarian", "dairy-free", "gluten-free"]
+heat: "none"
+
+nutrition:
+  basis: "per serving at 4 servings, counting the brine you actually eat"
+  calories: 55
+  fat: 0
+  carbs: 13
+  protein: 0.5
+  salt: 1.5
+
+sources:
+  - name: "Miles Evans"
+
+components:
+  - id: quickles
+    name: "Quickles"
+    ingredients:
+      - { id: vinegar, qty: 120, unit: ml, name: "rice vinegar", note: "plain white works, slightly less sweet" }
+      - { id: sugar, qty: 50, unit: g, name: "caster sugar" }
+      - { id: water, qty: 60, unit: ml, name: "water" }
+      - { id: salt, qty: 1, unit: tsp, name: "coarse salt" }
+      - { id: ginger, qty: 4, unit: slice, name: "ginger", note: "thin", optional: true }
+      - { id: veg, qty: 250, unit: g, name: "cucumber", note: "sliced thin; carrot or any crunchy veg works" }
+    ops:
+      - id: brine
+        in: [vinegar, sugar, water, salt, ginger]
+        do: "medium-low heat, stirring now and then\n**2-3 min**, until the sugar and salt dissolve\n**no need to boil it**"
+      - id: steep
+        in: [brine, veg]
+        final: true
+        do: "pour over the sliced veg\n**fridge, 1-3 h**, until the brine soaks in"
+    root: steep
+---
+

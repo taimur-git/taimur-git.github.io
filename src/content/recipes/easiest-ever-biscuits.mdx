@@ -1,0 +1,65 @@
+---
+title: "Easiest-Ever Biscuits"
+date: 2026-09-04
+summary: "American biscuits: soft, scone-shaped, no rubbing in. Cream is the only fat."
+tags: ["side", "bread"]
+cuisine: "American"
+category: "Bread"
+
+yield: "10 biscuits"
+servings: 10
+prep: 10
+cook: 12
+
+allergens: ["gluten", "dairy"]
+diet: ["vegetarian"]
+heat: "none"
+
+nutrition:
+  basis: "per biscuit at 10, with the butter brush"
+  calories: 380
+  fat: 24
+  carbs: 34
+  protein: 5
+  salt: 0.9
+
+sources:
+  - name: "America's Test Kitchen"
+    url: "https://www.americastestkitchen.com/recipes/11334-easiest-ever-biscuits"
+
+components:
+  - id: biscuits
+    name: "Biscuits"
+    note: "Dropped, not rolled or cut. There is no rubbing in and no resting."
+    ingredients:
+      - { id: flour, qty: 425, unit: g, name: "plain flour", note: "moyda" }
+      - { id: sugar, qty: 4, unit: tsp, name: "caster sugar" }
+      - { id: bakingpowder, qty: 1, unit: tbsp, name: "baking powder" }
+      - { id: bakingsoda, qty: 0.25, unit: tsp, name: "baking soda" }
+      - { id: salt, qty: 1.25, unit: tsp, name: "fine salt" }
+      - { id: cream, qty: 480, unit: ml, name: "heavy or whipping cream" }
+      - { id: butter, qty: 30, unit: g, name: "unsalted butter", note: "melted, to brush", optional: true }
+    ops:
+      - id: dry
+        in: [flour, sugar, bakingpowder, bakingsoda, salt]
+        do: "**oven to 230 °C**, rack upper-middle\nline a tray with parchment\nwhisk together"
+      - id: warm
+        in: [cream]
+        do: "warm to body temperature, **35-38 °C**\n60-90 s in the microwave, stirring halfway"
+      - id: dough
+        in: [dry, warm]
+        do: "stir in\n**until a soft, uniform dough forms**"
+      - id: scoop
+        in: [dough]
+        do: "oil-spray a ⅓-cup measure\nlevel scoops, **5 cm apart**\nabout 6 cm wide and 3 cm tall\nrespray every 3 or 4\nreshape any misshapen ones with your fingertips"
+      - id: bake
+        in: [scoop]
+        do: "**10-12 min at 230 °C**, turning the tray halfway\ntops light golden"
+      - id: brush
+        in: [bake, butter]
+        final: true
+        do: "brush them hot, if using\nserve warm"
+    root: brush
+---
+
+Keeps 24 hours in a sealed bag; reheat 10 minutes at 150 °C.

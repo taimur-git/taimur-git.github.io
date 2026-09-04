@@ -1,0 +1,77 @@
+---
+title: "Moqueca"
+date: 2026-09-04
+summary: "Brazilian shrimp and fish stew. The seafood poaches off the heat, covered."
+tags: ["meal", "seafood"]
+cuisine: "Brazilian"
+category: "Main"
+
+yield: "serves 6"
+servings: 6
+prep: 20
+cook: 40
+
+allergens: ["shellfish", "fish"]
+diet: ["dairy-free", "gluten-free"]
+heat: "none"
+
+nutrition:
+  basis: "per serving at 6 servings, stew only, no rice"
+  calories: 350
+  fat: 22
+  carbs: 9
+  protein: 30
+  salt: 1.3
+
+sources:
+  - name: "America's Test Kitchen"
+    url: "https://www.americastestkitchen.com/recipes/10603-brazilian-shrimp-and-fish-stew-moqueca"
+
+components:
+  - id: moqueca
+    name: "Moqueca"
+    note: "The last step is off the heat with the lid on. Residual heat cooks the seafood; the burner would overcook it."
+    ingredients:
+      - { id: shrimp, qty: 450, unit: g, name: "large shrimp", note: "chingri, peeled and deveined, tails off" }
+      - { id: fish, qty: 450, unit: g, name: "skinless bhetki or rupchanda fillets", note: "2-2.5 cm thick, cut into 4 cm pieces; stands in for cod" }
+      - { id: garlic, qty: 3, unit: clove, name: "garlic", note: "minced" }
+      - { id: salt-a, qty: 0.5, unit: tsp, name: "salt" }
+      - { id: pepper, qty: 0.25, unit: tsp, name: "black pepper" }
+      - { id: oil, qty: 2, unit: tbsp, name: "vegetable or olive oil" }
+      - { id: redcapsicum, qty: 1, unit: piece, name: "red capsicum", note: "seeded, 1 cm pieces" }
+      - { id: greencapsicum, qty: 1, unit: piece, name: "green capsicum", note: "seeded, 1 cm pieces" }
+      - { id: salt-b, qty: 0.5, unit: tsp, name: "salt" }
+      - { id: onion, qty: 1, unit: piece, name: "onion", note: "coarsely chopped" }
+      - { id: tomatoes, qty: 350, unit: g, name: "fresh tomatoes", note: "chopped, with their juice" }
+      - { id: coriander-a, qty: 15, unit: g, name: "coriander leaves", note: "dhonepata, chopped" }
+      - { id: salt-c, qty: 0.5, unit: tsp, name: "salt" }
+      - { id: coconutmilk, qty: 400, unit: ml, name: "coconut milk", note: "or fresh narkel dudh" }
+      - { id: lime, qty: 30, unit: ml, name: "lime or lemon juice" }
+      - { id: coriander-b, qty: 30, unit: g, name: "coriander leaves", note: "chopped, to finish" }
+      - { id: saltpepper, name: "salt and pepper", note: "to taste" }
+    ops:
+      - id: marinate
+        in: [shrimp, fish, garlic, salt-a, pepper]
+        do: "toss together in a bowl\nset aside"
+      - id: peppers
+        in: [oil, redcapsicum, greencapsicum, salt-b]
+        do: "large heavy pot, medium-high, **until shimmering**\nstirring often\n**5-7 min**, softened"
+      - id: puree
+        in: [onion, tomatoes, coriander-a]
+        do: "food processor\n**~30 s**, to the texture of a pureed salsa"
+      - id: reduce
+        in: [peppers, puree, salt-c]
+        do: "medium heat, stirring often\n**3-5 min**, reduced and slightly thickened\n*the pot should not go dry*"
+      - id: boil
+        in: [reduce, coconutmilk]
+        do: "high heat\n**bubbling right across the surface**"
+      - id: poach
+        in: [marinate, boil, lime]
+        do: "seafood and lime in, spread out, **every piece submerged**\n**cover and take the pot off the heat**\n**15 min**, until opaque and just cooked through"
+      - id: finish
+        in: [poach, coriander-b, saltpepper]
+        final: true
+        do: "stir gently — **do not break the fish up**\nsalt and pepper to taste"
+    root: finish
+---
+

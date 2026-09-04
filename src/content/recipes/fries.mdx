@@ -1,8 +1,8 @@
 ---
 title: "Bangladesh Fries"
 date: 2026-09-03
-summary: "Chips for a weeknight."
-tags: ["fries", "potato"]
+summary: "Chips for a weeknight. Optional brine if longer"
+tags: ["fast food", "vegetable"]
 cuisine: "Bangladeshi"
 category: "Side"
 
@@ -85,6 +85,66 @@ components:
         final: true
         do: "toss **immediately**, still steaming\nit will not stick to a cooled chip\nblend first, taste one, then plain salt only if it needs it"
     root: season
+
+  - id: brine
+    name: "Brined"
+    optional: true
+    nutrition:
+      basis: "per serving at 4 servings, brined. Salt is the number that moves"
+      calories: 330
+      fat: 15
+      carbs: 40
+      protein: 5
+      salt: 5.5
+    note: "The other route, two days ahead. Replaces the soak — the brine and the soak do the same job to the potato surface from opposite directions, so running both leaches out what you waited for. Runs to the end on its own; ignore the fries component if you make this."
+    ingredients:
+      - { id: b-potatoes, qty: 1, unit: kg, name: "potatoes" }
+      - { id: b-water, qty: 2, unit: l, name: "water" }
+      - { id: b-salt, qty: 100, unit: g, name: "plain salt", note: "not iodised" }
+      - { id: b-garlic, qty: 3, unit: clove, name: "garlic", note: "lightly crushed" }
+      - { id: b-mustard, qty: 1, unit: tsp, name: "mustard seeds", note: "shorshe" }
+      - { id: b-pepper, qty: 1, unit: tsp, name: "black peppercorns", note: "golmorich" }
+      - { id: b-bay, qty: 1, unit: leaf, name: "bay", note: "tejpata" }
+      - { id: b-chilli, qty: 1, unit: piece, name: "dried red chilli", optional: true }
+      - { id: b-cornflour, qty: 2, unit: tbsp, name: "cornflour" }
+      - { id: b-oil, qty: 1.5, unit: l, name: "oil", note: "soybean or sunflower" }
+      - { id: b-seasoning, name: "spice blend", ref: "spice-blend", note: "half what you would normally use" }
+    ops:
+      - id: b-cut
+        in: [b-potatoes]
+        do: "peel\n12 mm batons\n*thicker than the plain ones*\nrinse **until it runs clear**"
+      - id: b-brine
+        in: [b-water, b-salt]
+        do: "whisk **until fully dissolved**\nwarm a little of it if it will not go\ncool back down before using"
+      - id: b-submerge
+        in: [b-cut, b-brine, b-garlic, b-mustard, b-pepper, b-bay, b-chilli]
+        do: "jar or food-safe tub\ncovered by **at least 2 cm**\nweigh it down, anything in the air is where mould starts\n**rest the lid on loosely, never seal it**"
+      - id: b-ferment
+        in: [b-submerge]
+        do: "**36-48 h**, out of the sun\nor **5-7 days in the fridge**, much harder to get wrong\ncheck daily, skim any white film, top up with fresh brine\ndone when cloudy, bubbling and clearly sour"
+      - id: b-dry
+        in: [b-ferment]
+        do: "drain, discard the brine and aromatics\ndry **thoroughly**, cloth, then 20 min on a rack\n*they are fragile now; handle them gently*"
+      - id: b-dust
+        in: [b-dry, b-cornflour]
+        do: "dust lightly, turn gently\nthe brine raises no starchy surface, so this stands in for it"
+      - id: b-heat
+        in: [b-oil]
+        do: "heat"
+      - id: b-fry1
+        in: [b-dust, b-heat]
+        do: "**140 °C**\n5-6 min, in batches\nany colour means the oil is too hot"
+      - id: b-freeze
+        in: [b-fry1]
+        do: "single layer on a tray\n**1 h minimum**, overnight is better\nthe ice ruptures the cells and drives out water"
+      - id: b-fry2
+        in: [b-freeze]
+        do: "**190 °C**\nfry **from frozen**, small batches\n2-3 min, deep golden"
+      - id: b-season
+        in: [b-fry2, b-seasoning]
+        final: true
+        do: "**half the blend, no extra salt**\nthese are salted all the way through already"
+    root: b-season
 ---
 
 ## Shopping
@@ -132,6 +192,52 @@ Drop the handle of a wooden spoon into the oil.
 If a chip browns in under a minute on the first fry, the oil is too hot; pull the pot off the heat
 for a minute. If it just sits there barely bubbling, it is too cold and the chips are drinking oil.
 
+## On the brine
+
+The amounts and the sequence are in the **Brined** component above. What follows is the part that
+does not fit in a table.
+
+### Judging the ferment
+
+The source recipes say 3 to 5 days at room temperature. That is written for a 20°C kitchen and it
+does not transfer. At 28 to 32°C a lacto ferment runs two to three times faster, which is why the
+component says 36 to 48 hours — but go by the signs, not the clock.
+
+Normal looks like a cloudy, slightly milky brine, small bubbles when you nudge the jar, and a smell
+that is sour, tangy and a bit yeasty. Like sauerkraut.
+
+- **A thin white film on the surface** is kahm yeast. Harmless. Skim it and carry on.
+- **Fuzzy mould — green, black, blue or pink — means throw the whole batch away**, brine and potatoes
+  together. Do not scoop it off and use what is underneath; the threads run deeper than what you can
+  see. A putrid smell, as opposed to a sour one, means the same.
+
+Two rules prevent almost every failure: keep everything under the brine, and never seal the jar.
+Fermentation makes CO2 and a sealed jar builds pressure. Use plain salt, not iodised — iodine holds
+the ferment back.
+
+**If you would rather not judge it, ferment in the fridge for 5 to 7 days.** Much slower, much harder
+to get wrong, and you get less funk, which some people prefer anyway. This is the one to pick the
+first time.
+
+### What you get
+
+Denser and a little less fluffy than the plain ones. Fermentation softens the structure, so they fry
+up more solid. That is the trade, not a mistake: the plain version is about texture and this one is
+about flavour, so it is the more interesting chip and the less impressive one. Make the plain version
+when there are guests.
+
+Beef dripping suits these particularly well — see the note below.
+
+The brine is single use. Throw it out, do not run a second batch through it.
+
+### Without the wait
+
+Brine for **4 hours in the fridge** instead of 48 at room temperature. You get potatoes seasoned all
+the way through without any of the sourness, and no judgement calls. It is not the recipe you wanted,
+but it is a genuinely good chip and it is the same day. Fry it exactly as the component says, freeze
+included.
+
+
 ## From frozen
 
 A real option, not a consolation. Golden Harvest, Pran or imported McCain.
@@ -177,3 +283,13 @@ and it is mostly salt: roughly 1.5g of salt per serving at 3g of blend.
 
 Frozen chips fried at 190°C come out around 380 kcal a serving, since they are par-fried in oil
 before you get them.
+
+Where the brined salt figure comes from: 100g of salt in 2L of brine against about 790g of water
+inside 1kg of potatoes puts equilibrium near 3.6g per 100ml, so roughly 28g of salt ends up in the
+potatoes if they get all the way there — and over 48 hours a 12mm baton very nearly does. They are
+drained but never rinsed, and salt does not cook off. Short of equilibrium it is still most of a
+day's allowance in a side dish, which is why that method ends with no extra salt.
+
+The 4-hour fridge brine is a different thing: salt reaches perhaps 3mm into a 6mm half-thickness, so
+it seasons the outside and leaves the middle plain. Nearer 2.5g a serving, much closer to the plain
+version than to the fermented one.

@@ -1,0 +1,78 @@
+---
+title: "Pseudo-Bourbon Chicken"
+date: 2026-09-04
+summary: "Sticky soy-and-sugar chicken. No bourbon in it, and none needed."
+tags: ["meal", "chicken"]
+cuisine: "American"
+category: "Main"
+
+yield: "serves 4"
+servings: 4
+prep: 15
+cook: 25
+
+allergens: ["soy", "gluten", "sesame"]
+diet: ["dairy-free"]
+heat: "none"
+
+nutrition:
+  basis: "per serving at 4 servings, chicken and glaze only, no rice"
+  calories: 640
+  fat: 30
+  carbs: 32
+  protein: 40
+  salt: 4.2
+
+sources:
+  - name: "America's Test Kitchen"
+    url: "https://www.americastestkitchen.com/recipes/14007-bourbon-chicken"
+
+components:
+  - id: glaze
+    name: "Glaze"
+    note: "Made first and used twice: two spoonfuls go into the dredge, the rest finishes the pan."
+    ingredients:
+      - { id: g-soy, qty: 120, unit: ml, name: "soy sauce" }
+      - { id: g-sugar, qty: 110, unit: g, name: "brown sugar", note: "packed; or grated khejur/nolen gur" }
+      - { id: g-water, qty: 60, unit: ml, name: "water" }
+      - { id: g-juice, qty: 2, unit: tbsp, name: "apple juice", note: "stands in for the bourbon" }
+      - { id: g-sesame, qty: 1, unit: tsp, name: "sesame oil", note: "til tel" }
+      - { id: g-pepper, qty: 0.5, unit: tsp, name: "black pepper" }
+    ops:
+      - id: g-mix
+        in: [g-soy, g-sugar, g-water, g-juice, g-sesame, g-pepper]
+        do: "combine in a jug\nwarm it, **~2 min** in the microwave or a small pan\nwhisk **until the sugar is fully dissolved**"
+    root: g-mix
+
+  - id: chicken
+    name: "The chicken"
+    ingredients:
+      - { id: thigh, qty: 900, unit: g, name: "boneless skinless chicken thigh", note: "trimmed, 2.5 cm pieces" }
+      - { id: cornflour, qty: 2, unit: tbsp, name: "cornflour" }
+      - { id: glaze-dredge, name: "glaze", ref: "glaze", note: "2 tbsp of it, no more" }
+      - { id: oil, qty: 2, unit: tbsp, name: "soybean or sunflower oil" }
+      - { id: garlic, qty: 2, unit: clove, name: "garlic", note: "minced" }
+      - { id: ginger, qty: 1, unit: tsp, name: "ginger", note: "grated" }
+      - { id: glaze-rest, name: "glaze", ref: "glaze", note: "the rest of it" }
+      - { id: vinegar, qty: 1, unit: tbsp, name: "cider or white vinegar" }
+    ops:
+      - id: toss
+        in: [thigh, cornflour, glaze-dredge]
+        do: "toss **until every piece is coated**"
+      - id: heat
+        in: [oil]
+        do: "wide nonstick pan, medium-high\n**until it shimmers**"
+      - id: brown
+        in: [toss, heat]
+        do: "the pan will be full\nstir now and then\n**~10 min**, browned and cooked through"
+      - id: reduce
+        in: [brown, garlic, ginger, glaze-rest]
+        do: "bring to a boil\n**6-8 min**\nsyrupy: a spatula dragged through leaves a wide trail before it fills back in"
+      - id: finish
+        in: [reduce, vinegar]
+        final: true
+        do: "**off the heat**\nstir the vinegar through\nserve"
+    root: finish
+---
+
+Apple juice replaces the bourbon and the brown sugar can be gur.

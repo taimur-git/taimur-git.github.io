@@ -1,0 +1,63 @@
+---
+title: "Brownies"
+date: 2026-09-04
+summary: "Chewy and fudgy. If you want cakey, look elsewhere."
+tags: ["dessert"]
+cuisine: "American"
+category: "Dessert"
+
+yield: "16 squares from a 23 × 33 cm tin"
+servings: 16
+prep: 15
+cook: 30
+
+allergens: ["gluten", "egg", "dairy"]
+diet: ["vegetarian"]
+heat: "none"
+
+nutrition:
+  basis: "per square at 16 squares"
+  calories: 380
+  fat: 24
+  carbs: 36
+  protein: 3
+  salt: 0.4
+
+sources:
+  - name: "Miles Evans"
+
+components:
+  - id: brownies
+    name: "Brownies"
+    ingredients:
+      - { id: sugar, qty: 400, unit: g, name: "caster sugar" }
+      - { id: oil, qty: 120, unit: g, name: "vegetable oil" }
+      - { id: eggs, qty: 4, unit: piece, name: "large eggs" }
+      - { id: vanilla, qty: 2, unit: tsp, name: "vanilla essence" }
+      - { id: flour, qty: 125, unit: g, name: "plain flour", note: "moyda" }
+      - { id: cocoa, qty: 60, unit: g, name: "cocoa powder" }
+      - { id: bakingpowder, qty: 0.5, unit: tsp, name: "baking powder" }
+      - { id: salt, qty: 1, unit: tsp, name: "fine salt" }
+      - { id: butter, qty: 230, unit: g, name: "unsalted butter", note: "melted" }
+      - { id: chocolate, qty: 170, unit: g, name: "dark chocolate", note: "chopped, or chips" }
+    ops:
+      - id: wet
+        in: [sugar, oil, eggs, vanilla]
+        do: "**oven to 175 °C**\ngrease a 23 × 33 cm tin\nwhisk together in a large bowl"
+      - id: dry
+        in: [wet, flour, cocoa, bakingpowder, salt]
+        do: "**same bowl**\nwhisk to combine"
+      - id: pour
+        in: [dry, butter]
+        do: "pour the melted butter over the top\nwhisk **slowly**"
+      - id: fold
+        in: [pour, chocolate]
+        do: "stir through"
+      - id: bake
+        in: [fold]
+        final: true
+        do: "into the tin\n**~30 min at 175 °C**\na skewer should come out with a few crumbs, **not clean**"
+    root: bake
+---
+
+

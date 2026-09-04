@@ -1,0 +1,97 @@
+---
+title: "Shrimp Chowder"
+date: 2026-09-04
+summary: "Clam chowder without the clams."
+tags: ["meal", "seafood"]
+cuisine: "American"
+category: "Soup"
+
+yield: "about 9 cups"
+servings: 9
+prep: 15
+cook: 60
+
+allergens: ["gluten", "dairy", "shellfish", "fish", "celery"]
+diet: []
+heat: "mild"
+
+nutrition:
+  basis: "per cup, about 9 cups from the pot"
+  calories: 350
+  fat: 25
+  carbs: 18
+  protein: 14
+  salt: 1.3
+
+sources:
+  - name: "The Cozy Cook"
+    url: "https://thecozycook.com/clam-chowder-recipe/"
+
+components:
+  - id: bacon
+    name: "Beef bacon"
+    note: "Rendered first, in the pot the chowder is built in. Its output goes two places: the drippings start the soffritto, the chopped bacon finishes the bowl."
+    ingredients:
+      - { id: strips, qty: 170, unit: g, name: "beef bacon", note: "about 6 strips" }
+    ops:
+      - id: render
+        in: [strips]
+        do: "**low heat**, in the soup pot, halved so it lies flat until crisp\nlift out onto paper towel, **keep 2 tbsp of the drippings**\nchop once cool, wipe out any dark spots, leave the rest"
+    root: render
+
+  - id: chowder
+    name: "Chowder"
+    ingredients:
+      - { id: drippings, name: "bacon drippings", ref: "bacon", note: "2 tbsp" }
+      - { id: butter, qty: 30, unit: g, name: "butter" }
+      - { id: onion, qty: 1, unit: piece, name: "onion", note: "diced" }
+      - { id: celery, qty: 2, unit: piece, name: "celery ribs", note: "diced; or more onion if there is none" }
+      - { id: garlic, qty: 3, unit: clove, name: "garlic", note: "minced" }
+      - { id: hotsauce, qty: 1, unit: tsp, name: "hot sauce", note: "or ½ tsp chilli flakes" }
+      - { id: worcester, qty: 1, unit: tsp, name: "Worcestershire sauce", note: "check the label, or use soy sauce" }
+      - { id: oregano, qty: 0.5, unit: tsp, name: "dried oregano" }
+      - { id: parsley, qty: 0.5, unit: tsp, name: "dried parsley", note: "or coriander leaves" }
+      - { id: thyme, qty: 0.25, unit: tsp, name: "dried thyme" }
+      - { id: salt, qty: 0.25, unit: tsp, name: "salt" }
+      - { id: paprika, qty: 0.125, unit: tsp, name: "smoked paprika" }
+      - { id: pepper, qty: 0.125, unit: tsp, name: "black pepper" }
+      - { id: flour, qty: 40, unit: g, name: "plain flour" }
+      - { id: stock, qty: 240, unit: ml, name: "chicken stock" }
+      - { id: creammilk, qty: 720, unit: ml, name: "cooking cream and milk", note: "1:1" }
+      - { id: cube, qty: 1, unit: piece, name: "chicken stock cube" }
+      - { id: fishstock, qty: 240, unit: ml, name: "shrimp or fish stock", note: "simmer shells and heads, or a fish cube" }
+      - { id: bay, qty: 1, unit: leaf, name: "bay", note: "tejpata" }
+      - { id: potatoes, qty: 560, unit: g, name: "potatoes", note: "peeled and diced" }
+      - { id: shrimp, qty: 450, unit: g, name: "peeled shrimp", note: "chingri, roughly chopped; stands in for tinned clams" }
+      - { id: garnish, name: "the chopped bacon", ref: "bacon" }
+      - { id: coriander, name: "coriander leaves and cracked pepper", note: "to serve" }
+    ops:
+      - id: soften
+        in: [drippings, butter, onion, celery]
+        do: "medium heat\nscrape the bottom of the pot clean as it melts\n**5-6 min**, softened"
+      - id: aromatics
+        in: [soften, garlic, hotsauce, worcester, oregano, parsley, thyme, salt, paprika, pepper]
+        do: "**1 min**"
+      - id: roux
+        in: [aromatics, flour]
+        do: "**2 min**, stirring\nuntil the raw flour smell is gone"
+      - id: loosen
+        in: [roux, stock, creammilk]
+        do: "**in small splashes**, stirring the whole time\nwiping the pot clean again as you go"
+      - id: simmer
+        in: [loosen, cube, fishstock, bay]
+        do: "boil, then down to a bare bubble\n**20 min**, partly covered, stirring now and then\n*the longer it goes the thicker it gets*"
+      - id: potato
+        in: [simmer, potatoes]
+        do: "**20-25 min**, until fork tender\nthen heat to low"
+      - id: prawn
+        in: [potato, shrimp]
+        do: "**3-4 min**, pink and opaque\nfish out the bay leaf"
+      - id: serve
+        in: [prawn, garnish, coriander]
+        final: true
+        do: "ladle out\nbacon, coriander, cracked pepper"
+    root: serve
+---
+
+Keeps 3 to 5 days in the fridge.

@@ -36,6 +36,9 @@ const proseSteps = data.components.flatMap((c) =>
     label: i === 0 ? c.name : undefined,
     body: step.text,
     list: step.list,
+    /* every step of an alternate path carries the tag, not just the first:
+       the method is one list and a reader can enter it anywhere */
+    optional: c.optional,
   })),
 );
 ---
@@ -85,7 +88,10 @@ const proseSteps = data.components.flatMap((c) =>
     <div data-method-view="prose">
       {data.components.map((component) => (
         <section class="recipe-component" id={component.id} data-component={component.id}>
-          <h2 class="recipe-component-title">{component.name}</h2>
+          <h2 class="recipe-component-title">
+            {component.name}
+            {component.optional && <span class="recipe-component-tag">optional</span>}
+          </h2>
           {component.note && <p class="recipe-component-note">{component.note}</p>}
           <Ingredients componentId={component.id} items={component.ingredients} title="Ingredients" />
         </section>
@@ -96,7 +102,10 @@ const proseSteps = data.components.flatMap((c) =>
     <div data-method-view="graph" class="recipe-graph-region" hidden>
       {data.components.map((component) => (
         <section class="recipe-component" data-component={component.id}>
-          <h2 class="recipe-component-title">{component.name}</h2>
+          <h2 class="recipe-component-title">
+            {component.name}
+            {component.optional && <span class="recipe-component-tag">optional</span>}
+          </h2>
           {component.note && <p class="recipe-component-note">{component.note}</p>}
           <RecipeGraph component={component} />
         </section>
@@ -104,6 +113,11 @@ const proseSteps = data.components.flatMap((c) =>
     </div>
 
     {data.nutrition && <Nutrition nutrition={data.nutrition} />}
+    {/* a component that changes the finished dish enough that the figures above
+        stop describing it gets its own block, labelled with the path */}
+    {data.components
+      .filter((c) => c.nutrition)
+      .map((c) => <Nutrition nutrition={c.nutrition!} label={c.name} />)}
 
     <div class="recipe-prose">
       <Content />

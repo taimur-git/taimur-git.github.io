@@ -1,0 +1,99 @@
+---
+title: "Korean-Style Roasted Wings"
+date: 2026-09-04
+summary: "Yangnyeom sauce on oven wings. No frying, no deep pot of oil."
+tags: ["meal", "chicken"]
+cuisine: "Korean"
+category: "Main"
+
+yield: "serves 4"
+servings: 4
+prep: 15
+cook: 75
+
+allergens: ["soy", "gluten", "sesame"]
+diet: ["dairy-free"]
+heat: "medium"
+
+nutrition:
+  basis: "per serving at 4 servings, with all the sauce"
+  calories: 830
+  fat: 50
+  carbs: 45
+  protein: 55
+  salt: 4.5
+
+sources:
+  - name: "Miles Evans"
+
+components:
+  - id: wings
+    name: "The wings"
+    note: "Needs 3 hours in the fridge, uncovered. Written for a full pack; halve it freely."
+    ingredients:
+      - { id: chickenwings, qty: 1.2, unit: kg, name: "chicken wings" }
+      - { id: w-salt, qty: 1.5, unit: tsp, name: "coarse salt" }
+      - { id: garlicpowder, qty: 1, unit: tsp, name: "garlic powder" }
+      - { id: onionpowder, qty: 1, unit: tsp, name: "onion powder" }
+      - { id: paprika, qty: 1, unit: tsp, name: "smoked paprika" }
+      - { id: w-pepper, qty: 0.5, unit: tsp, name: "black pepper" }
+      - { id: msg, qty: 0.5, unit: tsp, name: "MSG", note: "Ajinomoto", optional: true }
+      - { id: w-oil, qty: 1, unit: tbsp, name: "neutral oil" }
+      - { id: bakingpowder, qty: 1, unit: tbsp, name: "baking powder", note: "not baking soda" }
+    ops:
+      - id: dryrub
+        in: [chickenwings, w-salt, garlicpowder, onionpowder, paprika, w-pepper, msg]
+        do: "toss to coat"
+      - id: coat
+        in: [dryrub, w-oil, bakingpowder]
+        do: "toss again\n**uncovered in the fridge, 3 h minimum**, overnight is better"
+      - id: lowbake
+        in: [coat]
+        do: "back to room temperature\n**oven to 120 °C**\n**30 min** — renders the fat and dries the skin out"
+      - id: highbake
+        in: [lowbake]
+        final: true
+        do: "raise to **220 °C**\n**~40 min**, flipping halfway\nuntil they hit **88 °C** inside"
+    root: highbake
+
+  - id: sauce
+    name: "Yangnyeom sauce"
+    ingredients:
+      - { id: ketchup, qty: 6, unit: tbsp, name: "ketchup" }
+      - { id: gochujang, qty: 2, unit: tbsp, name: "gochujang", note: "import grocers carry it; or 2 tbsp chilli powder + 1 tbsp tomato paste + 1 tsp soy + ½ tsp sugar" }
+      - { id: honey-a, qty: 6, unit: tbsp, name: "honey" }
+      - { id: brownsugar, qty: 3, unit: tbsp, name: "brown sugar" }
+      - { id: soy, qty: 6, unit: tbsp, name: "soy sauce" }
+      - { id: sweetvinegar, qty: 3, unit: tbsp, name: "rice vinegar with 1 tbsp sugar stirred in", note: "stands in for mirin, which is alcoholic" }
+      - { id: honey-b, qty: 3, unit: tbsp, name: "honey", note: "stands in for corn syrup" }
+      - { id: s-garlic, qty: 3, unit: clove, name: "garlic" }
+      - { id: ginger, qty: 1, unit: tbsp, name: "ginger", note: "grated" }
+      - { id: vinegar, qty: 3, unit: tbsp, name: "rice vinegar" }
+      - { id: sesameoil, qty: 1, unit: tbsp, name: "sesame oil" }
+    ops:
+      - id: s-simmer
+        in: [ketchup, gochujang, honey-a, brownsugar, soy, sweetvinegar, honey-b, s-garlic, ginger, vinegar, sesameoil]
+        final: true
+        do: "everything into a small pot\nbring to a simmer\n**3 min**\noff the heat"
+    root: s-simmer
+
+  - id: glazing
+    name: "Glazing"
+    ingredients:
+      - { id: bakedwings, name: "the baked wings", ref: "wings" }
+      - { id: thesauce, name: "the sauce", ref: "sauce" }
+      - { id: sesameseeds, name: "sesame seeds", note: "to serve", optional: true }
+    ops:
+      - id: brush
+        in: [bakedwings, thesauce]
+        do: "oven to **grill/broil**\nbrush both sides"
+      - id: alternate
+        in: [brush]
+        do: "**60-90 s** under the grill, then brush again\nrepeat until the sauce runs out"
+      - id: serve
+        in: [alternate, sesameseeds]
+        final: true
+        do: "scatter and serve\n*good with rice and quickles*"
+    root: serve
+---
+

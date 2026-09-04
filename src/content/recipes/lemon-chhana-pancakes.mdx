@@ -1,0 +1,63 @@
+---
+title: "Lemon Chhana Pancakes"
+date: 2026-09-04
+summary: "Ricotta pancakes with chhana instead. Light, lemony, a 15 minute rest."
+tags: ["breakfast"]
+cuisine: "American"
+category: "Breakfast"
+
+yield: "2 large or 4 small servings"
+servings: 2
+prep: 10
+cook: 10
+
+allergens: ["gluten", "dairy", "egg"]
+diet: ["vegetarian"]
+heat: "none"
+
+nutrition:
+  basis: "per serving at 2 servings, pancakes only, nothing on top"
+  calories: 585
+  fat: 30
+  carbs: 58
+  protein: 20
+  salt: 1
+
+sources:
+  - name: "Allrecipes"
+    url: "https://www.allrecipes.com/recipe/257657/lemon-ricotta-pancakes/"
+
+components:
+  - id: pancakes
+    name: "Pancakes"
+    ingredients:
+      - { id: water, qty: 180, unit: ml, name: "cold water or milk", note: "water is better here" }
+      - { id: bakingsoda, qty: 0.5, unit: tsp, name: "baking soda" }
+      - { id: chhana, qty: 120, unit: g, name: "fresh chhana or paneer", note: "crumbled; stands in for ricotta" }
+      - { id: egg, qty: 1, unit: piece, name: "large egg" }
+      - { id: zest, qty: 1, unit: tbsp, name: "lemon zest", note: "grated" }
+      - { id: oil, qty: 1, unit: tbsp, name: "vegetable oil" }
+      - { id: sugar, qty: 1, unit: tbsp, name: "caster sugar" }
+      - { id: vanilla, qty: 0.125, unit: tsp, name: "vanilla essence"}
+      - { id: flour, qty: 140, unit: g, name: "self-raising flour", note: "or 140 g plain flour with 1½ tsp baking powder and ¾ tsp fine salt" }
+      - { id: butter, qty: 30, unit: g, name: "butter", note: "melted" }
+      - { id: lemonjuice, qty: 1, unit: tbsp, name: "lemon juice" }
+      - { id: panoil, name: "oil", note: "for the pan" }
+    ops:
+      - id: fizz
+        in: [water, bakingsoda]
+        do: "whisk together in a mixing bowl"
+      - id: wet
+        in: [fizz, chhana, egg, zest, oil, sugar, vanilla]
+        do: "whisk **until smooth**\nbreak up any lumps of cheese as you go"
+      - id: batter
+        in: [wet, flour, butter, lemonjuice]
+        do: "whisk **until most of the flour disappears**\n*a few streaks are fine*\n**rest 15 min** at room temperature"
+      - id: cook
+        in: [batter, panoil]
+        final: true
+        do: "lightly oiled griddle, medium-high\nlarge spoonfuls\n**2-3 min**, until bubbles form and the edges dry\nflip, **2-3 min** more"
+    root: cook
+---
+
+Chhana or paneer replaces the ricotta. To make ricotta instead: heat 500 ml milk almost to a boil, stir in 2 tbsp lemon juice, strain the curds.

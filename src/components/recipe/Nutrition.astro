@@ -8,8 +8,11 @@ interface Props {
     protein?: number;
     salt?: number;
   };
+  /* names the path these figures are for, when a recipe carries more than
+     one set. Omitted for the recipe's own block */
+  label?: string;
 }
-const { nutrition } = Astro.props;
+const { nutrition, label } = Astro.props;
 
 const rows = [
   ['Calories', nutrition.calories, 'kcal'],
@@ -21,7 +24,10 @@ const rows = [
 ---
 
 <div class="nutrition">
-  <p class="nutrition-heading">Nutrition <span class="nutrition-basis">{nutrition.basis}</span></p>
+  <p class="nutrition-heading">
+    Nutrition{label && <span class="nutrition-label"> · {label}</span>}
+    <span class="nutrition-basis">{nutrition.basis}</span>
+  </p>
   <dl class="nutrition-grid">
     {rows.map(([label, value, unit]) => (
       <div class="nutrition-item">
@@ -50,6 +56,8 @@ const rows = [
     color: var(--color-text-faint);
     margin: 0 0 var(--space-3);
   }
+
+  .nutrition-label { color: var(--color-text-muted); }
 
   .nutrition-basis {
     text-transform: none;

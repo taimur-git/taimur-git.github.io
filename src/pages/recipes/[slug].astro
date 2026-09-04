@@ -56,6 +56,9 @@ const proseSteps = data.components.flatMap((c) =>
 
     <div class="recipe-meta">
       <span class="mono recipe-date">{formattedDate}</span>
+      {data.category && (
+        <TagPill tag={data.category.toLowerCase()} href={`/recipes?tag=${data.category.toLowerCase()}`} />
+      )}
       {data.tags.map((tag) => <TagPill tag={tag} href={`/recipes?tag=${tag}`} />)}
     </div>
 

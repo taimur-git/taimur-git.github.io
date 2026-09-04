@@ -33,12 +33,23 @@ const allTags = [...new Set(enPosts.flatMap(p => p.data.tags))].sort();
         {allTags.map(tag => <TagPill tag={tag} />)}
       </div>
     )}
-    <div class="post-list" id="post-list">
-      {enPosts.map(post => (
-        <PostCard post={post} hasBn={bnIds.has(`${post.id}-bn`)} />
-      ))}
-    </div>
+    {enPosts.length > 0 ? (
+      <div class="post-list" id="post-list">
+        {enPosts.map(post => (
+          <PostCard post={post} hasBn={bnIds.has(`${post.id}-bn`)} />
+        ))}
+      </div>
+    ) : (
+      <p class="blog-empty mono">Haven't written anything yet.</p>
+    )}
   </div>
+  <style>
+    .blog-empty {
+      font-size: var(--font-size-sm);
+      color: var(--color-text-faint);
+      margin-top: var(--space-8);
+    }
+  </style>
   <script is:inline>
     (function () {
       var active = null;

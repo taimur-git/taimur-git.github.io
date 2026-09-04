@@ -202,11 +202,51 @@
   color: var(--color-text-faint);
 }
 
-.recipe-filters {
-  display: flex;
-  flex-wrap: wrap;
+.recipe-filter-toggle {
+  display: inline-flex;
+  align-items: center;
   gap: var(--space-2);
   margin-top: var(--space-6);
+  padding: 3px 12px 3px 10px;
+  font-size: var(--font-size-xs);
+  border-radius: var(--radius-full);
+  border: 0.5px solid var(--color-border-strong);
+  background: transparent;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: border-color var(--transition-base), color var(--transition-base);
+}
+
+.recipe-filter-toggle:hover,
+.recipe-filter-toggle[aria-expanded='true'],
+.recipe-filter-toggle.active {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+.recipe-filter-count::before { content: '· '; }
+
+.recipe-filters {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
+}
+
+/* an author `display` beats the UA sheet's [hidden] rule, so restate it */
+.recipe-filters[hidden] { display: none; }
+
+.recipe-filter-group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.recipe-filter-label {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-faint);
+  min-width: 3.5rem;
 }
 
 .recipe-filter {

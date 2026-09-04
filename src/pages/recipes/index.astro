@@ -8,13 +8,22 @@ const recipes = (await getCollection('recipes', ({ data }) => !data.draft)).sort
   (a, b) => b.data.date.getTime() - a.data.date.getTime(),
 );
 
-/* one flat facet list: tags, diet claims and "no <allergen>" all filter alike */
-const facets = [
-  ...new Set(recipes.flatMap((r) => [...r.data.tags, ...r.data.diet])),
-].sort();
+/* three facet axes, each filtering the same way. Course comes off the
+   `category` field so it is never restated as a tag; tags are what the dish
+   is made of; diet is the claim list. */
+const courseOf = (r: (typeof recipes)[number]) =>
+  r.data.category?.toLowerCase() ?? '';
+
+const uniq = (xs: string[]) => [...new Set(xs)].filter(Boolean).sort();
+
+const facetGroups = [
+  { label: 'course', facets: uniq(recipes.map(courseOf)) },
+  { label: 'uses', facets: uniq(recipes.flatMap((r) => r.data.tags)) },
+  { label: 'diet', facets: uniq(recipes.flatMap((r) => r.data.diet)) },
+].filter((g) => g.facets.length > 0);
 
 const facetsOf = (r: (typeof recipes)[number]) =>
-  [...r.data.tags, ...r.data.diet].join(',');
+  [courseOf(r), ...r.data.tags, ...r.data.diet].filter(Boolean).join(',');
 ---
 
 <BaseLayout title="Recipes" description="Recipes, written twice: as prose and as a dependency graph.">
@@ -24,14 +33,33 @@ const facetsOf = (r: (typeof recipes)[number]) =>
       Here are my recipes I adapted from places. Sources are attached, exports support Paprika and OpenRecipe.
     </p>
 
-    {facets.length > 0 && (
-      <div class="recipe-filters" id="recipe-filters">
-        {facets.map((facet) => (
-          <button type="button" class="recipe-filter" data-facet={facet} aria-pressed="false">
-            {facet}
-          </button>
+    {facetGroups.length > 0 && (
+      <>
+      <button
+        type="button"
+        class="recipe-filter-toggle"
+        id="recipe-filter-toggle"
+        aria-controls="recipe-filters"
+        aria-expanded="false"
+        aria-label="Show filters"
+      >
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 5h18l-7 8v6l-4 2v-8z"/></svg>
+        <span class="mono">filters</span>
+        <span class="recipe-filter-count mono" id="recipe-filter-count" hidden></span>
+      </button>
+      <div class="recipe-filters" id="recipe-filters" hidden>
+        {facetGroups.map((group) => (
+          <div class="recipe-filter-group">
+            <span class="recipe-filter-label mono">{group.label}</span>
+            {group.facets.map((facet) => (
+              <button type="button" class="recipe-filter" data-facet={facet} aria-pressed="false">
+                {facet}
+              </button>
+            ))}
+          </div>
         ))}
       </div>
+      </>
     )}
 
     {recipes.length === 0 ? (
@@ -62,9 +90,22 @@ const facetsOf = (r: (typeof recipes)[number]) =>
   <script is:inline>
     (function () {
       var active = null;
+      var panel = document.getElementById('recipe-filters');
+      var toggle = document.getElementById('recipe-filter-toggle');
+      var count = document.getElementById('recipe-filter-count');
+
+      function setOpen(open) {
+        panel.hidden = !open;
+        toggle.setAttribute('aria-expanded', String(open));
+        toggle.setAttribute('aria-label', open ? 'Hide filters' : 'Show filters');
+      }
 
       function apply(facet) {
         active = facet;
+        /* the panel can be shut, so the button carries the active facet */
+        count.textContent = facet || '';
+        count.hidden = !facet;
+        toggle.classList.toggle('active', !!facet);
         document.querySelectorAll('#recipe-grid .recipe-card-link').forEach(function (card) {
           var facets = (card.dataset.facets || '').split(',');
           card.style.display = !facet || facets.includes(facet) ? '' : 'none';
@@ -79,6 +120,12 @@ const facetsOf = (r: (typeof recipes)[number]) =>
       }
 
       apply(fromUrl());
+      /* a shared ?tag= link lands with a filter on: open so it is visible */
+      setOpen(!!fromUrl());
+
+      toggle.addEventListener('click', function () {
+        setOpen(panel.hidden);
+      });
 
       document.querySelectorAll('#recipe-filters .recipe-filter').forEach(function (btn) {
         btn.addEventListener('click', function () {

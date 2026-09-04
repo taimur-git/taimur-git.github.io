@@ -1,0 +1,173 @@
+---
+title: "Naan"
+date: 2026-09-04
+summary: "Tawa naan, no tandoor. Yeast dough, charred over the flame, garlic butter."
+tags: ["bread", "side"]
+cuisine: "Indian"
+category: "Side"
+
+yield: "6 naan"
+servings: 6
+prep: 25
+cook: 15
+
+allergens: ["gluten", "dairy"]
+diet: ["vegetarian"]
+heat: "none"
+
+nutrition:
+  basis: "per naan at 6, including the garlic butter"
+  calories: 320
+  fat: 15
+  carbs: 40
+  protein: 6
+  salt: 1.1
+
+sources:
+  - name: "Adam Ragusea"
+    url: "https://www.youtube.com/@aragusea"
+  - name: "Nisha Vora / Rainbow Plant Life"
+    url: "https://rainbowplantlife.com/vegan-naan/"
+  - name: "Fallow"
+    url: "https://www.youtube.com/@FallowChefs"
+
+components:
+  - id: garlic-butter
+    name: "Garlic butter"
+    note: "Make it while the dough rises."
+    ingredients:
+      - { id: gb-butter, qty: 60, unit: g, name: "butter", note: "or ghee" }
+      - { id: gb-garlic, qty: 3, unit: clove, name: "garlic", note: "grated" }
+      - { id: gb-coriander, qty: 2, unit: tbsp, name: "coriander leaf", note: "chopped" }
+      - { id: gb-salt, qty: 1, unit: pinch, name: "salt" }
+    ops:
+      - id: gb-melt
+        in: [gb-butter, gb-garlic, gb-coriander, gb-salt]
+        do: "melt the butter, then **off the heat**\nstir in the garlic, coriander and salt\nraw garlic softening in warm butter, not fried"
+    root: gb-melt
+
+  - id: naan
+    name: "Naan"
+    ingredients:
+      - { id: milk, qty: 100, unit: ml, name: "milk", note: "warm; hold a little back" }
+      - { id: sugar, qty: 2, unit: tsp, name: "sugar" }
+      - { id: yeast, qty: 1.5, unit: tsp, name: "instant yeast" }
+      - { id: flour, qty: 300, unit: g, name: "plain flour", note: "moyda" }
+      - { id: salt, qty: 1, unit: tsp, name: "fine salt" }
+      - { id: bp, qty: 0.5, unit: tsp, name: "baking powder" }
+      - { id: nigella, qty: 1, unit: tbsp, name: "nigella seeds", note: "kalojira", optional: true }
+      - { id: yogurt, qty: 120, unit: g, name: "plain yoghurt", note: "tok doi, not misti doi" }
+      - { id: oil, qty: 2, unit: tbsp, name: "oil" }
+      - { id: gbutter, name: "garlic butter", ref: "garlic-butter" }
+    ops:
+      - id: bloom
+        in: [milk, sugar, yeast]
+        do: "milk at blood heat, no hotter\nstir in the sugar, then the yeast\n**stand 10 min**, until frothy"
+      - id: dry
+        in: [flour, salt, bp, nigella]
+        do: "whisk together"
+      - id: knead
+        in: [bloom, dry, yogurt, oil]
+        do: "mix to a shaggy dough\nknead **6-8 min**, until smooth and springy\nsoft and barely tacky, **not sticky**\nhold back milk if it goes wet, add a splash if it is stiff"
+      - id: rise
+        in: [knead]
+        do: "oil the ball and the bowl\ncover\n**1 h**, until doubled"
+      - id: divide
+        in: [rise]
+        do: "knock back\n6 balls, ~90 g\ncover, **rest 15 min**"
+      - id: roll
+        in: [divide]
+        do: "flour the surface\nroll thin, ~20 x 13 cm\n*just shy of the thinnest you can get it*\nkeep the others covered"
+      - id: cook
+        in: [roll]
+        do: "**cast iron or an iron tawa, medium-high, near smoking**\n**not nonstick** - it has to stick\nwet the underside with your hand, lay it wet-side down\n**45-60 s**, until bubbled all over and the edges dry\ninvert the pan over the flame, ~30 s, until charred in patches\nno gas: flip it in the pan, lid on, 30-40 s"
+      - id: finish
+        in: [cook, gbutter]
+        final: true
+        do: "brush with the garlic butter\n**pull it while parts still look doughy** - cooked through is a cracker\nstack under a cloth"
+    root: finish
+
+  - id: milk-powder
+    name: "Milk powder naan"
+    optional: true
+    note: "The same dough with the milk solids raised and the water put back separately, which liquid milk cannot do. Softer, browns harder, and the powder keeps in the cupboard. Makes 6."
+    ingredients:
+      - { id: mp-water, qty: 100, unit: ml, name: "water", note: "warm; hold a little back" }
+      - { id: mp-powder, qty: 25, unit: g, name: "full-cream milk powder", note: "plain, not sweetened or malted" }
+      - { id: mp-sugar, qty: 2, unit: tsp, name: "sugar" }
+      - { id: mp-yeast, qty: 1.5, unit: tsp, name: "instant yeast" }
+      - { id: mp-flour, qty: 300, unit: g, name: "plain flour", note: "moyda" }
+      - { id: mp-salt, qty: 1, unit: tsp, name: "fine salt" }
+      - { id: mp-bp, qty: 0.5, unit: tsp, name: "baking powder" }
+      - { id: mp-nigella, qty: 1, unit: tbsp, name: "nigella seeds", note: "kalojira", optional: true }
+      - { id: mp-yogurt, qty: 120, unit: g, name: "plain yoghurt", note: "tok doi, not misti doi" }
+      - { id: mp-oil, qty: 2, unit: tbsp, name: "oil" }
+      - { id: mp-butter, name: "garlic butter", ref: "garlic-butter" }
+    ops:
+      - id: mp-dissolve
+        in: [mp-water, mp-powder]
+        do: "water at blood heat, no hotter\nwhisk the powder in, **until there is not a lump left**\nundissolved powder shows up as white specks and dry patches in the crumb"
+      - id: mp-bloom
+        in: [mp-dissolve, mp-sugar, mp-yeast]
+        do: "sugar, then the yeast\n**stand 10 min**, until frothy"
+      - id: mp-dry
+        in: [mp-flour, mp-salt, mp-bp, mp-nigella]
+        do: "whisk together"
+      - id: mp-knead
+        in: [mp-bloom, mp-dry, mp-yogurt, mp-oil]
+        do: "mix to a shaggy dough\nknead **6-8 min**, until smooth and springy\n**it will feel wetter than the milk dough. Leave it 5 min, then judge it**\nthe powder is still drinking; flour added now makes a stiff dough that rolls back"
+      - id: mp-rise
+        in: [mp-knead]
+        do: "oil the ball and the bowl\ncover\n**1 h**, until doubled"
+      - id: mp-shape
+        in: [mp-rise]
+        do: "knock back\n6 balls, ~90 g\ncover, rest 15 min\nroll thin, ~20 x 13 cm"
+      - id: mp-cook
+        in: [mp-shape]
+        do: "**cast iron or an iron tawa, medium-high, near smoking**\nwet the underside, lay it wet-side down\n**40-50 s** - the extra milk solids colour faster than the milk version, so watch it\ninvert the pan over the flame, ~30 s"
+      - id: mp-finish
+        in: [mp-cook, mp-butter]
+        final: true
+        do: "brush with the garlic butter\n**pull it while parts still look doughy**\nstack under a cloth"
+    root: mp-finish
+
+  - id: no-yeast
+    name: "No-yeast naan"
+    optional: true
+    note: "30 minutes, start to finish. Softer and closer to a bread roll than the yeast version, less chew. The yoghurt and soda do the lift. Runs to the end on its own; ignore the main dough if you make this."
+    ingredients:
+      - { id: ny-flour, qty: 250, unit: g, name: "plain flour", note: "moyda" }
+      - { id: ny-sugar, qty: 1, unit: tsp, name: "sugar" }
+      - { id: ny-salt, qty: 0.5, unit: tsp, name: "fine salt" }
+      - { id: ny-bp, qty: 1, unit: tsp, name: "baking powder" }
+      - { id: ny-soda, qty: 0.25, unit: tsp, name: "bicarbonate of soda" }
+      - { id: ny-yogurt, qty: 60, unit: g, name: "plain yoghurt", note: "tok doi" }
+      - { id: ny-oil, qty: 2, unit: tbsp, name: "oil" }
+      - { id: ny-milk, qty: 100, unit: ml, name: "milk", note: "warm" }
+      - { id: ny-butter, name: "garlic butter", ref: "garlic-butter" }
+    ops:
+      - id: ny-dry
+        in: [ny-flour, ny-sugar, ny-salt, ny-bp, ny-soda]
+        do: "whisk together"
+      - id: ny-mix
+        in: [ny-dry, ny-yogurt, ny-oil, ny-milk]
+        do: "stir in the yoghurt and oil\nmilk a little at a time\nstop at soft and kneadable, **not sticky**"
+      - id: ny-rest
+        in: [ny-mix]
+        do: "knead **5 min**, until smooth\ncover, **rest 30 min**\nit will not rise; it relaxes, and it rolls thin instead of springing back"
+      - id: ny-cook
+        in: [ny-rest]
+        do: "4 balls\nroll thin\n**hot cast iron or tawa, not nonstick**\nwet-side down, **45-60 s**\ninvert the pan over the flame, ~30 s"
+      - id: ny-finish
+        in: [ny-cook, ny-butter]
+        final: true
+        do: "brush with the garlic butter\nstack under a cloth"
+    root: ny-finish
+---
+
+## Notes
+
+- Cast iron instead of non-stick.
+- Roll thin.
+- Wet the underside every time so it sticks to the pan
+- Wipe the pan between naans if flour builds up and starts to smoke.

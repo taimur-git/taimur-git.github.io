@@ -1,0 +1,112 @@
+---
+title: "Daal Tadka"
+date: 2026-09-04
+summary: "Dhaba-style yellow daal. One pot, fried masala base, ghee tadka poured on at the table."
+tags: ["daal", "lentils", "vegetarian"]
+cuisine: "Indian"
+category: "Main"
+
+yield: "about 1.6 L"
+servings: 6
+prep: 15
+cook: 45
+
+allergens: ["dairy", "gluten"]
+diet: ["vegetarian"]
+heat: "medium"
+
+nutrition:
+  basis: "per bowl at 6, with the full tadka"
+  calories: 255
+  fat: 11
+  carbs: 30
+  protein: 10
+  salt: 1.5
+
+sources:
+  - name: "Hebbar's Kitchen"
+    url: "https://hebbarskitchen.com/dal-tadka-recipe-yellow-dal-tadka/"
+  - name: "Your Food Lab"
+    url: "https://www.youtube.com/@YourFoodLab"
+  - name: "Spice Bangla"
+    url: "https://www.spicebangla.com/dal-recipe/"
+
+components:
+  - id: tadka
+    name: "Tadka"
+    note: "Small pan, made while the daal sits. It goes on at the table, not into the pot."
+    ingredients:
+      - { id: td-ghee, qty: 2, unit: tbsp, name: "ghee" }
+      - { id: td-cumin, qty: 1, unit: tsp, name: "cumin seeds", note: "jeera" }
+      - { id: td-garlic, qty: 4, unit: clove, name: "garlic", note: "sliced thin" }
+      - { id: td-chilli, qty: 3, unit: piece, name: "dried red chillies", note: "broken open" }
+      - { id: td-hing, qty: 0.25, unit: tsp, name: "hing", note: "most brands are cut with wheat flour", optional: true }
+      - { id: td-methi, qty: 1, unit: tsp, name: "kasuri methi", note: "dried fenugreek leaf" }
+      - { id: td-powder, qty: 1, unit: tsp, name: "red chilli powder" }
+      - { id: td-beresta, qty: 3, unit: tbsp, name: "beresta" }
+    ops:
+      - id: td-bloom
+        in: [td-ghee, td-cumin]
+        do: "ghee until it shimmers\ncumin in, **wait for it to crack**, ~20 s"
+      - id: td-fry
+        in: [td-bloom, td-garlic, td-chilli]
+        do: "garlic and chillies\n**pale gold, not brown**, ~40 s\nit carries on cooking off the heat"
+      - id: td-off
+        in: [td-fry, td-hing, td-methi, td-powder, td-beresta]
+        do: "**off the heat**, then the rest\nmethi crushed between your palms\nswirl 10 s\n*chilli powder on the flame turns bitter; the pan alone is hot enough*"
+    root: td-off
+
+  - id: daal
+    name: "The daal"
+    ingredients:
+      - { id: oil, qty: 2, unit: tbsp, name: "oil" }
+      - { id: bay, qty: 2, unit: leaf, name: "bay leaves", note: "tejpata" }
+      - { id: cardamom, qty: 1, unit: piece, name: "black cardamom", note: "boro elach" }
+      - { id: onion, qty: 150, unit: g, name: "onion", note: "finely chopped" }
+      - { id: ginger, qty: 20, unit: g, name: "ginger", note: "finely chopped" }
+      - { id: garlic, qty: 6, unit: clove, name: "garlic", note: "finely chopped" }
+      - { id: greenchilli, qty: 3, unit: piece, name: "green chillies", note: "slit" }
+      - { id: tomato, qty: 250, unit: g, name: "tomatoes", note: "chopped" }
+      - { id: salt, qty: 1.5, unit: tsp, name: "salt" }
+      - { id: turmeric, qty: 0.75, unit: tsp, name: "turmeric" }
+      - { id: chilli, qty: 1, unit: tsp, name: "red chilli powder" }
+      - { id: dhoniya, qty: 1, unit: tbsp, name: "ground coriander", note: "dhoniya guro" }
+      - { id: toor, qty: 150, unit: g, name: "toor dal", note: "arhar; rinsed, soaked 30 min" }
+      - { id: masoor, qty: 100, unit: g, name: "masoor dal", note: "rinsed, soaked with the toor" }
+      - { id: water, qty: 1.1, unit: l, name: "water", note: "hot" }
+      - { id: thetadka, name: "tadka", ref: "tadka" }
+      - { id: lemon, qty: 1, unit: tbsp, name: "lemon juice" }
+      - { id: dhonepata, qty: 3, unit: tbsp, name: "coriander leaf", note: "chopped" }
+    ops:
+      - id: sizzle
+        in: [oil, bay, cardamom]
+        do: "oil hot\nbay and cardamom, ~30 s, until they smell"
+      - id: soften
+        in: [sizzle, onion]
+        do: "onion in\n**8-10 min**, soft and gold at the edges\npale onion means flat daal"
+      - id: arom
+        in: [soften, ginger, garlic, greenchilli]
+        do: "2 min, until the raw edge goes"
+      - id: masala
+        in: [arom, tomato, salt, turmeric, chilli, dhoniya]
+        do: "tomato and the ground spices, low flame\nmash it down as it goes\n**stop only when the oil separates and pools at the edge**, 6-8 min"
+      - id: fry
+        in: [masala, toor, masoor]
+        do: "drained daal in\n2 min, turning it through the masala"
+      - id: cook
+        in: [fry, water]
+        do: "water in, scrape the bottom\npressure cooker: **4 whistles on medium**, then let it fall on its own\nopen pot: lid on, 40-45 min, stir now and then"
+      - id: mash
+        in: [cook]
+        do: "whisk hard, 20-30 s\nsome grains whole, the rest gone\nsimmer 5 min\n**leave it looser than you want it** - it tightens as it stands"
+      - id: serve
+        in: [mash, thetadka, lemon, dhonepata]
+        final: true
+        do: "pour the tadka over\n**do not stir it in**\nlemon, coriander, salt to taste"
+    root: serve
+---
+
+## Notes
+
+- It thickens hard overnight. Loosen with hot water when reheating, and taste for salt again.
+- If you need to cut further, skip the black cardamom, hing and kasuri methi.

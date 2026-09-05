@@ -36,9 +36,13 @@ const proseSteps = data.components.flatMap((c) =>
     label: i === 0 ? c.name : undefined,
     body: step.text,
     list: step.list,
+    ingredients: step.ingredients,
     /* every step of an alternate path carries the tag, not just the first:
        the method is one list and a reader can enter it anywhere */
     optional: c.optional,
+    /* the step list is rendered outside the per-component sections, so the
+       batch marker the stepper looks for has to ride on the step itself */
+    batch: c.batch,
   })),
 );
 ---

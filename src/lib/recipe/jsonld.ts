@@ -4,6 +4,7 @@
 
 import type { Recipe } from './schema';
 import { flattenOps } from './graph';
+import type { FlatStep } from './graph';
 import { isoDuration, renderIngredient } from './format';
 
 /* only the diet tags with a schema.org RestrictedDiet equivalent */
@@ -37,12 +38,22 @@ export function ingredientLines(recipe: Recipe): string[] {
   return exportedComponents(recipe).flatMap((c) => c.ingredients.map((i) => renderIngredient(i)));
 }
 
+/** One step as plain text, for every export. The ingredients lead: an
+    importing app renders directions as prose with no graph to read them
+    against, and "mix" on its own instructs nobody. Amounts are included
+    because a split ingredient is two authored lines that only the amount
+    tells apart — see FlatStep. */
+export function stepText(step: FlatStep): string {
+  const ingredients = step.ingredients.map((i) => renderIngredient(i)).join('; ');
+  const listed = step.list ? step.list.join('; ') : '';
+  return [ingredients, listed, step.text].filter(Boolean).join('. ');
+}
+
 /** Steps in method order, tagged with the component they belong to. */
 export function instructionSteps(recipe: Recipe): { name?: string; text: string }[] {
   return exportedComponents(recipe).flatMap((c) =>
     flattenOps(c).map((step, i) => {
-      const listed = step.list ? step.list.join('; ') : '';
-      const text = [listed, step.text].filter(Boolean).join('. ');
+      const text = stepText(step);
       return i === 0 ? { name: c.name, text } : { text };
     }),
   );

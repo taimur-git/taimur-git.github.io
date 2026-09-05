@@ -1,4 +1,7 @@
 ---
+import { renderQty } from '../../lib/recipe/format';
+import type { RecipeIngredient } from '../../lib/recipe/schema';
+
 interface RecipeStep {
   label?: string;
   body: string;
@@ -6,6 +9,13 @@ interface RecipeStep {
   duration?: string;
   optional?: boolean;
   tip?: string;
+  /* what this step consumes. The graph shows it by adjacency; here it has
+     to be named, amounts included — see FlatStep in lib/recipe/graph.ts */
+  ingredients?: RecipeIngredient[];
+  /* a pantry batch, so the servings stepper must leave its amounts alone.
+     The step list sits outside the per-component sections that carry this
+     everywhere else, so it is repeated per step. */
+  batch?: boolean;
 }
 interface Props {
   steps: RecipeStep[];
@@ -18,7 +28,10 @@ const { steps, title = 'Method' } = Astro.props;
   <p class="recipe-steps-heading">{title}</p>
   <ol class="recipe-step-list">
     {steps.map((step, i) => (
-      <li class={`recipe-step${step.optional ? ' recipe-step-optional' : ''}`}>
+      <li
+        class={`recipe-step${step.optional ? ' recipe-step-optional' : ''}`}
+        data-batch={step.batch ? '' : undefined}
+      >
         <span class="recipe-step-num" aria-hidden="true">{i + 1}</span>
         <div class="recipe-step-body">
           {/* omit the header entirely when empty: a blank one still reserves
@@ -31,6 +44,24 @@ const { steps, title = 'Method' } = Astro.props;
               )}
               {step.optional && <span class="recipe-step-tag">optional</span>}
             </div>
+          )}
+          {step.ingredients && step.ingredients.length > 0 && (
+            <p class="recipe-step-ing">
+              {step.ingredients.map((item, n) => (
+                <>
+                  {n > 0 && <span class="recipe-step-ing-sep" aria-hidden="true"> · </span>}
+                  <span class={`recipe-step-ing-item${item.optional ? ' is-optional' : ''}`}>
+                    {item.qty !== undefined && (
+                      <span class="ingredient-amount" data-qty={item.qty} data-unit={item.unit ?? ''}>
+                        {renderQty(item.qty, item.unit)}
+                      </span>
+                    )}{item.qty !== undefined && ' '}
+                    {/* no break before the note, or the comma renders detached */}
+                    {item.name}{item.note && <span class="recipe-step-ing-note">, {item.note}</span>}
+                  </span>
+                </>
+              ))}
+            </p>
           )}
           {step.list && (
             <ol class="recipe-step-list-inner">
@@ -152,6 +183,27 @@ const { steps, title = 'Method' } = Astro.props;
     line-height: var(--line-height-body);
     margin: 0;
   }
+
+  /* what the step consumes, above the instruction that acts on it */
+  .recipe-step-ing {
+    margin: 0 0 var(--space-2);
+    font-size: var(--font-size-sm);
+    color: var(--color-text);
+    line-height: var(--line-height-body);
+  }
+
+  .recipe-step-ing .ingredient-amount {
+    font-family: var(--font-mono);
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+    transition: color var(--transition-fast);
+  }
+
+  .recipe-step-ing .ingredient-amount.updated { color: var(--color-accent); }
+
+  .recipe-step-ing-sep { color: var(--color-text-faint); }
+  .recipe-step-ing-note { color: var(--color-text-faint); }
+  .recipe-step-ing-item.is-optional { font-style: italic; opacity: 0.7; }
 
   .recipe-step-list-inner {
     margin: 0 0 var(--space-2);

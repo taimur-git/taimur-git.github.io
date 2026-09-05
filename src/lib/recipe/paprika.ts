@@ -11,7 +11,7 @@ import { gzipSync } from 'node:zlib';
 import { createHash } from 'node:crypto';
 import type { Recipe } from './schema';
 import { flattenOps } from './graph';
-import { exportedComponents } from './jsonld';
+import { exportedComponents, stepText } from './jsonld';
 import { formatDuration, renderIngredient } from './format';
 import { nutritionLines } from './jsonld';
 
@@ -107,9 +107,7 @@ export function paprikaRecord(recipe: Recipe, slug: string, url: URL) {
   const directions = parts
     .flatMap((c) => [
       parts.length > 1 ? `${c.name}:` : null,
-      ...flattenOps(c).map((step) =>
-        [step.list ? step.list.join('; ') : '', step.text].filter(Boolean).join('. '),
-      ),
+      ...flattenOps(c).map(stepText),
     ])
     .filter(Boolean)
     .join('\n\n');

@@ -7,7 +7,7 @@
    node then stretches right to just before its parent's column, which is what
    produces the colspans; whatever is left over is filled with blank cells. */
 
-import type { RecipeComponent } from './schema';
+import type { RecipeComponent, RecipeIngredient } from './schema';
 
 export interface Cell {
   kind: 'ing' | 'op' | 'gap';
@@ -202,10 +202,27 @@ export function layoutComponent(c: RecipeComponent): Layout {
    stays visible as the typo it is instead of silently disappearing. */
 const EMPHASIS = /\*\*([^*]+)\*\*|\*([^*]+)\*/g;
 
+export interface FlatStep {
+  text: string;
+  list?: string[];
+  /* The ingredients this op consumes directly, in authored order. The graph
+     conveys these by adjacency — the cell sits against the rows it eats — so
+     `do` never names them ("mix", "shave paper-thin"). Prose has no adjacency
+     to lean on, so it has to say them out loud or the step is unfollowable.
+
+     Amounts travel too, and are not optional: an ingredient may only be
+     consumed once, so a split is authored as two lines with separate ids, and
+     several of those differ by an order of magnitude with nothing but the
+     amount to tell them apart (60ml vs 480ml of stock, 1 tbsp vs 240ml of
+     water). Naming alone would silently merge them. */
+  ingredients: RecipeIngredient[];
+}
+
 /* Ops in method order, for the prose view and every export. */
-export function flattenOps(c: RecipeComponent): { text: string; list?: string[] }[] {
+export function flattenOps(c: RecipeComponent): FlatStep[] {
   const ops = new Map(c.ops.map((o) => [o.id, o]));
-  const out: { text: string; list?: string[] }[] = [];
+  const ingredients = new Map(c.ingredients.map((i) => [i.id, i]));
+  const out: FlatStep[] = [];
   const seen = new Set<string>();
 
   function walk(id: string) {
@@ -216,8 +233,11 @@ export function flattenOps(c: RecipeComponent): { text: string; list?: string[] 
     out.push({
       text: (op.do ?? '').replace(/\n/g, ' ').replace(EMPHASIS, (_, bold, italic) => bold ?? italic).trim(),
       list: op.list,
+      ingredients: op.in
+        .map((input) => ingredients.get(input))
+        .filter((i): i is RecipeIngredient => i !== undefined),
     });
   }
   walk(c.root);
-  return out.filter((step) => step.text || step.list);
+  return out.filter((step) => step.text || step.list || step.ingredients.length > 0);
 }

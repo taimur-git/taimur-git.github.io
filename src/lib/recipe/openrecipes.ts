@@ -7,7 +7,7 @@
 
 import type { Recipe } from './schema';
 import { flattenOps } from './graph';
-import { exportedComponents } from './jsonld';
+import { exportedComponents, stepText } from './jsonld';
 import { renderIngredient } from './format';
 
 /* the vocabulary observed in the sample. Anything absent has no representation. */
@@ -60,9 +60,7 @@ export function openRecipesDocument(recipe: Recipe): string {
   const instruction = parts
     .flatMap((component) => [
       parts.length > 1 ? `${component.name}:` : null,
-      ...flattenOps(component).map((step) =>
-        [step.list ? step.list.join('; ') : '', step.text].filter(Boolean).join('. '),
-      ),
+      ...flattenOps(component).map(stepText),
     ])
     .filter(Boolean)
     .join('\n');

@@ -41,8 +41,8 @@ const segments = (line: string) =>
                           {renderQty(cell.qty, cell.unit)}
                         </span>
                       )}{cell.qty !== undefined && ' '}
-                      {cell.name}
-                      {cell.note && <span class="ing-note">, {cell.note}</span>}
+                      {/* no break before the note, or the comma renders detached */}
+                      {cell.name}{cell.note && <span class="ing-note">, {cell.note}</span>}
                     </span>
                   </button>
                   {cell.ref && (

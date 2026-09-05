@@ -20,6 +20,10 @@ const PLURAL: Record<string, string> = {
   leaf: 'leaves', sprig: 'sprigs', bunch: 'bunches',
 };
 
+/* how far off a fraction may be and still be rendered as it. Half the ⅛ step
+   would snap everything, but it would also print ⅜ for 0.31. */
+const TOLERANCE = 0.04;
+
 const FRACS: [number, string][] = [
   [1 / 8, '⅛'], [1 / 4, '¼'], [1 / 3, '⅓'], [3 / 8, '⅜'], [1 / 2, '½'],
   [5 / 8, '⅝'], [2 / 3, '⅔'], [3 / 4, '¾'], [7 / 8, '⅞'],
@@ -27,13 +31,24 @@ const FRACS: [number, string][] = [
 
 /** 1.5 → "1½", 0.667 → "⅔". For spoons, cups and countable things. */
 export function formatFraction(n: number): string {
+  /* at this size an eighth is below the precision anyone cooks to, and the
+     check has to come first or 10.4 matches ⅜ and prints "10⅜" */
+  if (n >= 10) return String(Math.round(n));
+
   const whole = Math.floor(n);
   const frac = n - whole;
+
+  /* FRACS stops at ⅞, so a fraction just under 1 belongs on the next whole
+     number. Without this it falls through to the decimal: 1.96 tsp. */
+  if (1 - frac <= TOLERANCE) return String(whole + 1);
+
   for (const [val, ch] of FRACS) {
-    if (Math.abs(frac - val) < 0.04) return whole > 0 ? `${whole}${ch}` : ch;
+    if (Math.abs(frac - val) <= TOLERANCE) return whole > 0 ? `${whole}${ch}` : ch;
   }
-  if (frac < 0.04) return String(whole);
-  if (n >= 10) return String(Math.round(n));
+  /* the whole > 0 guard matters: without it an amount scaled below ⅛ lands
+     here and prints a bare "0" for something still in the dish. Under an
+     eighth there is no fraction to show, so the decimal is the honest one. */
+  if (frac <= TOLERANCE && whole > 0) return String(whole);
   return String(Math.round(n * 100) / 100);
 }
 

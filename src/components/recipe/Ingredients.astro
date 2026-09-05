@@ -27,9 +27,9 @@ const { componentId, items, title } = Astro.props;
                 {renderQty(item.qty, item.unit)}
               </span>
             )}
+            {/* no break before the note, or the comma renders detached */}
             <span class="ingredient-name">
-              {item.name}
-              {item.note && <span class="ingredient-note">, {item.note}</span>}
+              {item.name}{item.note && <span class="ingredient-note">, {item.note}</span>}
             </span>
             {item.optional && <span class="ingredient-tag">optional</span>}
           </span>

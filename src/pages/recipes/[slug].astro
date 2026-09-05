@@ -90,7 +90,12 @@ const proseSteps = data.components.flatMap((c) =>
 
     <div data-method-view="prose">
       {data.components.map((component) => (
-        <section class="recipe-component" id={component.id} data-component={component.id}>
+        <section
+          class="recipe-component"
+          id={component.id}
+          data-component={component.id}
+          data-batch={component.batch ? '' : undefined}
+        >
           <h2 class="recipe-component-title">
             {component.name}
             {component.optional && <span class="recipe-component-tag">optional</span>}
@@ -104,7 +109,11 @@ const proseSteps = data.components.flatMap((c) =>
 
     <div data-method-view="graph" class="recipe-graph-region" hidden>
       {data.components.map((component) => (
-        <section class="recipe-component" data-component={component.id}>
+        <section
+          class="recipe-component"
+          data-component={component.id}
+          data-batch={component.batch ? '' : undefined}
+        >
           <h2 class="recipe-component-title">
             {component.name}
             {component.optional && <span class="recipe-component-tag">optional</span>}

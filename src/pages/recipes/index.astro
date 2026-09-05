@@ -27,9 +27,9 @@ const facetsOf = (r: (typeof recipes)[number]) =>
 ---
 
 <BaseLayout title="Recipes" description="Recipes, written twice: as prose and as a dependency graph.">
-  <div class="site-container" style="padding-top: var(--space-12); padding-bottom: var(--space-16);">
-    <h1 style="font-size: var(--font-size-3xl); font-weight: var(--font-weight-medium); line-height: var(--line-height-tight);">recipes</h1>
-    <p style="color: var(--color-text-muted); max-width: var(--max-width-prose); line-height: var(--line-height-body);">
+  <div class="site-container recipe-index">
+    <h1 class="recipe-index-title">recipes</h1>
+    <p class="recipe-index-intro">
       Here are my recipes I adapted from places. Sources are attached, exports support Paprika and OpenRecipe.
     </p>
 
@@ -93,6 +93,10 @@ const facetsOf = (r: (typeof recipes)[number]) =>
       var panel = document.getElementById('recipe-filters');
       var toggle = document.getElementById('recipe-filter-toggle');
       var count = document.getElementById('recipe-filter-count');
+
+      /* the whole filter block is only rendered when there is something to
+         filter by, so with no facets there is nothing here to wire up */
+      if (!panel || !toggle || !count) return;
 
       function setOpen(open) {
         panel.hidden = !open;

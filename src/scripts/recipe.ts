@@ -50,7 +50,11 @@ function initStepper() {
   const base = Number(stepper.dataset.baseServings ?? '1');
   const countEl = stepper.querySelector<HTMLElement>('.servings-count')!;
   const resetBtn = stepper.querySelector<HTMLButtonElement>('.stepper-reset')!;
-  const amounts = document.querySelectorAll<HTMLElement>('[data-qty]');
+  /* a batch component is a jar you made once and draw from, so its amounts
+     are fixed regardless of how much of the dish you are cooking today */
+  const amounts = [...document.querySelectorAll<HTMLElement>('[data-qty]')].filter(
+    (el) => !el.closest('[data-batch]'),
+  );
   let current = base;
 
   function render() {

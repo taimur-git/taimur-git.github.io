@@ -78,9 +78,14 @@ const stats = [
       border-bottom: 0.5px solid var(--color-border);
       border-right: none;
     }
-    /* right column: restore right border */
-    .recipe-stat:nth-child(odd) { border-right: 0.5px solid var(--color-border); }
-    /* last row: no bottom border */
-    .recipe-stat:nth-last-child(-n+2):not(:nth-child(odd) ~ *) { border-bottom: none; }
+    /* left column: restore the divider between the two columns. An odd last
+       child sits alone on its row, so it has nothing to divide from. */
+    .recipe-stat:nth-child(odd):not(:last-child) {
+      border-right: 0.5px solid var(--color-border);
+    }
+    /* last row: the card's own border is already there. That is the last
+       child, plus the one before it when the last child is a right column. */
+    .recipe-stat:last-child,
+    .recipe-stat:nth-last-child(2):nth-child(odd) { border-bottom: none; }
   }
 </style>

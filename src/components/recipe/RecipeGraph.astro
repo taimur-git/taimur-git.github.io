@@ -9,7 +9,13 @@ interface Props {
 const { component } = Astro.props;
 const { width, rows } = layoutComponent(component);
 
-/* **bold** and *italic* inside an op's lines */
+/* **bold** and *italic* inside an op's lines. Split on the pair, then match
+   the pair again to decide what a segment is: testing for a leading asterisk
+   would claim an unpaired one and eat the character after it, where graph.ts
+   leaves the same typo visible. */
+const BOLD = /^\*\*[^*]+\*\*$/;
+const ITALIC = /^\*[^*]+\*$/;
+
 const segments = (line: string) =>
   line.split(/(\*\*[^*]+\*\*|\*[^*]+\*)/).filter(Boolean);
 ---
@@ -66,9 +72,9 @@ const segments = (line: string) =>
                   <>
                     {i > 0 && <br />}
                     {segments(line).map((part) =>
-                      part.startsWith('**') ? (
+                      BOLD.test(part) ? (
                         <strong>{part.slice(2, -2)}</strong>
-                      ) : part.startsWith('*') ? (
+                      ) : ITALIC.test(part) ? (
                         <em>{part.slice(1, -1)}</em>
                       ) : (
                         part

@@ -29,9 +29,9 @@ const rows = [
     <span class="nutrition-basis">{nutrition.basis}</span>
   </p>
   <dl class="nutrition-grid">
-    {rows.map(([label, value, unit]) => (
+    {rows.map(([name, value, unit]) => (
       <div class="nutrition-item">
-        <dt>{label}</dt>
+        <dt>{name}</dt>
         <dd>{value.toLocaleString('en-GB')}{unit}</dd>
       </div>
     ))}

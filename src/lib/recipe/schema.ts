@@ -55,6 +55,9 @@ const component = z.object({
   /* an alternate path, not a part of the dish: rendered dimmed and tagged,
      and left out of every export so it cannot double the shopping list */
   optional: z.boolean().default(false),
+  /* a pantry batch made once and drawn from, not a part of this cook. Its
+     amounts are fixed by the jar, so the servings stepper leaves them alone */
+  batch: z.boolean().default(false),
   /* only for a component that changes the finished dish enough that the
      recipe-level figures no longer describe it. Display only — the exports
      carry one nutrition block and it is the recipe's */

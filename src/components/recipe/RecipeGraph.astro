@@ -185,11 +185,13 @@ const segments = (line: string) =>
 
   .graph-op strong { color: var(--color-text); font-weight: var(--font-weight-medium); }
 
-  .graph-final ol {
+  /* any op can carry a `list`, not only the final one, and the left align has
+     to beat the centring on .graph-op wherever it appears */
+  .graph-op ol {
     margin: 0 0 var(--space-2);
     padding-left: 1.2rem;
     text-align: left;
   }
 
-  .graph-final li { line-height: var(--line-height-tight); }
+  .graph-op li { line-height: var(--line-height-tight); }
 </style>

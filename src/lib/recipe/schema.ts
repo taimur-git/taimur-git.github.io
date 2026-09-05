@@ -80,6 +80,9 @@ export const recipeSchema = z.object({
 
   yield: z.string(),
   servings: z.number().int().positive(),
+  /* what `servings` counts, when it is not people: "burgers", "cups",
+     "squares". Plural — the stepper prints it against any count. */
+  servingsUnit: z.string().default('servings'),
   prep: z.number().int().nonnegative(),
   cook: z.number().int().nonnegative(),
 

@@ -84,7 +84,7 @@ const proseSteps = data.components.flatMap((c) =>
     <Badges allergens={data.allergens} diet={data.diet} heat={data.heat} />
 
     <div class="recipe-controls">
-      <ServingsStepper servings={data.servings} />
+      <ServingsStepper servings={data.servings} unit={data.servingsUnit} />
       <ViewToggle />
     </div>
 

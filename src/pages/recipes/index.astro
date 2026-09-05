@@ -41,7 +41,6 @@ const facetsOf = (r: (typeof recipes)[number]) =>
         id="recipe-filter-toggle"
         aria-controls="recipe-filters"
         aria-expanded="false"
-        aria-label="Show filters"
       >
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 5h18l-7 8v6l-4 2v-8z"/></svg>
         <span class="mono">filters</span>
@@ -100,8 +99,9 @@ const facetsOf = (r: (typeof recipes)[number]) =>
 
       function setOpen(open) {
         panel.hidden = !open;
+        /* no aria-label here: it would override the button's own text and
+           hide the active facet the count span appends to it */
         toggle.setAttribute('aria-expanded', String(open));
-        toggle.setAttribute('aria-label', open ? 'Hide filters' : 'Show filters');
       }
 
       function apply(facet) {
